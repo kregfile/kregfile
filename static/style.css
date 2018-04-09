@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext');
+
+:root {
+  --main-bg: #333333;
+  --text-fg: #fefefe;
+  --dark-fg: #aeaeae;
+  --dark-bg: #101010;
+
+  --role-user-fg: #23d16f;
+  --role-mod-fg: pink;
+  --role-system-fg: #d880fc;
+}
+
+html {
+  font-size: 12pt;
+  font-family: 'Open Sans', sans-serif;
+  color: white;
+  background: var(--main-bg);
+  color: var(--text-fg);
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: var(--dark-fg);
+  transition: color 1s;
+}
+a:hover {
+  color: var(--text-fg);
+}
+
+body {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+
+  grid-template-columns: 1fr 2fr;
+  grid-template-rows: auto 1fr auto auto;
+  grid-column-gap: 1ex;
+  grid-template-areas:
+    "nav nav"
+    "chat files"
+    "status files"
+    "chatbox files";
+}
+
+nav {
+  margin: 0;
+  padding: 1ex 1em;
+  grid-area: nav;
+}
+h1 {
+  margin: 0;
+  padding: 0;
+}
+
+#chat {
+  grid-area: chat;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  background: var(--dark-bg);
+}
+
+#chat > div {
+  padding: 0.3ex 1ex;
+}
+
+.u{
+  display: inline-block;
+  padding-right: 1ex;
+  white-space: no-wrap;
+  color: var(--dark-fg);
+}
+.u > .time {
+  display: inline-block;
+  padding-right: 1ex;
+  font-size: x-small;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+.u.system {
+  color: var(--role-system-fg);
+}
+
+.u.user {
+  color: var(--role-user-fg);
+}
+
+.u.admin {
+  color: var(--role-admin-fg);
+}
+
+.msg {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+#status {
+  padding: 1ex 2px;
+}
+
+#nick {
+  color: var(--text-fg);
+  background: var(--dark-bg);
+  border: 1px solid var(--dark-bg);
+  border-left-width: 3px;
+  outline: none;
+  box-shadow: none;
+}
+
+
+#chatbox {
+  grid-area: chatbox;
+}
+
+#text {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  resize: none;
+  color: var(--text-fg);
+  background: var(--dark-bg);
+  outline: none;
+  box-shadow: none;
+}
+
+#files {
+  grid-area: files;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: var(--dark-bg);
+}
+
+#status {
+  grid-area: status;
+  padding: 3px;
+  font-size: x-small;
+  text-align: right;
+}

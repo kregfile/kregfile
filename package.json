@@ -1,0 +1,22 @@
+{
+  "name": "kregfile",
+  "version": "1.0.0",
+  "description": "Best volafile replacement ever",
+  "main": "index.js",
+  "author": "RealDolos <dolos@cock.li>",
+  "license": "MIT",
+  "scripts": {
+    "pack": "cd client && webpack -w"
+  },
+  "dependencies": {
+    "express": "^4.16.3",
+    "morgan": "^1.9.0",
+    "redis": "^2.8.0",
+    "socket.io": "^2.1.0",
+    "url-regex": "^4.1.1"
+  },
+  "devDependencies": {
+    "webpack": "^4.5.0",
+    "webpack-cli": "^2.0.14"
+  }
+}
