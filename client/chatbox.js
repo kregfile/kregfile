@@ -1,7 +1,7 @@
 "use strict";
 /* global localforage */
 
-const {debounce, nukeEvent} = require("./util");
+const {debounce, nukeEvent, parseCommand} = require("./util");
 const EventEmitter = require("events");
 
 const RE_WORD = /^[\w\d]$/;
@@ -168,12 +168,39 @@ class ChatBox extends EventEmitter {
     if (e.key === "Enter" && !e.shiftKey) {
       const {target} = e;
       if (target.value) {
-        this.sendMessage(target.value);
+        let {value} = target;
+        value = value.trim();
+        const cmd = parseCommand(value);
+        if (cmd && this.doCommand(cmd)) {
+          // done
+        }
+        else {
+          this.sendMessage(value);
+        }
         target.value = "";
       }
       return nukeEvent(e);
     }
     return true;
+  }
+
+  cmd_nick(value) {
+    this.nick.value = value;
+    this.ensureNick();
+    this.socket.emit("nick", this.nick.value);
+    return true;
+  }
+
+  doCommand(cmd) {
+    const fn = this[`cmd_${cmd.cmd}`];
+    if (!fn) {
+      return false;
+    }
+    if (fn.call(this, cmd.args)) {
+      this.history.add(cmd.str);
+      return true;
+    }
+    return false;
   }
 
   ensureNick() {
@@ -194,7 +221,6 @@ class ChatBox extends EventEmitter {
       }
       nick = nick.replace(/[^a-z\d]/gi, "");
       if (onick !== nick) {
-        console.log(onick, nick);
         this.emit(
           "warn",
           "Nickname contained invalid stuff, which was removed");

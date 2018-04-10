@@ -18,6 +18,9 @@ class Broker extends EventEmitter {
     });
 
     this.on("newListener", event => {
+      if (event === "newListener" || event === "removeListener") {
+        return;
+      }
       let count = subs.get(event) || 0;
       if (count) {
         subs.set(event, ++count);
@@ -35,7 +38,6 @@ class Broker extends EventEmitter {
       }
       subs.delete(event);
       sub.unsubscribe(event);
-      console.log("unsubed", event);
     });
   }
 

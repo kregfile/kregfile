@@ -55,15 +55,12 @@ socket.on("message", msgs.add.bind(msgs));
 socket.on("usercount", v => {
   document.querySelector("#usercount").textContent = v;
 });
-socket.on("config", c => {
-  for (const [k, v] of Object.entries(c)) {
-    switch (k) {
-    case "name":
-      setRoomName(v);
-      break;
-    }
+socket.on("config", arr => {
+  const cmap = new Map(arr);
+  const rn = cmap.get("roomname");
+  if (rn) {
+    setRoomName(rn);
   }
-  Object.assign(config, c);
 });
 
 addEventListener("DOMContentLoaded", function load() {

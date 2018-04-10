@@ -1,6 +1,6 @@
 "use strict";
 
-const {toMessage} = require("./util");
+const {toMessage, parseCommand} = require("./util");
 const BROKER = require("./broker");
 const {Room} = require("./room");
 
@@ -15,21 +15,25 @@ class Client {
     this.nick = this.nick || `anon-${++running}`;
 
     this.onusercount = this.onusercount.bind(this);
-    this.onbrokermessage = this.onbrokermessage.bind(this);
+    this.onconfig = this.onconfig.bind(this);
+    this.onconfigloaded = this.onconfigloaded.bind(this);
+    this.unicast = this.unicast.bind(this);
     this.emit = socket.emit.bind(socket);
 
     this.roomid = roomid;
     this.socket = socket;
     this.room = Room.get(this.roomid);
     this.room.on("usercount", this.onusercount);
+    this.room.on("config", this.onconfig);
+    this.room.on("config-loaded", this.onconfigloaded);
     this.room.ref();
 
     socket.on("message", this.onmessage.bind(this));
     socket.on("nick", this.onnick.bind(this));
     socket.on("disconnect", this.onclose.bind(this));
 
-    BROKER.on("message", this.onbrokermessage);
-    BROKER.on(`${this.roomid}:message`, this.onbrokermessage);
+    BROKER.on("message", this.unicast);
+    BROKER.on(`${this.roomid}:message`, this.unicast);
 
     Object.seal(this);
 
@@ -37,17 +41,59 @@ class Client {
     this.emit("usercount", this.room.userCount.value);
   }
 
-  onmessage(msg) {
-    msg = toMessage(msg);
-    console.log(msg);
-    BROKER.emit(`${this.roomid}:message`, {
+  broadcast(msg) {
+    BROKER.emit(`${this.roomid}:message`, msg);
+  }
+
+  unicast(...args) {
+    this.emit("message", ...args);
+  }
+
+  async onmessage(msg) {
+    msg = msg.trim();
+    const cmd = parseCommand(msg);
+    if (cmd) {
+      try {
+        msg = await this.room.doCommand(cmd);
+        if (msg) {
+          this.unicast({
+            user: "Command",
+            role: "system",
+            volatile: true,
+            msg: toMessage(msg)
+          });
+        }
+      }
+      catch (ex) {
+        console.error(ex);
+        this.unicast({
+          user: "Error",
+          role: "system",
+          volatile: true,
+          msg: toMessage(ex.message || ex.toString())
+        });
+      }
+      return;
+    }
+    if (msg[0] === "/") {
+      msg = msg.slice(1);
+    }
+    this.broadcast({
       user: this.nick,
-      msg
+      msg: toMessage(msg),
     });
   }
 
   onusercount(count) {
     this.emit("usercount", count);
+  }
+
+  onconfig(key, value) {
+    this.emit("config", [[key, value]]);
+  }
+
+  onconfigloaded(config) {
+    this.emit("config", config);
   }
 
   onnick(nick) {
@@ -61,15 +107,15 @@ class Client {
     this.nick = nick;
   }
 
-  onbrokermessage(...m) {
-    this.emit("message", ...m);
-  }
-
   onclose() {
-    BROKER.removeListener("message", this.onbrokermessage);
-    BROKER.removeListener(`${this.roomid}:message`, this.onbrokermessage);
+    BROKER.removeListener("message", this.unicast);
+    BROKER.removeListener(`${this.roomid}:message`, this.unicast);
+
     this.socket.removeAllListeners();
+
     this.room.removeListener("usercount", this.onusercount);
+    this.room.removeListener("config", this.onconfig);
+    this.room.removeListener("config-loaded", this.onconfigloaded);
     this.room.unref();
   }
 
