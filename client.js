@@ -2,6 +2,7 @@
 
 const {toMessage} = require("./util");
 const BROKER = require("./broker");
+const {Room} = require("./room");
 
 let running = 0;
 
@@ -13,18 +14,27 @@ class Client {
     this.onnick(nick);
     this.nick = this.nick || `anon-${++running}`;
 
+    this.onusercount = this.onusercount.bind(this);
+    this.onbrokermessage = this.onbrokermessage.bind(this);
+    this.emit = socket.emit.bind(socket);
+
     this.roomid = roomid;
     this.socket = socket;
+    this.room = Room.get(this.roomid);
+    this.room.on("usercount", this.onusercount);
+    this.room.ref();
+
     socket.on("message", this.onmessage.bind(this));
     socket.on("nick", this.onnick.bind(this));
     socket.on("disconnect", this.onclose.bind(this));
 
-    this.onbrokermessage = this.onbrokermessage.bind(this);
     BROKER.on("message", this.onbrokermessage);
     BROKER.on(`${this.roomid}:message`, this.onbrokermessage);
-    this.emit = socket.emit.bind(socket);
-    this.emit("nick", this.nick);
+
     Object.seal(this);
+
+    this.emit("nick", this.nick);
+    this.emit("usercount", this.room.userCount.value);
   }
 
   onmessage(msg) {
@@ -34,6 +44,10 @@ class Client {
       user: this.nick,
       msg
     });
+  }
+
+  onusercount(count) {
+    this.emit("usercount", count);
   }
 
   onnick(nick) {
@@ -48,13 +62,15 @@ class Client {
   }
 
   onbrokermessage(...m) {
-    this.socket.emit("message", ...m);
+    this.emit("message", ...m);
   }
 
   onclose() {
     BROKER.removeListener("message", this.onbrokermessage);
     BROKER.removeListener(`${this.roomid}:message`, this.onbrokermessage);
     this.socket.removeAllListeners();
+    this.room.removeListener("usercount", this.onusercount);
+    this.room.unref();
   }
 
   static create(socket) {

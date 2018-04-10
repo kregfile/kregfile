@@ -101,7 +101,14 @@ h1 {
 }
 
 #status {
+  display: flex;
   padding: 1ex 2px;
+  justify-content: flex-end;
+  align-items: center;
+  align-content: center;
+}
+#status > * {
+  margin-left: 1ex;
 }
 
 #nick {

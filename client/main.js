@@ -52,6 +52,9 @@ chatbox.on("warn", e => {
 });
 msgs.on("message", m => chatbox.autocomplete.add(m));
 socket.on("message", msgs.add.bind(msgs));
+socket.on("usercount", v => {
+  document.querySelector("#usercount").textContent = v;
+});
 socket.on("config", c => {
   for (const [k, v] of Object.entries(c)) {
     switch (k) {
