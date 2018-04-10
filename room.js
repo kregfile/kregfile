@@ -7,6 +7,8 @@ const {toMessage} = require("./util");
 
 const ROOMS = new Map();
 
+const LOADING = Symbol();
+
 class Room extends EventEmitter {
   static get(roomid) {
     let rv = ROOMS.get(roomid);
@@ -32,18 +34,22 @@ class Room extends EventEmitter {
 
     this.config = new DistributedMap(`rco:${this.roomid}`);
 
+    this[LOADING] = (async() => {
+      await this.config.loaded;
+      if (!this.config.has("roomname")) {
+        this.config.set("roomname", "New Room");
+      }
+      this.config.on("set", (key, rn) => {
+        this.emit("config", key, rn);
+      });
+    })();
+
     Object.seal(this);
   }
 
   async load() {
-    await this.config.loaded;
-    if (!this.config.has("roomname")) {
-      this.config.set("roomname", "New Room");
-    }
+    await this[LOADING];
     this.emit("config-loaded", Array.from(this.config));
-    this.config.on("set", (key, rn) => {
-      this.emit("config", key, rn);
-    });
   }
 
   cmd_kek(client, arg) {
