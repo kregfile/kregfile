@@ -16,6 +16,9 @@ app.use(require("morgan")("tiny"));
 app.get("/", function (req, res) {
   res.sendFile(`${__dirname}/static/index.html`);
 });
+app.get("/favicon.ico", function (req, res) {
+  res.sendFile(`${__dirname}/static/favicon.jpg`);
+});
 app.get("/r/:roomid", function (req, res) {
   res.sendFile(`${__dirname}/static/room.html`);
 });
