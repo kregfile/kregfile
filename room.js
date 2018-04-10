@@ -3,6 +3,7 @@
 const EventEmitter = require("events");
 const {DistributedCounter} = require("./dcounter");
 const {DistributedMap} = require("./dmap");
+const {toMessage} = require("./util");
 
 const ROOMS = new Map();
 
@@ -45,11 +46,11 @@ class Room extends EventEmitter {
     });
   }
 
-  cmd_kek(arg) {
+  cmd_kek(client, arg) {
     return `*hue ${arg}`;
   }
 
-  cmd_name(arg) {
+  cmd_name(client, arg) {
     if (arg.length < 3 || arg.length > 20) {
       throw new Error("Invalid room name");
     }
@@ -57,12 +58,33 @@ class Room extends EventEmitter {
     return `Changed room name to: ${arg}`;
   }
 
-  doCommand(cmd) {
+  cmd_motd(client) {
+    client.sendMOTD();
+  }
+
+  cmd_setmotd(client, arg) {
+    if (!arg) {
+      this.config.delete("motd");
+      return "Removed MOTD";
+    }
+    if (arg.length > 500) {
+      throw new Error("MOTD too long");
+    }
+    try {
+      this.config.set("motd", toMessage(arg));
+    }
+    catch (ex) {
+      throw new Error("Invalid MOTD");
+    }
+    return "";
+  }
+
+  doCommand(client, cmd) {
     const fn = this[`cmd_${cmd.cmd}`];
     if (!fn) {
       throw new Error(`No such command: ${cmd.cmd}`);
     }
-    return fn.call(this, cmd.args);
+    return fn.call(this, client, cmd.args);
   }
 
   async ref() {

@@ -54,7 +54,7 @@ class Client {
     const cmd = parseCommand(msg);
     if (cmd) {
       try {
-        msg = await this.room.doCommand(cmd);
+        msg = await this.room.doCommand(this, cmd);
         if (msg) {
           this.unicast({
             user: "Command",
@@ -90,10 +90,14 @@ class Client {
 
   onconfig(key, value) {
     this.emit("config", [[key, value]]);
+    if (key === "motd") {
+      this.sendMOTD(value);
+    }
   }
 
   onconfigloaded(config) {
     this.emit("config", config);
+    this.sendMOTD();
   }
 
   onnick(nick) {
@@ -117,6 +121,19 @@ class Client {
     this.room.removeListener("config", this.onconfig);
     this.room.removeListener("config-loaded", this.onconfigloaded);
     this.room.unref();
+  }
+
+  sendMOTD(motd) {
+    motd = motd || this.room.config.get("motd");
+    if (!motd) {
+      return;
+    }
+    this.unicast({
+      user: "MOTD",
+      role: "system",
+      volatile: true,
+      msg: motd
+    });
   }
 
   static create(socket) {

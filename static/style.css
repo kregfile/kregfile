@@ -53,9 +53,16 @@ nav {
   padding: 1ex 1em;
   grid-area: nav;
 }
+
 h1 {
   margin: 0;
   padding: 0;
+}
+
+.hr {
+  margin: 1ex 2em !important;
+  padding: 0 !important;
+  border: 1px solid var(--dark-fg);
 }
 
 .hidden {

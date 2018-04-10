@@ -29,6 +29,7 @@ class Messages extends EventEmitter {
     this._save = debounce(this._save.bind(this));
     this.flush = APOOL.wrap(this.flush);
     this.scrollEnd = APOOL.wrap(this.scrollEnd);
+    this.restoring = [];
     Object.seal(this);
   }
 
@@ -51,6 +52,10 @@ class Messages extends EventEmitter {
   }
 
   add(m) {
+    if (this.restoring) {
+      this.restoring.push(m);
+      return;
+    }
     this._add(m);
     const d = m.date.toLocaleString("en-US", {
       hour12: false,
@@ -161,9 +166,15 @@ class Messages extends EventEmitter {
 
   async restore() {
     const stored = (await this.store.getItem(this.roomid));
+    const {restoring} = this;
+    this.restoring = null;
     if (stored) {
       stored.forEach(this.add.bind(this));
     }
+    const hr = document.createElement("div");
+    hr.classList.add("hr");
+    this.queue.push(hr);
+    restoring.forEach(this.add.bind(this));
   }
 }
 

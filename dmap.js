@@ -3,6 +3,7 @@
 const BROKER = require("./broker");
 const {ObservableMap} = require("./omap");
 
+const PID = Symbol();
 const KEY = Symbol();
 const LOADING = Symbol();
 const SYNCKEY = Symbol();
@@ -13,6 +14,7 @@ const SYNCKEY = Symbol();
 class DistributedMap extends ObservableMap {
   constructor(key) {
     super();
+    this[PID] = process.pid;
     this[KEY] = `map:${key}`;
     this[SYNCKEY] = `sync-${this[KEY]}`;
     this.onsync = this.onsync.bind(this);
@@ -42,6 +44,9 @@ class DistributedMap extends ObservableMap {
   }
 
   onsync(d) {
+    if (d.pid === this[PID]) {
+      return;
+    }
     switch (d.t) {
     case "s":
       super.set(d.k, d.v);
@@ -64,20 +69,20 @@ class DistributedMap extends ObservableMap {
   set(k, v) {
     const [sk, sv] = [JSON.stringify(k), JSON.stringify(v)];
     BROKER.PUB.hset(this[KEY], sk, sv);
-    BROKER.emit(this[SYNCKEY], {t: "s", k, v});
+    BROKER.emit(this[SYNCKEY], {pid: this[PID], t: "s", k, v});
     return super.set(k, v);
   }
 
   delete(k) {
     const sk = JSON.stringify(k);
     BROKER.PUB.hdel(this[KEY], sk);
-    BROKER.emit(this[SYNCKEY], {t: "d", k});
+    BROKER.emit(this[SYNCKEY], {pid: this[PID], t: "d", k});
     return super.delete(k);
   }
 
   clear() {
     BROKER.PUB.del(this[KEY]);
-    BROKER.emit(this[SYNCKEY], {t: "c"});
+    BROKER.emit(this[SYNCKEY], {pid: this[PID], t: "c"});
     return super.clear();
   }
 
