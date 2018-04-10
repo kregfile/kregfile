@@ -8,8 +8,12 @@ let running = 0;
 
 class Client {
   constructor(socket) {
-    const {nick, roomid} = socket.handshake.query;
+    const {remoteAddress, remotePort} = socket.request.connection;
+    this.ip = remoteAddress;
+    this.port = remotePort;
+    this.address = `${this.ip}:${this.port}`;
 
+    const {nick, roomid} = socket.handshake.query;
     this.nick = null;
     this.onnick(nick);
     this.nick = this.nick || `anon-${++running}`;
