@@ -4,7 +4,7 @@ const {URL} = require("url");
 
 const WHITE_REGEX = /^[\r\n]+$/;
 const SCHEME_REGEX = /^(?:https?|ftp|irc):/;
-const URL_REGEX = new RegExp(`([\r\n]+|#{a-z0-9_-]+|${require("url-regex")().source})`, "ig");
+const URL_REGEX = new RegExp(`([\r\n]+|#[a-z0-9_-]+|${require("url-regex")().source})`, "ig");
 
 function debounce(fn, to) {
   if (fn.length) {

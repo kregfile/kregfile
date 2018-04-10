@@ -80,7 +80,7 @@ class Messages extends EventEmitter {
 
       case "r": {
         const a = document.createElement("a");
-        a.href = `/${p.v}`;
+        a.href = `/r/${p.v}`;
         a.target = "_blank";
         a.textContent = `#${p.v}`;
         msg.appendChild(a);
