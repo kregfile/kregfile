@@ -58,6 +58,25 @@ h1 {
   padding: 0;
 }
 
+.hidden {
+  display: none;
+}
+
+.blink {
+  animation: blink-animation 1s steps(5, start) infinite;
+  -webkit-animation: blink-animation 1s steps(5, start) infinite;
+}
+@keyframes blink-animation {
+  to {
+    opacity: 0;
+  }
+}
+@-webkit-keyframes blink-animation {
+  to {
+    opacity: 0;
+  }
+}
+
 #chat {
   grid-area: chat;
   overflow-x: hidden;
@@ -121,6 +140,9 @@ h1 {
   box-shadow: none;
 }
 
+#endmarker {
+  cursor: pointer;
+}
 
 #chatbox {
   grid-area: chatbox;

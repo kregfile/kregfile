@@ -10,12 +10,25 @@ class Messages extends EventEmitter {
     super();
     this.roomid = roomid;
     this.el = document.querySelector("#chat");
+    this.endMarker = document.querySelector("#endmarker");
+    this.endMarker.addEventListener("click", () => {
+      this.scrollEnd();
+    });
+    this.el.addEventListener("scroll", () => {
+      if (this.isScrollEnd) {
+        this.hideEndMarker();
+      }
+    });
     this.msgs = [];
+    this.els = [];
+    this.queue = [];
+    this.flushing = null;
     this.store = localforage.createInstance({
       storeName: "msgs"
     });
     this._save = debounce(this._save.bind(this));
     this.flush = APOOL.wrap(this.flush);
+    this.scrollEnd = APOOL.wrap(this.scrollEnd);
     Object.seal(this);
   }
 
@@ -95,18 +108,55 @@ class Messages extends EventEmitter {
     e.appendChild(user);
     e.appendChild(msg);
 
-    this.flush(e);
+    this.queue.push(e);
+    if (!this.flushing) {
+      this.flushing = this.flush();
+      console.log(this.flushing);
+    }
   }
 
-  flush(e) {
+  get isScrollEnd() {
     const {el} = this;
     const end = el.scrollHeight -
-        el.clientHeight -
-        el.scrollTop;
-    el.appendChild(e);
-    if (end < 10) {
-      e.scrollIntoView();
+          el.clientHeight -
+          el.scrollTop;
+    return (end < 16);
+  }
+
+  flush() {
+    const {el} = this;
+    const end = this.isScrollEnd;
+    for (const e of this.queue) {
+      this.els.push(e);
+      el.appendChild(e);
     }
+    this.queue.length = 0;
+    while (this.els.length > 300) {
+      const rem = this.els.shift();
+      console.log(this.els.length, rem);
+      rem.parentElement.removeChild(rem);
+    }
+    if (end) {
+      // nasty but meh
+      setTimeout(() => this.scrollEnd(), 10);
+    }
+    else {
+      this.showEndMarker();
+    }
+    this.flushing = null;
+  }
+
+  scrollEnd() {
+    this.els[this.els.length - 1].scrollIntoView();
+    this.hideEndMarker();
+  }
+
+  showEndMarker() {
+    this.endMarker.classList.remove("hidden");
+  }
+
+  hideEndMarker() {
+    this.endMarker.classList.add("hidden");
   }
 
   async restore() {
