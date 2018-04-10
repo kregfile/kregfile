@@ -3,11 +3,12 @@
 const EventEmitter = require("events");
 const {createClient: redis} = require("redis");
 
+const PUB = redis();
+
 class Broker extends EventEmitter {
   constructor(conn) {
     super();
 
-    this.pub = redis(conn);
     const sub = redis(conn);
     const subs = new Map();
 
@@ -43,9 +44,10 @@ class Broker extends EventEmitter {
       return super.emit(event, ...args);
     }
     args = JSON.stringify(args);
-    console.log(args);
-    return this.pub.publish(event, args);
+    return PUB.publish(event, args);
   }
 }
 
-module.exports = new Broker();
+const BROKER = new Broker();
+BROKER.PUB = PUB;
+module.exports = BROKER;
