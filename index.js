@@ -14,6 +14,7 @@ if (cluster.isMaster) {
 
   const BROKER = require("./broker");
 
+  /*
   setInterval(function news() {
     BROKER.emit("message", {
       user: "News",
@@ -22,6 +23,7 @@ if (cluster.isMaster) {
       volatile: true
     });
   }, 5000);
+  */
 }
 else {
   require("./server");
