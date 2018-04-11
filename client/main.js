@@ -1,6 +1,8 @@
 "use strict";
 /* globals io, localforage */
 
+const registry = require("./registry");
+
 const roomid = document.location.pathname.replace(/^\/r\//, "");
 
 const {Messages} = require("./messages");
@@ -24,10 +26,9 @@ function createSocket() {
   return socket;
 }
 
-const config = {};
-const socket = createSocket();
-const chatbox = new ChatBox(roomid, socket);
-const msgs = new Messages(roomid);
+const socket = registry.socket = createSocket();
+const chatbox = registry.chatbox = new ChatBox(roomid);
+const msgs = registry.messages = new Messages(roomid);
 
 function setRoomName(name) {
   document.title = `${name} - kregfile`;
@@ -57,6 +58,14 @@ socket.on("usercount", v => {
 });
 socket.on("config", arr => {
   const cmap = new Map(arr);
+  for (const [k, v] of cmap.entries()) {
+    if (v === null) {
+      registry.config.delete(k);
+    }
+    else {
+      registry.config.set(k, v);
+    }
+  }
   const rn = cmap.get("roomname");
   if (rn) {
     setRoomName(rn);

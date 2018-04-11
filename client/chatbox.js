@@ -3,6 +3,7 @@
 
 const {debounce, nukeEvent, parseCommand} = require("./util");
 const EventEmitter = require("events");
+const registry = require("./registry");
 
 const RE_WORD = /^[\w\d]$/;
 
@@ -148,16 +149,15 @@ class Autocomplete {
 }
 
 class ChatBox extends EventEmitter {
-  constructor(roomid, socket) {
+  constructor(roomid) {
     super();
     this.roomid = roomid;
-    this.socket = socket;
     this.text = document.querySelector("#text");
     this.nick = document.querySelector("#nick");
     this.history = new History(roomid, this.text);
     this.autocomplete = new Autocomplete(this.text);
     this.text.addEventListener("keypress", this.press.bind(this));
-    socket.on("nick", m => {
+    registry.socket.on("nick", m => {
       this.nick.value = m;
       localStorage.setItem("nick", m);
     });
@@ -233,7 +233,7 @@ class ChatBox extends EventEmitter {
         this.emit("error", "Nickname too long");
         return;
       }
-      this.socket.emit("nick", nick);
+      registry.socket.emit("nick", nick);
       localStorage.setItem("nick", nick);
     }
     finally {
@@ -243,7 +243,7 @@ class ChatBox extends EventEmitter {
 
   sendMessage(m) {
     this.ensureNick();
-    this.socket.emit("message", m);
+    registry.socket.emit("message", m);
     this.history.add(m);
   }
 }

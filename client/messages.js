@@ -4,6 +4,7 @@
 const EventEmitter = require("events");
 const {debounce} = require("./util");
 const {APOOL} = require("./animationpool");
+const registry = require("./registry");
 
 class Messages extends EventEmitter {
   constructor(roomid) {
@@ -116,7 +117,6 @@ class Messages extends EventEmitter {
     this.queue.push(e);
     if (!this.flushing) {
       this.flushing = this.flush();
-      console.log(this.flushing);
     }
   }
 
@@ -148,6 +148,7 @@ class Messages extends EventEmitter {
     else {
       this.showEndMarker();
     }
+
     this.flushing = null;
   }
 
@@ -165,7 +166,7 @@ class Messages extends EventEmitter {
   }
 
   async restore() {
-    const stored = (await this.store.getItem(this.roomid));
+    const stored = await this.store.getItem(this.roomid);
     const {restoring} = this;
     this.restoring = null;
     if (stored) {
