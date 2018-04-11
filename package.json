@@ -2,7 +2,7 @@
   "name": "kregfile",
   "version": "1.0.0",
   "description": "Best volafile replacement ever",
-  "main": "index.js",
+  "main": "server.js",
   "author": "RealDolos <dolos@cock.li>",
   "license": "MIT",
   "scripts": {

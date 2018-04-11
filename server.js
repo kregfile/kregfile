@@ -1,31 +1,29 @@
 "use strict";
 
-const express = require("express");
-const {Server} = require("http");
-const {Client} = require("./client");
+const cluster = require("cluster");
+const numCPUs = require("os").cpus().length;
 
-const app = express();
-const server = new Server(app);
-const io = require("socket.io")(server, {
-  path: "/w",
-  transports: ["websocket"],
-});
 
-app.use(require("morgan")("tiny"));
+if (cluster.isMaster) {
+  console.log(`Master ${process.pid} is running`);
 
-app.get("/", function (req, res) {
-  res.sendFile(`${__dirname}/static/index.html`);
-});
-app.get("/favicon.ico", function (req, res) {
-  res.sendFile(`${__dirname}/static/favicon.jpg`);
-});
-app.get("/r/:roomid", function (req, res) {
-  res.sendFile(`${__dirname}/static/room.html`);
-});
-app.use("/static", express.static("static"));
+  // Fork workers.
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
 
-io.on("connection", function (socket) {
-  Client.create(socket);
-});
-
-server.listen(8080);
+  /*
+  const BROKER = require("./broker");
+  setInterval(function news() {
+    BROKER.emit("message", {
+      user: "News",
+      role: "system",
+      msg: "now with 100% more rice",
+      volatile: true
+    });
+  }, 5000);
+  */
+}
+else {
+  require("./lib/server");
+}

@@ -9,4 +9,4 @@ function nukeEvent(e) {
 module.exports = {
   nukeEvent,
 };
-Object.assign(module.exports, require("../common"));
+Object.assign(module.exports, require("../lib/common"));
