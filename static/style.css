@@ -5,6 +5,8 @@
   --text-fg: #fefefe;
   --dark-fg: #aeaeae;
   --dark-bg: #101010;
+  --hi-fg: #f4f3f3;
+  --hi-bg: #282828;
 
   --role-user-fg: #23d16f;
   --role-mod-fg: pink;
@@ -125,6 +127,10 @@ h1 {
 .msg {
   overflow-wrap: break-word;
   word-wrap: break-word;
+}
+#chat > .hi {
+  color: var(--hi-fg);
+  background: var(--hi-bg);
 }
 
 #status {

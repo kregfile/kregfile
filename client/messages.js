@@ -41,15 +41,31 @@ class Messages extends EventEmitter {
 
   _add(m) {
     m.date = m.date || new Date();
-    if (m.volatile) {
-      return;
+    let notify = false;
+    if (!("notify" in m)) {
+      m.notify = false;
+      for (const p of m.msg) {
+        if (p.t === "t" && registry.chatbox.checkHighlight(p.v)) {
+          notify = true;
+          break;
+        }
+      }
     }
+    if (!("highlight" in m)) {
+      m.highlight = notify;
+    }
+
+    if (m.volatile) {
+      return notify;
+    }
+
     this.msgs.push(m);
     if (this.msgs.length > 100) {
       this.msgs.shift();
     }
     this._save();
     this.emit("message", m);
+    return notify;
   }
 
   add(m) {
@@ -57,7 +73,7 @@ class Messages extends EventEmitter {
       this.restoring.push(m);
       return;
     }
-    this._add(m);
+    const notify = this._add(m);
     const d = m.date.toLocaleString("en-US", {
       hour12: false,
       hour: "2-digit",
@@ -65,6 +81,9 @@ class Messages extends EventEmitter {
       second: "2-digit",
     });
     const e = document.createElement("div");
+    if (m.highlight) {
+      e.classList.add("hi");
+    }
     const user = document.createElement("span");
     user.classList.add("u");
     if (m.role) {
@@ -115,6 +134,12 @@ class Messages extends EventEmitter {
     e.appendChild(msg);
 
     this.queue.push(e);
+    if (notify) {
+      this.displayNotification({
+        user: m.user,
+        msg: msg.textContent
+      }).catch(console.error);
+    }
     if (!this.flushing) {
       this.flushing = this.flush();
     }
@@ -126,6 +151,32 @@ class Messages extends EventEmitter {
           el.clientHeight -
           el.scrollTop;
     return (end < 16);
+  }
+
+  async displayNotification(n) {
+    if (!("Notification" in window)) {
+      return;
+    }
+    if (Notification.permission === "denied") {
+      return;
+    }
+    if (Notification.permission !== "granted") {
+      await Notification.requestPermission();
+    }
+    if (Notification.permission !== "granted") {
+      return;
+    }
+    const opts = {
+      icon: "/favicon.ico",
+      body: n.msg,
+      silent: true,
+      noscreen: true,
+    };
+    const rn = registry.config.get("roomname");
+    const notification = new Notification(
+      `${n.user} | ${rn} | kregfile`,
+      opts);
+    setTimeout(notification.close.bind(notification), 10000);
   }
 
   flush() {

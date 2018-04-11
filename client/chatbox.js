@@ -151,6 +151,7 @@ class Autocomplete {
 class ChatBox extends EventEmitter {
   constructor(roomid) {
     super();
+    this.currentNick = "";
     this.roomid = roomid;
     this.text = document.querySelector("#text");
     this.nick = document.querySelector("#nick");
@@ -159,6 +160,7 @@ class ChatBox extends EventEmitter {
     this.text.addEventListener("keypress", this.press.bind(this));
     registry.socket.on("nick", m => {
       this.nick.value = m;
+      this.currentNick = m;
       localStorage.setItem("nick", m);
     });
     Object.seal(this);
@@ -187,7 +189,6 @@ class ChatBox extends EventEmitter {
   cmd_nick(value) {
     this.nick.value = value;
     this.ensureNick();
-    this.socket.emit("nick", this.nick.value);
     return true;
   }
 
@@ -237,7 +238,7 @@ class ChatBox extends EventEmitter {
       localStorage.setItem("nick", nick);
     }
     finally {
-      this.nick.value = localStorage.getItem("nick");
+      this.currentNick = this.nick.value = localStorage.getItem("nick");
     }
   }
 
@@ -245,6 +246,10 @@ class ChatBox extends EventEmitter {
     this.ensureNick();
     registry.socket.emit("message", m);
     this.history.add(m);
+  }
+
+  checkHighlight(str) {
+    return str.toUpperCase().includes(this.currentNick.toUpperCase());
   }
 }
 
