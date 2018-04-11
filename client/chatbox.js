@@ -149,21 +149,28 @@ class Autocomplete {
 }
 
 class ChatBox extends EventEmitter {
-  constructor(roomid) {
+  constructor() {
     super();
     this.currentNick = "";
-    this.roomid = roomid;
+    this.roomid = registry.roomid;
     this.text = document.querySelector("#text");
     this.nick = document.querySelector("#nick");
-    this.history = new History(roomid, this.text);
+    this.history = new History(this.roomid, this.text);
     this.autocomplete = new Autocomplete(this.text);
     this.text.addEventListener("keypress", this.press.bind(this));
+    Object.seal(this);
+  }
+
+  init() {
+    registry.messages.on("message", m => {
+      this.autocomplete.add(m);
+    });
+
     registry.socket.on("nick", m => {
       this.nick.value = m;
       this.currentNick = m;
       localStorage.setItem("nick", m);
     });
-    Object.seal(this);
   }
 
   press(e) {
@@ -253,4 +260,4 @@ class ChatBox extends EventEmitter {
   }
 }
 
-module.exports = { ChatBox };
+registry.chatbox = new ChatBox();

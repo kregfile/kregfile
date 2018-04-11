@@ -8,6 +8,14 @@ class Roomie {
     this.unread = 0;
     this.hidden = document.hidden;
 
+    Object.seal(this);
+  }
+
+  init() {
+    registry.socket.on("usercount", v => {
+      document.querySelector("#usercount").textContent = v;
+    });
+
     registry.config.on("set-roomname", v => this.name = v);
 
     registry.messages.on("message", () => {
@@ -47,4 +55,4 @@ class Roomie {
   }
 }
 
-module.exports = { Roomie };
+registry.roomie = new Roomie();

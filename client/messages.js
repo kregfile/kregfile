@@ -7,19 +7,11 @@ const {APOOL} = require("./animationpool");
 const registry = require("./registry");
 
 class Messages extends EventEmitter {
-  constructor(roomid) {
+  constructor() {
     super();
-    this.roomid = roomid;
+    this.roomid = registry.roomid;
     this.el = document.querySelector("#chat");
     this.endMarker = document.querySelector("#endmarker");
-    this.endMarker.addEventListener("click", () => {
-      this.scrollEnd();
-    });
-    this.el.addEventListener("scroll", () => {
-      if (this.isScrollEnd) {
-        this.hideEndMarker();
-      }
-    });
     this.msgs = [];
     this.els = [];
     this.queue = [];
@@ -31,7 +23,38 @@ class Messages extends EventEmitter {
     this.flush = APOOL.wrap(this.flush);
     this.scrollEnd = APOOL.wrap(this.scrollEnd);
     this.restoring = [];
+
     Object.seal(this);
+  }
+
+  init() {
+    registry.socket.on("message", this.add.bind(this));
+
+    registry.chatbox.on("error", e => {
+      this.add({
+        volatile: true,
+        role: "system",
+        user: "Error",
+        msg: e
+      });
+    });
+    registry.chatbox.on("warn", e => {
+      this.add({
+        volatile: true,
+        role: "system",
+        user: "Warning",
+        msg: e
+      });
+    });
+
+    this.endMarker.addEventListener("click", () => {
+      this.scrollEnd();
+    });
+    this.el.addEventListener("scroll", () => {
+      if (this.isScrollEnd) {
+        this.hideEndMarker();
+      }
+    });
   }
 
   _save() {
@@ -172,7 +195,7 @@ class Messages extends EventEmitter {
       silent: true,
       noscreen: true,
     };
-    const rn = registry.config.get("roomname");
+    const rn = registry.roomie.name;
     const notification = new Notification(
       `${n.user} | ${rn} | kregfile`,
       opts);
@@ -189,7 +212,6 @@ class Messages extends EventEmitter {
     this.queue.length = 0;
     while (this.els.length > 300) {
       const rem = this.els.shift();
-      console.log(this.els.length, rem);
       rem.parentElement.removeChild(rem);
     }
     if (end) {
@@ -230,4 +252,4 @@ class Messages extends EventEmitter {
   }
 }
 
-module.exports = {Messages};
+registry.messages = new Messages();
