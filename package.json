@@ -9,11 +9,13 @@
     "pack": "cd client && webpack -w"
   },
   "dependencies": {
+    "compression": "^1.7.2",
     "express": "^4.16.3",
     "localforage": "^1.7.1",
     "morgan": "^1.9.0",
     "redis": "^2.8.0",
     "socket.io": "^2.1.0",
+    "socket.io-client": "^2.1.0",
     "url-regex": "^4.1.1"
   },
   "devDependencies": {

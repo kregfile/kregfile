@@ -1,6 +1,6 @@
 "use strict";
-/* globals io */
 
+const io = require("socket.io-client");
 const registry = require("./registry");
 
 function createSocket() {
