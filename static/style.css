@@ -100,12 +100,14 @@ h1 {
 
 .u{
   display: inline-block;
+  font-weight: bold;
   padding-right: 1ex;
   white-space: no-wrap;
   color: var(--dark-fg);
 }
 .u > .time {
   display: inline-block;
+  font-weight: normal;
   padding-right: 1ex;
   font-size: x-small;
   -moz-user-select: none;
