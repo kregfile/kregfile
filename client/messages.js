@@ -158,7 +158,7 @@ class Messages extends EventEmitter {
 
     this.queue.push(e);
     if (notify) {
-      this.displayNotification({
+      registry.roomie.displayNotification({
         user: m.user,
         msg: msg.textContent
       }).catch(console.error);
@@ -174,32 +174,6 @@ class Messages extends EventEmitter {
           el.clientHeight -
           el.scrollTop;
     return (end < 16);
-  }
-
-  async displayNotification(n) {
-    if (!("Notification" in window)) {
-      return;
-    }
-    if (Notification.permission === "denied") {
-      return;
-    }
-    if (Notification.permission !== "granted") {
-      await Notification.requestPermission();
-    }
-    if (Notification.permission !== "granted") {
-      return;
-    }
-    const opts = {
-      icon: "/favicon.ico",
-      body: n.msg,
-      silent: true,
-      noscreen: true,
-    };
-    const rn = registry.roomie.name;
-    const notification = new Notification(
-      `${n.user} | ${rn} | kregfile`,
-      opts);
-    setTimeout(notification.close.bind(notification), 10000);
   }
 
   flush() {

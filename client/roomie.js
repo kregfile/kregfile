@@ -44,6 +44,32 @@ class Roomie {
     this._updateTitleAndName();
   }
 
+  async displayNotification(n) {
+    if (!("Notification" in window)) {
+      return;
+    }
+    if (Notification.permission === "denied") {
+      return;
+    }
+    if (Notification.permission !== "granted") {
+      await Notification.requestPermission();
+    }
+    if (Notification.permission !== "granted") {
+      return;
+    }
+    const opts = {
+      icon: "/favicon.ico",
+      body: n.msg,
+      silent: true,
+      noscreen: true,
+    };
+    const notification = new Notification(
+      `${n.user} | ${this.name} | kregfile`,
+      opts);
+    setTimeout(notification.close.bind(notification), 10000);
+  }
+
+
   _updateTitle() {
     const unread = this.unread ? `(${this.unread}) ` : "";
     document.title = `${unread}${this.name} - kregfile`;
