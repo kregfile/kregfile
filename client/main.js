@@ -1,5 +1,4 @@
 "use strict";
-/* globals io, localforage */
 
 const registry = require("./registry");
 

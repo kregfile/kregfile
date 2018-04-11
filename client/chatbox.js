@@ -1,8 +1,8 @@
 "use strict";
-/* global localforage */
 
-const {debounce, nukeEvent, parseCommand} = require("./util");
 const EventEmitter = require("events");
+const localforage = require("localforage");
+const {debounce, nukeEvent, parseCommand} = require("./util");
 const registry = require("./registry");
 
 const RE_WORD = /^[\w\d]$/;

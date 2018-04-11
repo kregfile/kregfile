@@ -1,7 +1,7 @@
 "use strict";
-/* global localforage */
 
 const EventEmitter = require("events");
+const localforage = require("localforage");
 const {debounce} = require("./util");
 const {APOOL} = require("./animationpool");
 const registry = require("./registry");
