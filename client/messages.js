@@ -219,6 +219,22 @@ class Messages extends EventEmitter {
     if (stored) {
       stored.forEach(this.add.bind(this));
     }
+    else {
+      this.add({
+        volatile: true,
+        highlight: true,
+        notify: false,
+        role: "system",
+        user: "System",
+        msg: [
+          {t: "t", v: "Welcome to kregfile"},
+          {t: "b"},
+          {t: "t", v: "Share this room with somebody: "},
+          {t: "b"},
+          {t: "u", v: document.location.href.toString()},
+        ]
+      });
+    }
     const hr = document.createElement("div");
     hr.classList.add("hr");
     this.queue.push(hr);
