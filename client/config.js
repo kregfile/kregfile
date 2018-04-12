@@ -1,9 +1,9 @@
 "use strict";
 
-const {ObservableMap} = require("../lib/omap");
-const registry = require("./registry");
+import {ObservableMap} from "../lib/omap";
+import registry from "./registry";
 
-class Config extends ObservableMap {
+export default new class Config extends ObservableMap {
   init() {
     registry.socket.on("config", arr => {
       const cmap = new Map(arr);
@@ -17,6 +17,4 @@ class Config extends ObservableMap {
       }
     });
   }
-}
-
-registry.config = new Config();
+}();

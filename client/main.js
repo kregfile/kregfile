@@ -1,7 +1,6 @@
 "use strict";
 
-const registry = require("./registry");
-
+import registry from "./registry";
 registry.init();
 
 addEventListener("DOMContentLoaded", function load() {

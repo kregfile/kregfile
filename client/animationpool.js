@@ -102,4 +102,4 @@ class AnimationPool {
 
 const APOOL = new AnimationPool();
 
-module.exports = { AnimationPool, APOOL };
+export { AnimationPool, APOOL };

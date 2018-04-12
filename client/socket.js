@@ -1,9 +1,9 @@
 "use strict";
 
-const io = require("socket.io-client");
-const registry = require("./registry");
+import io from "socket.io-client";
+import registry from "./registry";
 
-function createSocket() {
+export default function createSocket() {
   const params = new URLSearchParams();
   const nick = localStorage.getItem("nick");
   params.set("roomid", registry.roomid);
@@ -19,5 +19,3 @@ function createSocket() {
   socket.on("close", console.log);
   return socket;
 }
-
-registry.socket = createSocket();

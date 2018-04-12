@@ -1,8 +1,8 @@
 "use strict";
 
-const registry = require("./registry");
+import registry from "./registry";
 
-class Roomie {
+export default new class Roomie {
   constructor() {
     this._name = "New Room";
     this.unread = 0;
@@ -79,6 +79,4 @@ class Roomie {
     this._updateTitle();
     document.querySelector("#name").textContent = this.name;
   }
-}
-
-registry.roomie = new Roomie();
+}();

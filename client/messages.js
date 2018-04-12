@@ -1,15 +1,14 @@
 "use strict";
 
-const EventEmitter = require("events");
-const localforage = require("localforage");
-const {debounce} = require("./util");
-const {APOOL} = require("./animationpool");
-const registry = require("./registry");
+import EventEmitter from "events";
+import localforage from "localforage";
+import {debounce} from "./util";
+import {APOOL} from "./animationpool";
+import registry from "./registry";
 
-class Messages extends EventEmitter {
+export default new class Messages extends EventEmitter {
   constructor() {
     super();
-    this.roomid = registry.roomid;
     this.el = document.querySelector("#chat");
     this.endMarker = document.querySelector("#endmarker");
     this.msgs = [];
@@ -58,7 +57,7 @@ class Messages extends EventEmitter {
   }
 
   _save() {
-    this.store.setItem(this.roomid, this.msgs).
+    this.store.setItem(registry.roomid, this.msgs).
       catch(console.error);
   }
 
@@ -213,7 +212,7 @@ class Messages extends EventEmitter {
   }
 
   async restore() {
-    const stored = await this.store.getItem(this.roomid);
+    const stored = await this.store.getItem(registry.roomid);
     const {restoring} = this;
     this.restoring = null;
     if (stored) {
@@ -240,6 +239,4 @@ class Messages extends EventEmitter {
     this.queue.push(hr);
     restoring.forEach(this.add.bind(this));
   }
-}
-
-registry.messages = new Messages();
+}();

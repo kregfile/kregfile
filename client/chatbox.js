@@ -1,15 +1,14 @@
 "use strict";
 
-const EventEmitter = require("events");
-const localforage = require("localforage");
-const {debounce, nukeEvent, parseCommand} = require("./util");
-const registry = require("./registry");
+import EventEmitter from "events";
+import localforage from "localforage";
+import {debounce, nukeEvent, parseCommand} from "./util";
+import registry from "./registry";
 
 const RE_WORD = /^[\w\d]$/;
 
 class History {
-  constructor(roomid, text) {
-    this.roomid = roomid;
+  constructor(text) {
     this.text = text;
     this.hot = false;
     this.idx = -1;
@@ -18,7 +17,7 @@ class History {
     this.store = localforage.createInstance({
       storeName: "chatbox"
     });
-    this.store.getItem(roomid).then(m => {
+    this.store.getItem(registry.roomid).then(m => {
       if (m) {
         this.set = new Set(m);
         this.arr = m;
@@ -70,7 +69,7 @@ class History {
   }
 
   _save() {
-    this.store.setItem(this.roomid, this.arr = Array.from(this.set)).
+    this.store.setItem(registry.roomid, this.arr = Array.from(this.set)).
       catch(console.error);
     this.idx = -1;
   }
@@ -148,20 +147,21 @@ class Autocomplete {
   }
 }
 
-class ChatBox extends EventEmitter {
+export default new class ChatBox extends EventEmitter {
   constructor() {
     super();
     this.currentNick = "";
-    this.roomid = registry.roomid;
     this.text = document.querySelector("#text");
     this.nick = document.querySelector("#nick");
-    this.history = new History(this.roomid, this.text);
+    this.history = null;
     this.autocomplete = new Autocomplete(this.text);
     this.text.addEventListener("keypress", this.press.bind(this));
     Object.seal(this);
   }
 
   init() {
+    this.history = new History(this.text);
+
     registry.messages.on("message", m => {
       this.autocomplete.add(m);
     });
@@ -258,6 +258,4 @@ class ChatBox extends EventEmitter {
   checkHighlight(str) {
     return str.toUpperCase().includes(this.currentNick.toUpperCase());
   }
-}
-
-registry.chatbox = new ChatBox();
+}();

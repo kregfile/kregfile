@@ -1,23 +1,37 @@
 "use strict";
 
-const roomid = document.location.pathname.replace(/^\/r\//, "");
+import config from "./config";
+import socket from "./socket";
+import messages from "./messages";
+import roomie from "./roomie";
+import chatbox from "./chatbox";
 
-function init() {
-  for (const component of Object.values(module.exports)) {
-    if (typeof component.init !== "function") {
-      continue;
-    }
-    component.init();
+export default new class Registry {
+  constructor() {
+    Object.defineProperty(this, "roomid", {
+      value: document.location.pathname.replace(/^\/r\//, ""),
+      enumerable: true
+    });
   }
-}
-
-module.exports = {
-  init,
-  roomid,
-};
-
-require("./config");
-require("./socket");
-require("./messages");
-require("./roomie");
-require("./chatbox");
+  init() {
+    delete this.init;
+    const components = {
+      socket,
+      config,
+      messages,
+      roomie,
+      chatbox
+    };
+    for (const [k, component] of Object.entries(components)) {
+      this[k] = component;
+    }
+    for (const [k, component] of Object.entries(components)) {
+      if (typeof component === "function") {
+        this[k] = component();
+      }
+      if (typeof component.init === "function") {
+        component.init();
+      }
+    }
+  }
+}();

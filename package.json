@@ -6,7 +6,7 @@
   "author": "RealDolos <dolos@cock.li>",
   "license": "MIT",
   "scripts": {
-    "pack": "cd client && webpack -w"
+    "pack": "cd client && webpack --verbose -w"
   },
   "dependencies": {
     "compression": "^1.7.2",
