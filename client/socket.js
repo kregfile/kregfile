@@ -15,7 +15,13 @@ export default function createSocket() {
     query: params.toString(),
     transports: ["websocket"],
   });
-  socket.on("connect", console.log);
-  socket.on("close", console.log);
+  socket.on("reconnect", () => {
+    registry.messages.add({
+      volatile: true,
+      user: "Connection",
+      role: "system",
+      msg: "reconnected"
+    });
+  });
   return socket;
 }
