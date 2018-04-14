@@ -5,6 +5,7 @@ import registry from "./registry";
 export default new class Roomie {
   constructor() {
     this._name = "New Room";
+    this.motd = null;
     this.unread = 0;
     this.hidden = document.hidden;
 
@@ -16,7 +17,17 @@ export default new class Roomie {
       document.querySelector("#usercount").textContent = v;
     });
 
-    registry.config.on("set-roomname", v => this.name = v);
+    registry.config.on("set-roomname", v => {
+      console.log(v);
+      this.name = v;
+    });
+    registry.config.on("set-motd", v => {
+      if (JSON.stringify(this.motd) === JSON.stringify(v)) {
+        return;
+      }
+      this.motd = v;
+      registry.messages.showMOTD();
+    });
 
     registry.messages.on("message", () => {
       if (!this.hidden) {

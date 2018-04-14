@@ -199,6 +199,11 @@ export default new class ChatBox extends EventEmitter {
     return true;
   }
 
+  cmd_motd() {
+    registry.messages.showMOTD();
+    return true;
+  }
+
   doCommand(cmd) {
     const fn = this[`cmd_${cmd.cmd}`];
     if (!fn) {

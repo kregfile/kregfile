@@ -203,6 +203,19 @@ export default new class Messages extends EventEmitter {
     this.hideEndMarker();
   }
 
+  showMOTD() {
+    const {motd} = registry.roomie;
+    if (!motd || !motd.length) {
+      return;
+    }
+    this.add({
+      volatile: true,
+      role: "system",
+      user: "MOTD",
+      msg: motd
+    });
+  }
+
   showEndMarker() {
     this.endMarker.classList.remove("hidden");
   }
