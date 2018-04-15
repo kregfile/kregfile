@@ -9,10 +9,12 @@
     "pack": "cd client && webpack --verbose -w"
   },
   "dependencies": {
+    "blake2": "https://github.com/RealDolos/node-blake2",
+    "colors": "^1.2.1",
     "compression": "^1.7.2",
     "express": "^4.16.3",
     "localforage": "^1.7.1",
-    "morgan": "^1.9.0",
+    "mkdirp": "^0.5.1",
     "redis": "^2.8.0",
     "socket.io": "^2.1.0",
     "socket.io-client": "^2.1.0",
