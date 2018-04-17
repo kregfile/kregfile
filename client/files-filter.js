@@ -12,13 +12,34 @@ function all(val, e) {
   return false;
 }
 
+function nall(val, e) {
+  if (e.name.toUpperCase().includes(val)) {
+    return false;
+  }
+  for (const v of e.tagValuesCase) {
+    if (v.includes(val)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 function exists(tag, e) {
   return e.tagsMap.has(tag);
+}
+
+function nexists(tag, e) {
+  return !e.tagsMap.has(tag);
 }
 
 function matches(tag, val, e) {
   const v = e.tagsMapCase.get(tag);
   return v && v.includes(val);
+}
+
+function nmatches(tag, val, e) {
+  const v = e.tagsMapCase.get(tag);
+  return !v || !v.includes(val);
 }
 
 function *tokens(value) {
@@ -88,18 +109,26 @@ function *tokens(value) {
 }
 
 function toFunc(e) {
+  const neg = e.startsWith("-");
+  if (neg) {
+    e = e.slice(1);
+  }
+  if (!e) {
+    return null;
+  }
+
   const idx = e.indexOf(":");
   if (idx <= 0 || e[idx - 1] === "\\") {
-    return all.bind(null, e.toUpperCase());
+    return (neg ? nall : all).bind(null, e.toUpperCase());
   }
   if (idx === e.length - 1) {
-    return exists.bind(null, e.slice(0, -1).toLowerCase());
+    return (neg ? nexists : exists).bind(null, e.slice(0, -1).toLowerCase());
   }
   const tag = e.slice(0, idx).toLowerCase();
   const val = e.slice(idx + 1).toUpperCase();
-  return matches.bind(null, tag, val.toUpperCase());
+  return (neg ? nmatches : matches).bind(null, tag, val.toUpperCase());
 }
 
 export default function toFilterFuncs(value) {
-  return Array.from(tokens(value)).map(toFunc);
+  return Array.from(tokens(value)).map(toFunc).filter(e => e);
 }
