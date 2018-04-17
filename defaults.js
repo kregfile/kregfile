@@ -12,4 +12,8 @@ module.exports = {
   pendingTTL: 12,
   jail: linux,
   exiftool: "exiftool",
+  chatFloodTrigger: 5,
+  chatFloodDuration: 10000,
+  uploadFloodTrigger: 25,
+  uploadFloodDuration: 60000,
 };
