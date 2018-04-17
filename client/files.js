@@ -703,7 +703,7 @@ export default new class Files extends EventEmitter {
     }
     for (const f of files) {
       if (this.fileset.delete(f)) {
-        this.files.splice(this.files.indexOf(f), 0);
+        this.files.splice(this.files.indexOf(f), 1);
       }
     }
   }
