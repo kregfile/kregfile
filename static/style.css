@@ -222,6 +222,11 @@ button:focus {
   flex: 5;
 }
 
+#filter:required,
+#filter:invalid {
+  box-shadow: none;
+}
+
 #filter-clear {
   margin-left: 0.4ex;
   font-size: 10pt;
