@@ -394,7 +394,7 @@ export default new class Files extends EventEmitter {
     this.filterClear = document.querySelector("#filter-clear");
     this.filterStatus = document.querySelector("#filter-status");
     this.files = [];
-    this.fileset = {};
+    this.fileset = new Set();
     this.elmap = new WeakMap();
     this.onfiles = this.onfiles.bind(this);
     this.applying = null;
@@ -660,7 +660,6 @@ export default new class Files extends EventEmitter {
   }
 
   onfiles(data) {
-    console.log(data);
     if (data.replace) {
       this.clear();
     }
@@ -683,6 +682,8 @@ export default new class Files extends EventEmitter {
         // ignored
       }
     });
+    this.files.length = 0;
+    this.fileset.clear();
     this.adjustEmpty();
     this.updateFilterStatus();
   }
