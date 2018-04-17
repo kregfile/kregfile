@@ -9,14 +9,14 @@
   --odd-bg: #202020;
   --upload-bg: rgb(66, 66, 66);
   --err-bg: #f75353;
-
   --role-user-fg: #23d16f;
   --role-mod-fg: pink;
   --role-system-fg: #d880fc;
+  --base-size: 12pt;
 }
 
 html {
-  font-size: 12pt;
+  font-size: var(--base-size);
   font-family: 'Open Sans', sans-serif;
   color: white;
   background: var(--dark-bg);
@@ -123,6 +123,10 @@ ol > li {
   border: 0;
 }
 
+button:focus {
+  outline: 0;
+}
+
 #page h1 {
   margin: 1ex 0.5ex;
   width: 800px;
@@ -161,6 +165,10 @@ ol > li {
   border-radius: 2px;
   background: rgba(128,128,128, 0.4);
   transition: background 0.5s, color 0.5s ease-in;
+  border: 0;
+  color: var(--text-fg);
+  box-sizing: content-box;
+  font-size: var(--base-size);
 }
 .filterbtn:hover {
   background: rgba(128,128,128, 0.8) !important;
@@ -175,6 +183,8 @@ ol > li {
   background: black;
   border: 0;
   padding: 4px 1ex;
+  user-select: none;
+  outline: 0;
 }
 #filter:focus {
   flex: 7;
@@ -392,8 +402,12 @@ ol > li {
     color: orchid;
 }
 
-.file > .info .i-upload {
+.file > .i-upload {
   animation: opulse 2s infinite ease-in;
+}
+
+.file > .i-wait {
+  opacity: 0.5;
 }
 
 .file > .detail {

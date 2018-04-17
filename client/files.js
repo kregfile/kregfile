@@ -438,7 +438,7 @@ export default new class Files extends EventEmitter {
       e.stopPropagation();
       const {tag, tagValue} = el.dataset;
       if (e.button) {
-        this.filter.value += ` -${tag}:'${tagValue.replace(/'/g, "\\'")}'`;
+        this.filter.value = `${this.filter.value} -${tag}:'${tagValue.replace(/'/g, "\\'")}'`.trim();
       }
       else {
         this.filter.value = `${tag}:'${tagValue.replace(/'/g, "\\'")}'`;
@@ -450,7 +450,6 @@ export default new class Files extends EventEmitter {
   }
 
   onfilterbutton(e) {
-    console.log(e);
     e.preventDefault();
     e.stopPropagation();
 
@@ -489,7 +488,6 @@ export default new class Files extends EventEmitter {
     const funcs = toFilterFuncs(this.filter.value);
     if (filters.size !== this.filterButtons.length) {
       funcs.push(function(e) {
-        console.log(filters, e.type);
         return filters.has(e.type);
       });
     }
