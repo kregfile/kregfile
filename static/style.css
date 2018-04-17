@@ -65,10 +65,11 @@ body#page {
 nav {
   background: var(--main-bg);
   margin: 0;
-  padding: 1ex 1ex;
+  padding: 0 1ex;
   grid-area: nav;
   align-self: center;
   border-bottom: 1px solid rgba(128,128,128,0.4);
+  height: 100%;
 }
 
 article {
@@ -130,6 +131,35 @@ button:focus {
 #page h1 {
   margin: 1ex 0.5ex;
   width: 800px;
+}
+
+#room nav {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: space-between;
+}
+
+#room nav#main > div {
+  width: 3ex;
+}
+
+#menu {
+  display: block;
+  background: rgba(255,255,255,0.9);
+  border: 0;
+  color: black;
+  padding: 0.7ex;
+  font-size: var(--base-size);
+  margin: 0;
+  border-radius: 2px;
+  transition: background 1s;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+#menu:hover {
+  background: rgba(255,255,255,0.7);
 }
 
 .hr {
