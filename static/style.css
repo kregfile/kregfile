@@ -13,11 +13,12 @@
   --role-mod-fg: pink;
   --role-system-fg: #d880fc;
   --base-size: 12pt;
+  --base-font: 'Open Sans', sans-serif;
 }
 
 html {
   font-size: var(--base-size);
-  font-family: 'Open Sans', sans-serif;
+  font-family: var(--base-font);
   color: white;
   background: var(--dark-bg);
   color: var(--text-fg);
@@ -124,6 +125,18 @@ ol > li {
   border: 0;
 }
 
+button {
+  display: block;
+  border: 0;
+  margin: 0;
+  padding: 0.7ex;
+  font-size: var(--base-size);
+  transition: background 1s;
+  cursor: pointer;
+  box-sizing: border-box;
+  border-radius: 2px;
+}
+
 button:focus {
   outline: 0;
 }
@@ -145,17 +158,8 @@ button:focus {
 }
 
 #menu {
-  display: block;
   background: rgba(255,255,255,0.9);
-  border: 0;
   color: black;
-  padding: 0.7ex;
-  font-size: var(--base-size);
-  margin: 0;
-  border-radius: 2px;
-  transition: background 1s;
-  cursor: pointer;
-  box-sizing: border-box;
 }
 
 #menu:hover {
@@ -187,17 +191,11 @@ button:focus {
 }
 
 .filterbtn {
-  padding: 0.7ex;
   margin-right: 1ex;
   overflow: hidden;
-  text-align: center;
-  cursor: pointer;
-  border-radius: 2px;
   background: rgba(128,128,128, 0.4);
   transition: background 0.5s, color 0.5s ease-in;
-  border: 0;
   color: var(--text-fg);
-  box-sizing: content-box;
   font-size: var(--base-size);
 }
 .filterbtn:hover {
@@ -208,6 +206,7 @@ button:focus {
   color: var(--dark-fg);
   box-shadow: none;
 }
+
 #filter {
   color: white;
   background: black;
@@ -216,9 +215,38 @@ button:focus {
   user-select: none;
   outline: 0;
 }
-#filter:focus {
-  flex: 7;
+#filter:active,
+#filter:focus,
+#filter:valid {
+  transition: flex 0.5s ease-out;
+  flex: 5;
 }
+
+#filter-clear {
+  margin-left: 0.4ex;
+  font-size: 10pt;
+  background: transparent;
+  color: var(--text-fg);
+}
+#filter-clear.disabled {
+  display: none;
+}
+
+#filter-status {
+  margin-left: 2em;
+  font-size: xx-small;
+  font-family: var(--base-font) !important;
+}
+#filter-status.disabled {
+  display: none;
+}
+
+#filter-status.i-filter:before {
+  font-family: 'symbols';
+  display: inline-block;
+  margin-right: 1ex;
+}
+
 
 #tools .spacer {
   flex: 5;

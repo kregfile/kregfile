@@ -391,6 +391,8 @@ export default new class Files extends EventEmitter {
     this.filterButtons = Array.from(document.querySelectorAll(".filterbtn"));
     this.filterFunc = null;
     this.filter = document.querySelector("#filter");
+    this.filterClear = document.querySelector("#filter-clear");
+    this.filterStatus = document.querySelector("#filter-status");
     this.files = [];
     this.fileset = {};
     this.elmap = new WeakMap();
@@ -416,6 +418,8 @@ export default new class Files extends EventEmitter {
     });
     this.filter.addEventListener(
       "input", debounce(this.onfilter.bind(this), 200));
+    this.filterClear.addEventListener(
+      "click", this.clearFilter.bind(this), true);
 
     this.el.addEventListener("click", this.onclick.bind(this));
     this.el.addEventListener("contextmenu", this.onclick.bind(this));
@@ -507,8 +511,16 @@ export default new class Files extends EventEmitter {
     };
   }
 
+  clearFilter() {
+    this.filterButtons.forEach(e => e.classList.remove("disabled"));
+    this.filter.value = "";
+
+    this.doFilter();
+  }
+
   doFilter() {
     this.filterFunc = this.createFilterFunc();
+    this.filterClear.classList[this.filterFunc ? "remove" : "add"]("disabled");
     REMOVALS.trigger();
     if (!this.applying) {
       this.applying = this.applyFilter().then(() => this.applying = null);
@@ -527,25 +539,38 @@ export default new class Files extends EventEmitter {
   }
 
   applyFilter() {
-    const files = this.filtered(this.files);
-    if (!files || !files.length) {
-      this.visible.forEach(e => e.el.parentElement.removeChild(e.el));
-      this.adjustEmpty();
-      return;
-    }
-
-    // Remove now hidden
-    const fileset = new Set(files);
-    this.visible.forEach(e => {
-      if (fileset.has(e)) {
+    try {
+      const files = this.filtered(this.files);
+      if (!files || !files.length) {
+        this.visible.forEach(e => e.el.parentElement.removeChild(e.el));
         return;
       }
-      e.el.parentElement.removeChild(e.el);
-    });
 
-    // Add all matching files
-    this.insertFilesIntoDOM(files);
-    this.adjustEmpty();
+      // Remove now hidden
+      const fileset = new Set(files);
+      this.visible.forEach(e => {
+        if (fileset.has(e)) {
+          return;
+        }
+        e.el.parentElement.removeChild(e.el);
+      });
+
+      // Add all matching files
+      this.insertFilesIntoDOM(files);
+    }
+    finally {
+      this.adjustEmpty();
+      this.updateFilterStatus();
+    }
+  }
+
+  updateFilterStatus() {
+    if (!this.files.length) {
+      this.filterStatus.classList.add("disabled");
+      return;
+    }
+    this.filterStatus.textContent = `${this.visible.length} of ${this.files.length} files`;
+    this.filterStatus.classList.remove("disabled");
   }
 
   ondrop(e) {
@@ -659,6 +684,7 @@ export default new class Files extends EventEmitter {
       }
     });
     this.adjustEmpty();
+    this.updateFilterStatus();
   }
 
   adjustEmpty() {
@@ -702,6 +728,7 @@ export default new class Files extends EventEmitter {
       }
       this.insertFilesIntoDOM(files);
       this.adjustEmpty();
+      this.updateFilterStatus();
     }
     catch (ex) {
       console.error(ex);
