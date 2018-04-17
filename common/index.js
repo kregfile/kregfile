@@ -66,6 +66,7 @@ function toLocaleStringSupportsLocales() {
 
 const fixer = uselocale && toLocaleStringSupportsLocales() ?
   function (digits) {
+    // eslint-disable-next-line
     return this.toLocaleString(undefined, {
       minimumFractionDigits: digits,
       maximumFractionDigits: digits,
@@ -158,20 +159,63 @@ function toPrettyDuration(s, short) {
     rv.push(plural(Math.floor(), "min", "mins"));
     s %= 60;
   }
-  if (s) {
-    if (short) {
-      return `${Math.round(s)} s`;
-    }
-    rv.push(`${Math.floor(s)} s`);
+  if (short) {
+    return `${Math.round(s)} s`;
   }
+  rv.push(`${Math.floor(s)} s`);
   return rv.join(" ");
 }
 
+function ofilter(o, set) {
+  const rv = {};
+  for (const k of set.values()) {
+    if (o.hasOwnProperty(k)) {
+      rv[k] = o[k];
+    }
+  }
+  return rv;
+}
+
+class CoalescedUpdate extends Set {
+  constructor(to, cb) {
+    super();
+    this.to = to;
+    this.cb = cb;
+    this.triggerTimer = 0;
+    this.trigger = this.trigger.bind(this);
+    Object.seal(this);
+  }
+
+  add(s) {
+    super.add(s);
+    if (!this.triggerTimer) {
+      this.triggerTimer = setTimeout(this.trigger, this.to);
+    }
+  }
+
+  trigger() {
+    this.triggerTimer = 0;
+    if (!this.size) {
+      return;
+    }
+    const a = Array.from(this);
+    this.clear();
+    this.cb(a);
+  }
+}
+
 module.exports = {
+  CoalescedUpdate,
   debounce,
   mixin,
+  ofilter,
   parseCommand,
   toPrettyDuration,
   toPrettySize,
 };
+
+// No dynamic requires to not confuse webpack!
 Object.assign(module.exports, require("./sorting"));
+Object.assign(module.exports, require("./promisepool"));
+Object.assign(module.exports, require("./omap"));
+Object.assign(module.exports, require("./oset"));

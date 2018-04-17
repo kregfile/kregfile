@@ -13,14 +13,9 @@ function master() {
 
   console.log(`Master ${process.pid.toString().bold} is running`);
 
-  const {HTTP_PORT = 8080} = process.env;
-  const server_env = Object.assign({}, process.env, {
-    HTTP_PORT
-  });
-
   // Fork workers.
   for (let i = 0; i < NUM_CPUS; i++) {
-    cluster.fork(server_env);
+    cluster.fork();
   }
 
   // Fork the file expiration worker
@@ -28,7 +23,7 @@ function master() {
     [EXPIRATION_WORKER]: 1
   }));
 
-  console.log(`Point your browser to http://0.0.0.0:${HTTP_PORT}/r/test`);
+  console.log(`Point your browser to http://0.0.0.0:${config.get("port")}/r/test`);
 }
 
 if (cluster.isMaster) {

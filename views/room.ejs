@@ -1,0 +1,39 @@
+<!doctype html>
+<%- include("head"); %>
+<body id="room">
+  <nav>
+    <h1 id="name">kregfile - better than volafile - 100% more rice</h1>
+  </nav>
+
+  <nav id="tools">
+    <div id="filter-image" class="filterbtn i-image-b"></div>
+    <div id="filter-video" class="filterbtn i-video-b"></div>
+    <div id="filter-audio" class="filterbtn i-audio-b"></div>
+    <div id="filter-document" class="filterbtn i-document-b"></div>
+    <div id="filter-archive" class="filterbtn i-archive-b"></div>
+    <div id="filter-file" class="filterbtn i-file-b"></div>
+    <input id="filter" placeholder="Filter files…" type="text"/>
+    <div class="spacer"></div>
+    <div id="nail" class="btn i-images"></div>
+    <div id="up" class="btn i-upload"></div>
+  </nav>
+
+  <section id="chat">
+    <section id="messages"></section>
+  </section>
+
+  <section id="status">
+    <div id="usercount">0</div>
+    <div id="endmarker" class="blink hidden">▼</div>
+    <input type="text" id="nick">
+  </section>
+
+  <section id="chatbox">
+    <textarea id="text" rows="3" maxlength="300"></textarea>
+  </section>
+
+  <section id="files">
+  </section>
+
+  <script src="/static/client.js?v=<%=v%>"></script>
+</body>

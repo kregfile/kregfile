@@ -1,12 +1,14 @@
-@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext');
-
 :root {
   --main-bg: #333333;
   --text-fg: #fefefe;
   --dark-fg: #aeaeae;
   --dark-bg: #101010;
+  --lite-bg: #4f4f4f;
   --hi-fg: #f4f3f3;
   --hi-bg: #282828;
+  --odd-bg: #202020;
+  --upload-bg: rgb(66, 66, 66);
+  --err-bg: #f75353;
 
   --role-user-fg: #23d16f;
   --role-mod-fg: pink;
@@ -17,7 +19,7 @@ html {
   font-size: 12pt;
   font-family: 'Open Sans', sans-serif;
   color: white;
-  background: var(--main-bg);
+  background: var(--dark-bg);
   color: var(--text-fg);
   width: 100%;
   height: 100%;
@@ -33,7 +35,8 @@ a:hover {
   color: var(--text-fg);
 }
 
-body {
+body#room {
+  background: var(--main-bg);
   display: grid;
   width: 100%;
   height: 100%;
@@ -44,21 +47,85 @@ body {
   grid-template-rows: auto 1fr auto auto;
   grid-column-gap: 1ex;
   grid-template-areas:
-    "nav nav"
+    "nav tools"
     "chat files"
     "status files"
     "chatbox files";
 }
 
-nav {
+body#page {
+  display: flex;
   margin: 0;
-  padding: 1ex 1em;
-  grid-area: nav;
+  background: var(--dark-bg);
+  flex-direction: column;
+  align-items: stretch;
+  min-height: 100vh;
 }
 
-h1 {
+nav {
+  background: var(--main-bg);
+  margin: 0;
+  padding: 1ex 1ex;
+  grid-area: nav;
+  align-self: center;
+  border-bottom: 1px solid rgba(128,128,128,0.4);
+}
+
+article {
+  margin: 0;
+  padding: 1ex 1ex;
+  margin-left: auto;
+  margin-right: auto;
+  flex: 1;
+  max-width: 800px;
+}
+
+article p {
+  text-align: justify;
+}
+
+q {
+  font-style: italic;
+}
+
+figure {
+  text-align: center;
+}
+
+figcaption {
+  font-size: small;
+}
+
+ol > li {
+  margin-bottom: 1ex;
+}
+
+#room h1 {
   margin: 0;
   padding: 0;
+  font-size: 12pt;
+}
+
+#page nav {
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  background: linear-gradient(
+    184deg,
+    var(--dark-bg),
+    var(--main-bg) 30%,
+    var(--main-bg) 60%,
+    var(--lite-bg)
+    );
+  border: 0;
+}
+
+#page h1 {
+  margin: 1ex 0.5ex;
+  width: 800px;
 }
 
 .hr {
@@ -72,19 +139,70 @@ h1 {
 }
 
 .blink {
-  animation: blink-animation 1s steps(5, start) infinite;
-  -webkit-animation: blink-animation 1s steps(5, start) infinite;
+  animation: opulse 5s infinite ease-in;
 }
-@keyframes blink-animation {
-  to {
-    opacity: 0;
-  }
+
+#tools {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  grid-area: tools;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }
-@-webkit-keyframes blink-animation {
-  to {
-    opacity: 0;
-  }
+
+.filterbtn {
+  padding: 0.7ex;
+  margin-right: 1ex;
+  overflow: hidden;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 2px;
+  background: rgba(128,128,128, 0.4);
+  transition: background 0.5s, color 0.5s ease-in;
 }
+.filterbtn:hover {
+  background: rgba(128,128,128, 0.8) !important;
+}
+.filterbtn.disabled {
+  background: transparent;
+  color: var(--dark-fg);
+  box-shadow: none;
+}
+#filter {
+  color: white;
+  background: black;
+  border: 0;
+  padding: 4px 1ex;
+}
+#filter:focus {
+  flex: 3;
+  min-width: 200px;
+}
+
+#tools .spacer {
+  flex: 5;
+}
+
+#tools .btn {
+  font-size: 16pt;
+  display: block;
+  background: rgba(255,255,255,0.9);
+  color: black;
+  height: cal(100% - 1ex);
+  padding: 0.5ex;
+  margin-top: 0.5ex;
+  margin-left: 1ex;
+  box-sizing: border-box;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  cursor: pointer;
+}
+#tools .btn:last-child {
+  border-top-right-radius: 0px;
+}
+
 
 #chat {
   grid-area: chat;
@@ -92,6 +210,7 @@ h1 {
   overflow-y: scroll;
   background: var(--dark-bg);
   min-width: 380px;
+  padding-bottom: 0.3em;
 }
 
 #chat > div {
@@ -165,9 +284,10 @@ h1 {
 
 #text {
   display: block;
-  width: 100%;
+  width: calc(100% - 2ex);
   margin: 0;
-  padding: 0;
+  padding: 6px 1ex;
+  padding-left: 1ex;
   border: 0;
   resize: none;
   color: var(--text-fg);
@@ -181,6 +301,119 @@ h1 {
   overflow-x: hidden;
   overflow-y: auto;
   background: var(--dark-bg);
+  user-select: none;
+}
+#files.empty {
+  padding: 10vh 10%;
+  background-repeat: no-repeat;
+  background-image: url(drop.svg);
+  background-position: 50% 50%;
+  background-origin: content-box;
+}
+
+.file {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 4px 1ex;
+  border: 1px dotted rgba(128, 128, 128, 0.1)
+}
+.file:nth-child(even) {
+  background: var(--odd-bg);
+}
+.file.upload {
+  background: var(--upload-bg);
+  background-image: repeating-linear-gradient(
+    60deg,
+    rgba(0, 0, 0, 0.5),
+    rgba(0, 0, 0, 0.5) 20px,
+    rgba(0, 0, 0, 0.3) 20px,
+    rgba(0, 0, 0, 0.3) 40px
+  );
+  background-size: 0% 100%;
+  background-repeat: no-repeat;
+}
+.file.error {
+  background: var(--err-bg);
+}
+
+.file a,
+.file span {
+  display: inline-block;
+  padding-right: 1ex;
+  color: var(--text-fg);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.file a:hover {
+  color: var(--dark-fg);
+}
+
+.file > .name {
+  flex: 1;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
+
+.file > .tags {
+  text-align: right;
+  display: inline-block;
+  padding: 0 1em;
+  max-width: 66%;
+  overflow-x: hidden;
+}
+
+.file > .tags > .tag {
+  font-size: xx-small;
+  background: rgba(128, 128, 128, 0.4);
+  padding: 1px 0.8ex;
+  margin-left: 1.1ex;
+  cursor: pointer;
+}
+
+.file > .i-image {
+    color: lightskyblue;
+}
+
+.file > .i-video {
+    color: yellowgreen;
+}
+
+.file > .i-document {
+    color: lightsalmon;
+}
+
+.file > .i-archive {
+    color: bisque;
+}
+
+.file > .i-audio {
+    color: orchid;
+}
+
+.file > .info .i-upload {
+  animation: opulse 2s infinite ease-in;
+}
+
+.file > .detail {
+  display: flex;
+  width: 180px;
+  white-space: nowrap;
+  font-size: 80%;
+}
+
+.file > .detail > span {
+  display: inline-block;
+  border-left: 2px solid rgba(128,128,128,0.5);
+  padding-left: 1ex;
+  flex: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.file > .detail > .ttl {
+  flex: 3;
 }
 
 #status {
@@ -188,4 +421,34 @@ h1 {
   padding: 3px;
   font-size: x-small;
   text-align: right;
+}
+
+@keyframes opulse {
+  0% { opacity: 0.2; }
+  50% { opacity: 1; }
+  100% { opacity: 0.2; }
+}
+
+footer {
+  padding: 1.5em 2em;
+  font-size: small;
+  box-sizing: border-box;
+  width: 100%;
+  text-align: right;
+  background: linear-gradient(
+    2deg,
+    var(--dark-bg),
+    var(--main-bg)
+    );
+}
+footer > * {
+  display: inline-block;
+  margin-left: 2em;
+}
+footer a {
+  display: inline-block;
+  text-decoration: none;
+}
+footer > * > a {
+  margin-left: 2px;
 }

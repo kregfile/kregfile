@@ -2,7 +2,7 @@
 
 import EventEmitter from "events";
 import localforage from "localforage";
-import {debounce} from "./util";
+import {dom, debounce} from "./util";
 import {APOOL} from "./animationpool";
 import registry from "./registry";
 
@@ -102,47 +102,60 @@ export default new class Messages extends EventEmitter {
       minute: "2-digit",
       second: "2-digit",
     });
-    const e = document.createElement("div");
+
+    const e = dom("div");
     if (m.highlight) {
       e.classList.add("hi");
     }
-    const user = document.createElement("span");
-    user.classList.add("u");
+    const ucls = ["u"];
     if (m.role) {
-      user.classList.add(m.role);
+      ucls.push(m.role);
     }
-    user.textContent = `${m.user}:`;
-    const ts = document.createElement("span");
-    ts.classList.add("time");
-    ts.textContent = d;
-    ts.setAttribute("title", m.date.toLocaleString("eu"));
+    const user = dom("span", {
+      classes: ucls,
+      text: `${m.user}:`
+    });
+
+    const ts = dom("span", {
+      attrs: {title: m.date.toLocaleString("eu")},
+      classes: ["time"],
+      text: d
+    });
     user.insertBefore(ts, user.firstChild);
-    const msg = document.createElement("span");
-    msg.classList.add("msg");
+
+    const msg = dom("span", {
+      classes: ["msg"]
+    });
     if (!Array.isArray(m.msg)) {
       m.msg = [{t: "t", v: m.msg}];
     }
     for (const p of m.msg) {
       switch (p.t) {
       case "b":
-        msg.appendChild(document.createElement("br"));
+        msg.appendChild(dom("br"));
         break;
 
       case "u": {
-        const a = document.createElement("a");
-        a.rel = "nofollow,noopener,noreferrer";
-        a.href = p.v;
-        a.target = "_blank";
-        a.textContent = p.v.replace(/^https?:\/\//, "");
+        const a = dom("a", {
+          attrs: {
+            target: "_blank",
+            rel: "nofollow,noopener,noreferrer",
+            href: p.v,
+          },
+          text: p.v.replace(/^https?:\/\//, ""),
+        });
         msg.appendChild(a);
         break;
       }
 
       case "r": {
-        const a = document.createElement("a");
-        a.href = `/r/${p.v}`;
-        a.target = "_blank";
-        a.textContent = `#${p.v}`;
+        const a = dom("a", {
+          attrs: {
+            target: "_blank",
+            href: `/r/${p.v}`,
+          },
+          text: `#${p.v}`,
+        });
         msg.appendChild(a);
         break;
       }
@@ -247,9 +260,7 @@ export default new class Messages extends EventEmitter {
         ]
       });
     }
-    const hr = document.createElement("div");
-    hr.classList.add("hr");
-    this.queue.push(hr);
+    this.queue.push(dom("div", {classes: ["hr"]}));
     restoring.forEach(this.add.bind(this));
   }
 }();

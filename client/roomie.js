@@ -2,12 +2,15 @@
 
 import registry from "./registry";
 
+const ALLOW_DRIFT = 200;
+
 export default new class Roomie {
   constructor() {
     this._name = "New Room";
     this.motd = null;
     this.unread = 0;
     this.hidden = document.hidden;
+    this.drift = 0;
 
     Object.seal(this);
   }
@@ -17,10 +20,19 @@ export default new class Roomie {
       document.querySelector("#usercount").textContent = v;
     });
 
+    registry.socket.on("time", v => {
+      const now = Date.now();
+      const drift = v - now;
+      this.drift =
+        Math.floor(Math.abs(drift) / ALLOW_DRIFT) *
+        (drift < 0 ? -ALLOW_DRIFT : ALLOW_DRIFT);
+    });
+
     registry.config.on("set-roomname", v => {
       console.log(v);
       this.name = v;
     });
+
     registry.config.on("set-motd", v => {
       if (JSON.stringify(this.motd) === JSON.stringify(v)) {
         return;
@@ -78,6 +90,17 @@ export default new class Roomie {
       `${n.user} | ${this.name} | kregfile`,
       opts);
     setTimeout(notification.close.bind(notification), 10000);
+  }
+
+  toServerTime(localTime) {
+    if (!localTime) {
+      localTime = Date.now();
+    }
+    return localTime + this.drift;
+  }
+
+  diffTimes(remote, local) {
+    return remote - this.toServerTime(local);
   }
 
 

@@ -21,4 +21,4 @@ export function nukeEvent(e) {
   return false;
 }
 
-export * from "../lib/common";
+export * from "../common/index";

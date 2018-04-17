@@ -1,7 +1,7 @@
 "use strict";
 
 const EventEmitter = require("events");
-const {mixin} = require("./common");
+const {mixin} = require("./");
 
 class ObservableMap extends Map {
   constructor(...args) {
@@ -10,23 +10,26 @@ class ObservableMap extends Map {
   }
 
   set(k, v) {
-    const rv = super.set(k, v);
+    super.set(k, v);
     this.emit("set", k, v);
     this.emit(`set-${k}`, v);
-    return rv;
+    return this;
   }
 
   delete(k) {
+    this.emit("predelete", k);
+    this.emit(`predelete-${k}`);
     const rv = super.delete(k);
-    this.emit("delete", k, rv);
-    this.emit(`delete-${k}`, rv);
+    if (rv) {
+      this.emit("delete", k, rv);
+      this.emit(`delete-${k}`, rv);
+    }
     return rv;
   }
 
   clear() {
-    const rv = super.clear();
+    super.clear();
     this.emit("clear");
-    return rv;
   }
 
   kill() {

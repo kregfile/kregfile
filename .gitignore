@@ -2,3 +2,7 @@ node_modules/
 static/client.js*
 .DS_Store
 .config.json
+lib/clientversion.js
+data/
+kregfile-v1.0.0.tgz
+yarn-error.log

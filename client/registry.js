@@ -5,6 +5,8 @@ import socket from "./socket";
 import messages from "./messages";
 import roomie from "./roomie";
 import chatbox from "./chatbox";
+import files from "./files";
+import reload from "./reload";
 
 export default new class Registry {
   constructor() {
@@ -20,7 +22,9 @@ export default new class Registry {
       config,
       messages,
       roomie,
-      chatbox
+      chatbox,
+      files,
+      reload,
     };
     for (const [k, component] of Object.entries(components)) {
       this[k] = component;

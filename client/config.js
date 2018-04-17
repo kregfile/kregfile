@@ -1,6 +1,6 @@
 "use strict";
 
-import {ObservableMap} from "../lib/omap";
+import {ObservableMap} from "./util";
 import registry from "./registry";
 
 export default new class Config extends ObservableMap {
