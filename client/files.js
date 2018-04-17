@@ -337,6 +337,8 @@ class File extends Removable {
     const tags = sort(Array.from(this.tagsMap.entries()));
     for (const [tn, tv] of tags) {
       const tag = dom("span", {classes: ["tag", `tag-${tn}`], text: tv});
+      tag.dataset.tag = tn;
+      tag.dataset.tagValue = tv;
       this.tagsEl.appendChild(tag);
     }
 
@@ -360,9 +362,6 @@ class File extends Removable {
     this.ttlEl.insertBefore(
       dom("span", {classes: ["i-clock"]}), this.ttlEl.firstChild);
     this.detailEl.appendChild(this.ttlEl);
-
-    this.el.addEventListener("click", this.onclick.bind(this));
-    this.el.addEventListener("contextmenu", this.onclick.bind(this));
   }
 
   get ttl() {
@@ -371,9 +370,6 @@ class File extends Removable {
 
   get expired() {
     return this.ttl <= 0;
-  }
-
-  onclick(e) {
   }
 
   updateTTL() {
@@ -420,6 +416,9 @@ export default new class Files extends EventEmitter {
     });
     this.filter.addEventListener(
       "input", debounce(this.onfilter.bind(this), 200));
+
+    this.el.addEventListener("click", this.onclick.bind(this));
+    this.el.addEventListener("contextmenu", this.onclick.bind(this));
   }
 
   get visible() {
@@ -430,6 +429,24 @@ export default new class Files extends EventEmitter {
 
   init() {
     registry.socket.on("files", this.onfiles);
+  }
+
+  onclick(e) {
+    const {target: el} = e;
+    if (el.classList.contains("tag")) {
+      e.preventDefault();
+      e.stopPropagation();
+      const {tag, tagValue} = el.dataset;
+      if (e.button) {
+        this.filter.value += ` -${tag}:'${tagValue.replace(/'/g, "\\'")}'`;
+      }
+      else {
+        this.filter.value = `${tag}:'${tagValue.replace(/'/g, "\\'")}'`;
+      }
+      this.doFilter();
+      return false;
+    }
+    return true;
   }
 
   onfilterbutton(e) {
