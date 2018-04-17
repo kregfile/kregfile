@@ -301,6 +301,14 @@ button:focus {
   align-content: center;
 }
 #status > * {
+  margin-left: 3ex;
+}
+#status > div {
+  user-select: none;
+}
+
+#usercount {
+  display: inline-block;
   margin-left: 1ex;
 }
 
