@@ -177,8 +177,7 @@ ol > li {
   padding: 4px 1ex;
 }
 #filter:focus {
-  flex: 3;
-  min-width: 200px;
+  flex: 7;
 }
 
 #tools .spacer {
