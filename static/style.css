@@ -35,6 +35,10 @@ a {
 a:hover {
   color: var(--text-fg);
 }
+a:focus, a:active {
+  outline: none !important;
+}
+
 
 body#room {
   background: var(--main-bg);
