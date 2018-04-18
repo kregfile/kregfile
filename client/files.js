@@ -750,6 +750,7 @@ export default new class Files extends EventEmitter {
         this.files.splice(this.files.indexOf(f), 1);
       }
     }
+    this.adjustEmpty();
   }
 
   addUploadElements(uploads) {
