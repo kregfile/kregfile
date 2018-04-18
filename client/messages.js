@@ -110,13 +110,16 @@ export default new class Messages extends EventEmitter {
     if (m.highlight) {
       e.classList.add("hi");
     }
+    if (m.me) {
+      e.classList.add("me");
+    }
     const ucls = ["u"];
     if (m.role) {
       ucls.push(m.role);
     }
     const user = dom("span", {
       classes: ucls,
-      text: `${m.user}:`
+      text: m.me ? m.user : `${m.user}:`
     });
 
     const ts = dom("span", {

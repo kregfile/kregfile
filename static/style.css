@@ -330,6 +330,11 @@ button:focus {
   background: var(--hi-bg);
 }
 
+#chat > .me {
+  font-style: italic;
+}
+
+
 #status {
   display: flex;
   padding: 1ex 2px;
