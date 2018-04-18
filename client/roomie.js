@@ -12,6 +12,8 @@ export default new class Roomie {
     this.hidden = document.hidden;
     this.drift = 0;
 
+    this.incrUnread = this.incrUnread.bind(this);
+
     Object.seal(this);
   }
 
@@ -41,13 +43,8 @@ export default new class Roomie {
       registry.messages.showMOTD();
     });
 
-    registry.messages.on("message", () => {
-      if (!this.hidden) {
-        return;
-      }
-      this.unread++;
-      this._updateTitle();
-    });
+    registry.messages.on("message", this.incrUnread);
+    registry.files.on("file-added", this.incrUnread);
 
     document.addEventListener("visibilitychange", () => {
       this.hidden = document.hidden;
@@ -56,6 +53,14 @@ export default new class Roomie {
       }
       this._updateTitle();
     });
+  }
+
+  incrUnread() {
+    if (!this.hidden) {
+      return;
+    }
+    this.unread++;
+    this._updateTitle();
   }
 
   get name() {
