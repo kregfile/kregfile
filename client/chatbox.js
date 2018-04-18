@@ -204,6 +204,11 @@ export default new class ChatBox extends EventEmitter {
     return true;
   }
 
+  cmd_search(value) {
+    registry.files.setFilter(value);
+    return true;
+  }
+
   doCommand(cmd) {
     const fn = this[`cmd_${cmd.cmd}`];
     if (!fn) {

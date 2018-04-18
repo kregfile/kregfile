@@ -519,6 +519,11 @@ export default new class Files extends EventEmitter {
     this.doFilter();
   }
 
+  setFilter(value) {
+    this.filter.value = value;
+    this.doFilter();
+  }
+
   doFilter() {
     this.filterFunc = this.createFilterFunc();
     this.filterClear.classList[this.filterFunc ? "remove" : "add"]("disabled");
