@@ -355,8 +355,7 @@ class File extends Removable {
       classes: ["ttl"],
       text: "ttl",
     });
-    this.updateTTL();
-    this.updateTTL = APOOL.wrap(this.updateTTL);
+    this._updateTTL();
     TTL.add(this);
 
     this.ttlEl.insertBefore(
@@ -372,7 +371,7 @@ class File extends Removable {
     return this.ttl <= 0;
   }
 
-  updateTTL() {
+  _updateTTL() {
     const diff = Math.max(0, this.ttl);
     this.ttlEl.lastChild.textContent = toPrettyDuration(diff, true);
   }
@@ -383,6 +382,8 @@ class File extends Removable {
     super.remove();
   }
 }
+
+File.prototype.updateTTL = APOOL.wrap(File.prototype._updateTTL);
 
 export default new class Files extends EventEmitter {
   constructor() {
