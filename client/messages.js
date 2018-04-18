@@ -6,6 +6,14 @@ import {dom, debounce} from "./util";
 import {APOOL} from "./animationpool";
 import registry from "./registry";
 
+const DATE_FORMAT_SHORT = new Intl.DateTimeFormat("en-US", {
+  hour12: false,
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+});
+const DATE_FORMAT_LONG = new Intl.DateTimeFormat("eu");
+
 export default new class Messages extends EventEmitter {
   constructor() {
     super();
@@ -96,12 +104,7 @@ export default new class Messages extends EventEmitter {
       return;
     }
     const notify = this._add(m);
-    const d = m.date.toLocaleString("en-US", {
-      hour12: false,
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
+    const d = DATE_FORMAT_SHORT.format(m.date);
 
     const e = dom("div");
     if (m.highlight) {
@@ -117,7 +120,7 @@ export default new class Messages extends EventEmitter {
     });
 
     const ts = dom("span", {
-      attrs: {title: m.date.toLocaleString("eu")},
+      attrs: {title: DATE_FORMAT_LONG.format(m.date)},
       classes: ["time"],
       text: d
     });
