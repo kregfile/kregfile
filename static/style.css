@@ -293,6 +293,22 @@ button:focus {
   padding: 0.3ex 1ex;
 }
 
+.chatfile {
+    border-radius: .2em;
+    border-radius: .2em/2px;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.4em;
+    text-align: center;
+    padding: 0.2ex 1ex;
+    text-decoration: none;
+    background-color: var(--main-bg);
+    border: 1px solid var(--odd-bg);
+    margin-bottom: 2px
+}
+
 .u{
   display: inline-block;
   font-weight: bold;

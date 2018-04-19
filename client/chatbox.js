@@ -1,151 +1,11 @@
 "use strict";
 
 import EventEmitter from "events";
-import localforage from "localforage";
-import {debounce, nukeEvent, parseCommand} from "./util";
+import {nukeEvent, parseCommand} from "./util";
 import registry from "./registry";
-
-const RE_WORD = /^[\w\d]$/;
-
-class History {
-  constructor(text) {
-    this.text = text;
-    this.hot = false;
-    this.idx = -1;
-    this.set = new Set();
-    this.arr = [];
-    this.store = localforage.createInstance({
-      storeName: "chatbox"
-    });
-    this.store.getItem(registry.roomid).then(m => {
-      if (m) {
-        this.set = new Set(m);
-        this.arr = m;
-      }
-    }).catch(console.error);
-    this.text.addEventListener("keydown", this.down.bind(this));
-    this._save = debounce(this._save.bind(this));
-    Object.seal(this);
-  }
-
-  down(e) {
-    if (e.key !== "ArrowUp" && e.key !== "ArrowDown") {
-      this.hot = false;
-      return true;
-    }
-    if (!this.hot && this.text.value && !e.shiftKey) {
-      return true;
-    }
-    this.hot = true;
-    const {length} = this.arr;
-    if (!length) {
-      return true;
-    }
-    let {idx} = this;
-    if (idx < 0) {
-      idx = length;
-    }
-    if (e.key === "ArrowUp") {
-      --idx;
-    }
-    else {
-      ++idx;
-    }
-    if (idx >= length || idx < 0) {
-      this.text.value = "";
-      this.idx = -1;
-    }
-    else {
-      this.text.value = this.arr[this.idx = idx];
-    }
-    nukeEvent(e);
-    return false;
-  }
-
-  add(m) {
-    this.set.delete(m);
-    this.set.add(m);
-    this._save();
-  }
-
-  _save() {
-    this.store.setItem(registry.roomid, this.arr = Array.from(this.set)).
-      catch(console.error);
-    this.idx = -1;
-  }
-}
-
-class Autocomplete {
-  constructor(text) {
-    this.hot = null;
-    this.text = text;
-    this.completes = [];
-    this.text.addEventListener("keydown", this.down.bind(this));
-  }
-  add(m) {
-    const {user} = m;
-    const {completes} = this;
-    if (!user) {
-      return;
-    }
-    const uuser = user.toUpperCase();
-    const idx = completes.findIndex(e => e.toUpperCase() === uuser);
-    if (idx >= 0) {
-      completes.splice(idx, 1);
-    }
-    completes.unshift(user);
-    if (completes.length > 20) {
-      completes.pop();
-    }
-  }
-
-  down(e) {
-    if (e.key !== "Tab") {
-      this.hot = null;
-      return true;
-    }
-    nukeEvent(e);
-    const {value} = this.text;
-    if (!this.hot) {
-      const {selectionStart: cur} = this.text;
-      let start = cur - 1;
-      while (start >= 0 && (!value[start] || RE_WORD.test(value[start]))) {
-        start--;
-      }
-      ++start;
-      const plain = value.slice(start, cur);
-      const word = plain.toUpperCase();
-      let cands = this.completes.filter(
-        e => e.toUpperCase().startsWith(word));
-      const post = value.slice(cur);
-      if (post && post[0] !== " " && post[0] !== "\n") {
-        cands = cands.map(e => `${e} `);
-      }
-      cands.push(plain);
-      this.hot = {
-        start,
-        pre: value.slice(0, start),
-        post,
-        word,
-        cands,
-        remaining: cands.slice()
-      };
-    }
-    const {hot} = this;
-    if (!hot.cands.length) {
-      return false;
-    }
-    if (!hot.remaining.length) {
-      hot.remaining = hot.cands.slice();
-    }
-    const cand = hot.remaining.shift();
-    const nvalue = hot.pre + cand + hot.post;
-    this.text.value = nvalue;
-    this.text.selectionEnd = this.text.selectionStart =
-      hot.start + cand.length;
-    return false;
-  }
-}
+import History from "./chatbox/history";
+import Autocomplete from "./chatbox/autocomplete";
+import {convertMessage, WHITE} from "./chatbox/parse";
 
 export default new class ChatBox extends EventEmitter {
   constructor() {
@@ -154,8 +14,10 @@ export default new class ChatBox extends EventEmitter {
     this.text = document.querySelector("#text");
     this.nick = document.querySelector("#nick");
     this.history = null;
-    this.autocomplete = new Autocomplete(this.text);
-    this.text.addEventListener("keypress", this.press.bind(this));
+    this.autocomplete = new Autocomplete(this);
+    this.text.addEventListener("keypress", this.onpress.bind(this));
+    this.text.addEventListener("paste", this.onpaste.bind(this));
+    this.text.addEventListener("drop", this.ondrop.bind(this));
     Object.seal(this);
   }
 
@@ -173,8 +35,9 @@ export default new class ChatBox extends EventEmitter {
     });
   }
 
-  press(e) {
-    if (e.key === "Enter" && !e.shiftKey) {
+  onpress(e) {
+    const {key, shiftKey} = e;
+    if (key === "Enter" && !shiftKey) {
       const {target} = e;
       if (target.value) {
         let {value} = target;
@@ -190,7 +53,66 @@ export default new class ChatBox extends EventEmitter {
       }
       return nukeEvent(e);
     }
+    if (this.text.value.length >= 300) {
+      return nukeEvent(e);
+    }
+    if (key === " " || key === "Enter") {
+      this.reparse(key === "Enter" ? "\n" : " ");
+      return nukeEvent(e);
+    }
     return true;
+  }
+
+  reparse(additional) {
+    const {selectionStart: start, selectionEnd: end, value} = this.text;
+    const pre = value.slice(0, start);
+    const post = value.slice(end);
+    const cpre = convertMessage(pre);
+    const cpost = convertMessage(post);
+    const nm = cpre + additional + cpost;
+    this.text.value = nm.slice(0, 300);
+    this.text.selectionEnd = this.text.selectionStart = Math.min(
+      cpre.length + 1, this.text.value.length);
+  }
+
+  injectFromEvent(data) {
+    data = convertMessage(data);
+    if (!data) {
+      return;
+    }
+    const {selectionStart: start, selectionEnd: end, value} = this.text;
+    const pre = value.slice(0, start);
+    const post = value.slice(end);
+    data = (pre && !WHITE.test(pre.slice(-1)) ? " " : "") +
+      data +
+      (!post || !WHITE.test(post[0]) ? " " : "");
+    const nm = pre + data + post;
+    if (nm.length > 300) {
+      return;
+    }
+    this.text.value = nm;
+    this.text.selectionEnd = this.text.selectionStart = start + data.length;
+  }
+
+  onpaste(e) {
+    let data = e.clipboardData || window.clipboardData;
+    if (!data) {
+      return;
+    }
+    data = data.getData("text") || data.getData("text/plain");
+    if (!data) {
+      return;
+    }
+    nukeEvent(e);
+    this.injectFromEvent(data);
+  }
+
+  ondrop() {
+    setTimeout(() => {
+      this.text.selectionStart = this.text.selectionEnd;
+      this.reparse(" ");
+      this.text.focus();
+    });
   }
 
   cmd_nick(value) {

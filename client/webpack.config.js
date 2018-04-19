@@ -1,6 +1,7 @@
 "use strict";
 
 const crypto = require("crypto");
+const path = require("path");
 const {RawSource, ConcatSource} = require("webpack-sources");
 
 class HashPlugin {
@@ -30,17 +31,21 @@ module.exports = {
   mode: "development",
   entry: "./main.js",
   output: {
-    path: `${__dirname}/../static/`,
+    path: path.join(__dirname, "..", "static"),
     filename: "client.js"
   },
   plugins: [new HashPlugin()],
   devtool: "source-map",
   resolve: {
     alias: {
-      "localforage$":
-        "../node_modules/localforage/dist/localforage.nopromises.min.js",
-      "socket.io-client":
-        "../node_modules/socket.io-client/dist/socket.io.slim.js",
+      "localforage$": path.join(
+        __dirname,
+        "..",
+        "node_modules/localforage/dist/localforage.nopromises.min.js"),
+      "socket-io-client": path.join(
+        __dirname,
+        "..",
+        "node_modules/socket.io-client/dist/socket.io.slim.js"),
     }
   }
 };
