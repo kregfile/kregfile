@@ -1,7 +1,6 @@
 name kregfile-jail
 
 # will be invoked with private=
-private-etc empty
 private-dev
 private-tmp
 read-only /
