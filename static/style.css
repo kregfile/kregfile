@@ -561,6 +561,7 @@ button:focus {
   animation-iteration-count: 1;
   animation-timing-function: linear;
   animation-duration: 0.2s;
+  box-shadow: 6px 6px 10px rgba(0, 0, 0, 0.3);
 }
 
 .tooltip > * {
@@ -572,6 +573,9 @@ button:focus {
 .tooltip-name {
   grid-column: 1 / span 4;
   margin-bottom: 1ex;
+  max-width: 40em;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
 }
 
 .tooltip-tag-tag {
@@ -580,6 +584,9 @@ button:focus {
 
 .tooltip-tag-value {
   grid-column: 3;
+  max-width: 20em;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
 }
 
 .tooltip-name,
