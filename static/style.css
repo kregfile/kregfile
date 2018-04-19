@@ -405,15 +405,23 @@ button:focus {
   grid-area: files;
   overflow-x: hidden;
   overflow-y: auto;
-  background: var(--dark-bg);
   user-select: none;
+  background: var(--dark-bg);
 }
-#files.empty {
+#dropminder {
+  grid-area: files;
+  background: var(--dark-bg);
   padding: 10vh 10%;
-  background-repeat: no-repeat;
-  background-image: url(drop.svg);
-  background-position: 50% 50%;
-  background-origin: content-box;
+}
+#dropminder svg {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  margin-left: auto;
+}
+.empty rect {
+  animation: 5s linear infinite spin, 10s ease-in infinite opulse;
+  transform-origin: 50% 50% 0px; 
 }
 
 .file {
@@ -422,7 +430,13 @@ button:focus {
   justify-content: center;
   width: 100%;
   padding: 4px 1ex;
-  border: 1px dotted rgba(128, 128, 128, 0.1)
+  border: 1px dotted rgba(128, 128, 128, 0.1);
+}
+.empty #files {
+  opacity: 0;
+}
+.empty #files .file {
+  display: none;
 }
 .file:nth-child(even) {
   background: var(--odd-bg);
@@ -476,6 +490,9 @@ button:focus {
   padding: 1px 0.8ex;
   margin-left: 1.1ex;
   cursor: pointer;
+  max-width: 25ex;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
 }
 
 .file > .i-image {
@@ -526,27 +543,16 @@ button:focus {
 }
 
 .tooltip {
-  display: grid;
-  position: fixed;
-  background: var(--main-bg);
-  padding: 1em;
-  padding-left: 0; /* added by children */
-  border: 1px solid var(--lite-bg);
-  border-left-width: 1ex;
-  border-top-left-radius: 1ex;
-  border-bottom-right-radius: 1ex;
-
-  grid-template-columns: auto 1fr auto;
-}
-
-.tooltip {
   visibility: hidden;
+  font-size: 95%;
   display: grid;
   position: fixed;
   z-index: 1000;
   background: var(--main-bg);
   padding: 1em;
-  padding-left: 0; /* added by children */
+  padding-left: 1ex;
+  padding-bottom: 1.2em;
+  padding-right: 3em;
   border: 1px solid var(--lite-bg);
   border-left-width: 1ex;
   border-top-left-radius: 1ex;
@@ -607,6 +613,13 @@ button:focus {
   font-size: x-small;
   text-align: right;
 }
+
+@keyframes spin {
+  50% {
+    transform: scale(0.9);
+  }
+}
+
 
 @keyframes opulse {
   0% { opacity: 0.2; }

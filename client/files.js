@@ -48,11 +48,42 @@ export default new class Files extends EventEmitter {
     this.onfilterbutton = this.onfilterbutton.bind(this);
     Object.seal(this);
 
-    this.el.ondrop = this.ondrop.bind(this);
-    this.el.ondragover = e => {
+    const dragBody = e => {
+      if (!e.dataTransfer.types.includes("Files")) {
+        return;
+      }
       e.preventDefault();
+      e.stopPropagation();
+      e.dataTransfer.dropEffect = "none";
+    };
+    addEventListener("dragenter", dragBody);
+    addEventListener("dragover", dragBody);
+    const dragEnter = e => {
+      if (this.tooltip) {
+        this.tooltip.remove();
+        this.tooltip = null;
+      }
+      if (!e.dataTransfer.types.includes("Files")) {
+        return;
+      }
+      this.adjustEmpty(true);
+      e.preventDefault();
+      e.stopPropagation();
       e.dataTransfer.dropEffect = "copy";
     };
+    const dragExit = e => {
+      if (e.target !== this.el) {
+        return;
+      }
+      console.log(e.type, e.target);
+      this.adjustEmpty();
+    };
+    this.el.addEventListener("drop", this.ondrop.bind(this), true);
+    this.el.addEventListener("dragenter", dragEnter, true);
+    this.el.addEventListener("dragover", dragEnter, true);
+    this.el.addEventListener("dragexit", dragExit, true);
+    this.el.addEventListener("dragleave", dragExit, true);
+    this.el.addEventListener("mouseout", dragExit, true);
 
     this.filterButtons.forEach(e => {
       e.addEventListener("click", this.onfilterbutton, true);
@@ -133,7 +164,11 @@ export default new class Files extends EventEmitter {
     });
   }
 
-  onout() {
+  onout(e) {
+    if (this.el === e.target) {
+      this.adjustEmpty();
+    }
+
     if (!this.tooltipFile) {
       return;
     }
@@ -383,12 +418,12 @@ export default new class Files extends EventEmitter {
     this.updateFilterStatus();
   }
 
-  adjustEmpty() {
-    if (this.el.childElementCount) {
-      this.el.classList.remove("empty");
+  adjustEmpty(forceOn) {
+    if (!forceOn && this.el.childElementCount) {
+      this.el.parentElement.classList.remove("empty");
     }
     else {
-      this.el.classList.add("empty");
+      this.el.parentElement.classList.add("empty");
     }
   }
 
