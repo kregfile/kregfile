@@ -1,5 +1,7 @@
 "use strict";
 
+const {memoize} = require("./memoize");
+
 function debounce(fn, to) {
   if (fn.length) {
     throw new Error("cannot have params");
@@ -148,7 +150,7 @@ function toPrettyDuration(s, short) {
     if (short) {
       return plural(Math.round(c), "hour", "hours");
     }
-    rv.push(plural(Math.floor(), "hour", "hours"));
+    rv.push(plural(Math.floor(c), "hour", "hours"));
     s %= 3600;
   }
   if (s >= 60) {
@@ -156,7 +158,7 @@ function toPrettyDuration(s, short) {
     if (short) {
       return plural(Math.round(c), "min", "mins");
     }
-    rv.push(plural(Math.floor(), "min", "mins"));
+    rv.push(plural(Math.floor(c), "min", "mins"));
     s %= 60;
   }
   if (short) {
@@ -204,14 +206,31 @@ class CoalescedUpdate extends Set {
   }
 }
 
+function randint(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function shuffle(array) {
+  for (let i = array.length; i; i--) {
+    const j = Math.floor(Math.random() * i);
+    [array[i - 1], array[j]] = [array[j], array[i - 1]];
+  }
+  return array;
+}
+
 module.exports = {
   CoalescedUpdate,
   debounce,
   mixin,
   ofilter,
   parseCommand,
+  memoize,
   toPrettyDuration,
   toPrettySize,
+  shuffle,
+  randint
 };
 
 // No dynamic requires to not confuse webpack!

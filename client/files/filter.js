@@ -1,5 +1,7 @@
 "use strict";
 
+export const NONE = Symbol();
+
 function all(val, e) {
   if (e.name.toUpperCase().includes(val)) {
     return true;
@@ -129,6 +131,31 @@ function toFunc(e) {
   return (neg ? nmatches : matches).bind(null, tag, val.toUpperCase());
 }
 
-export default function toFilterFuncs(value) {
-  return Array.from(tokens(value)).map(toFunc).filter(e => e);
+export function toFilterFuncs(buttons, value) {
+  const filters = new Set(buttons.
+    map(e => e.classList.contains("disabled") ? null : e.id.slice(7)).
+    filter(e => e));
+  if (!filters.size) {
+    return NONE;
+  }
+  const funcs = Array.from(tokens(value)).map(toFunc).filter(e => e);
+  if (filters.size !== buttons.length) {
+    funcs.push(function(e) {
+      return filters.has(e.type);
+    });
+  }
+  if (funcs.length === 1) {
+    return funcs[0];
+  }
+  if (!funcs.length) {
+    return null;
+  }
+  return function(e) {
+    for (const func of funcs) {
+      if (!func(e)) {
+        return false;
+      }
+    }
+    return true;
+  };
 }

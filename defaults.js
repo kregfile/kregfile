@@ -16,4 +16,6 @@ module.exports = {
   chatFloodDuration: 10000,
   uploadFloodTrigger: 25,
   uploadFloodDuration: 60000,
+  maxAssetsProcesses: 2,
+  maxMetaProcesses: 5,
 };

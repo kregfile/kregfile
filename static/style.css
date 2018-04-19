@@ -525,6 +525,75 @@ button:focus {
   flex: 3;
 }
 
+.tooltip {
+  display: grid;
+  position: fixed;
+  background: var(--main-bg);
+  padding: 1em;
+  padding-left: 0; /* added by children */
+  border: 1px solid var(--lite-bg);
+  border-left-width: 1ex;
+  border-top-left-radius: 1ex;
+  border-bottom-right-radius: 1ex;
+
+  grid-template-columns: auto 1fr auto;
+}
+
+.tooltip {
+  visibility: hidden;
+  display: grid;
+  position: fixed;
+  z-index: 1000;
+  background: var(--main-bg);
+  padding: 1em;
+  padding-left: 0; /* added by children */
+  border: 1px solid var(--lite-bg);
+  border-left-width: 1ex;
+  border-top-left-radius: 1ex;
+  border-bottom-right-radius: 1ex;
+
+  grid-template-columns: auto auto 1fr;
+}
+
+.tooltip.visible {
+  visibility: visible;
+  animation-name: toolfadein;
+  animation-iteration-count: 1;
+  animation-timing-function: linear;
+  animation-duration: 0.2s;
+}
+
+.tooltip > * {
+  display: block;
+  padding-left: 1em;
+  white-space: nowrap;
+}
+
+.tooltip-name {
+  grid-column: 1 / span 4;
+  margin-bottom: 1ex;
+}
+
+.tooltip-tag-tag {
+  grid-column: 2;
+}
+
+.tooltip-tag-value {
+  grid-column: 3;
+}
+
+.tooltip-name,
+.tooltip-tag-value {
+  font-weight: bold;
+}
+
+.tooltip-preview {
+  max-width: 200px;
+  max-height: 200px;
+  grid-column: 1;
+  grid-row: span 10000;
+}
+
 #status {
   grid-area: status;
   padding: 3px;
@@ -536,6 +605,17 @@ button:focus {
   0% { opacity: 0.2; }
   50% { opacity: 1; }
   100% { opacity: 0.2; }
+}
+
+@keyframes toolfadein {
+  0% {
+    opacity: 0;
+    border-color: var(--main-bg);
+    background-color: var(--lite-bg);
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 footer {

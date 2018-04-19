@@ -24,7 +24,8 @@
     "sharp": "^0.20.1",
     "socket.io": "^2.1.0",
     "socket.io-client": "^2.1.0",
-    "url-regex": "^4.1.1"
+    "url-regex": "^4.1.1",
+    "xregexp": "^4.1.1"
   },
   "devDependencies": {
     "webpack": "^4.5.0",

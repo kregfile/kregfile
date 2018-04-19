@@ -2,393 +2,20 @@
 
 import EventEmitter from "events";
 import registry from "./registry";
-import toFilterFuncs from "./files-filter";
+import * as filesfilter from "./files/filter";
 import {
   PromisePool,
-  CoalescedUpdate,
   debounce,
-  dom,
-  naturalSort,
+  naturalCaseSort,
   sort,
-  toPrettyDuration,
-  toPrettySize,
 } from "./util";
 import {APOOL} from "./animationpool";
-
-const NONE = Symbol();
+import {REMOVALS} from "./files/tracker";
+import Upload from "./files/upload";
+import File from "./files/file";
 
 const ROBOCOPFILES =
   /^(?:thumbs.*\.db|\.ds_store.*|.*\.ds_store|.\tthn|desktop.*.ini)$/i;
-
-const BASE_FILE = {
-  name: "",
-  href: "#",
-  tags: {},
-  expires: 0,
-};
-
-const ICONS = Object.freeze(new Set([
-  "video",
-  "audio",
-  "image",
-  "document",
-  "archive",
-  "file",
-]));
-
-const REMOVALS = new CoalescedUpdate(0, a => {
-  registry.files.removeFileElements(a);
-});
-
-const TTL = {
-  PERSEC: new CoalescedUpdate(1000, a => a.forEach(e => {
-    e.updateTTL();
-    if (e.expired) {
-      e.remove();
-    }
-    else {
-      TTL.PERSEC.add(e);
-    }
-  })),
-  PERMIN: new CoalescedUpdate(60000, a => a.forEach(e => {
-    e.updateTTL();
-    if (e.ttl < 60000) {
-      TTL.PERSEC.add(e);
-    }
-    else {
-      TTL.PERMIN.add(e);
-    }
-  })),
-  PERHOUR: new CoalescedUpdate(3600000, a => a.forEach(e => {
-    e.updateTTL();
-    if (e.ttl < 3600000) {
-      TTL.PERMIN.add(e);
-    }
-    else {
-      TTL.PERHOUR.add(e);
-    }
-  })),
-
-  add(e) {
-    const {ttl} = e;
-    if (ttl >= 3600000 * 2) {
-      this.PERHOUR.add(e);
-    }
-    else if (ttl >= 60000 * 2) {
-      this.PERMIN.add(e);
-    }
-    else {
-      this.PERSEC.add(e);
-    }
-  },
-
-  delete(e) {
-    if (this.PERSEC.delete(e)) {
-      return;
-    }
-    if (this.PERMIN.delete(e)) {
-      return;
-    }
-    this.PERHOUR.delete(e);
-  },
-
-  clear() {
-    this.PERSEC.clear();
-    this.PERMIN.clear();
-    this.PERHOUR.clear();
-  }
-};
-
-class Removable {
-  constructor() {
-    this.remove = APOOL.wrap(this.remove);
-  }
-
-  remove() {
-    try {
-      if (this.el.parentElement) {
-        this.el.parentElement.removeChild(this.el);
-      }
-    }
-    catch (ex) {
-      // ignored
-    }
-  }
-}
-
-class Upload extends Removable {
-  constructor(file) {
-    super();
-    this.file = file;
-    this.key = null;
-    this.offset = null;
-
-    this.el = dom("div", {classes: ["file", "upload"]});
-
-    this.iconEl = dom("span", {
-      classes: ["icon", "i-wait"],
-    });
-    this.el.appendChild(this.iconEl);
-
-    this.nameEl = dom("span", {classes: ["name"], text: this.file.name});
-    this.el.appendChild(this.nameEl);
-
-    this.detailEl = dom("span", {classes: ["detail"]});
-    this.el.appendChild(this.detailEl);
-
-    this.sizeEl = dom("span", {
-      classes: ["size"],
-      text: toPrettySize(this.file.size)
-    });
-    this.detailEl.appendChild(this.sizeEl);
-
-    this.setIcon = APOOL.wrap(this.setIcon);
-  }
-
-  getKey() {
-    const {socket} = registry;
-    const getter = (resolve, reject) => {
-      socket.once("uploadkey", d => {
-        if (d.err) {
-          reject(new Error(d.err));
-          return;
-        }
-        if (d.wait) {
-          resolve(new Promise((iresolve, ireject) => {
-            const dur = registry.roomie.diffTimes(d.wait);
-            if (dur <= 0) {
-              getter(iresolve, ireject);
-              return;
-            }
-            this.sizeEl.textContent = `Waiting (${toPrettyDuration(dur)})`;
-            setTimeout(() => getter(iresolve, ireject), Math.min(dur, 5000));
-          }));
-          return;
-        }
-        resolve(d);
-      });
-      setTimeout(() => reject("Timeout"), 30000);
-      socket.emit("uploadkey");
-    };
-    return new Promise(getter);
-  }
-
-  queryOffset() {
-    const {socket} = registry;
-    return new Promise((resolve, reject) => {
-      socket.once(`queryoffset-${this.key}`, d => {
-        if (d.err) {
-          reject(new Error(d.err));
-          return;
-        }
-        resolve(d);
-      });
-      setTimeout(() => reject("Timeout"), 30000);
-      socket.emit("queryoffset", this.key);
-    });
-  }
-
-  async attemptUpload() {
-    if (this.offset !== null) {
-      this.offset = await this.queryOffset();
-    }
-    else {
-      this.offset = 0;
-    }
-    const params = new URLSearchParams();
-    params.set("name", this.file.name);
-    params.set("key", this.key);
-    params.set("offset", this.offset);
-    return new Promise((resolve, reject) => {
-      const req = new XMLHttpRequest();
-      req.onerror = () => {
-        console.error("onerror");
-        reject(new Error("Connection lost"));
-      };
-      req.onabort = () => {
-        console.error("onabort");
-        const err = new Error("Aborted");
-        err.retryable = true;
-        reject(err);
-      };
-      req.onload = () => {
-        resolve(req.response);
-      };
-      req.responseType = "json";
-      req.upload.addEventListener("progress", e => {
-        if (this.offset === 0 && e.loaded > (1 << 20)) {
-          //req.abort();
-        }
-        this.setProgress(this.offset + e.loaded, this.offset + e.total);
-      });
-      req.open("PUT", `/api/upload?${params.toString()}`);
-      let {file} = this;
-      if (this.offset) {
-        file = file.slice(this.offset);
-      }
-      req.send(file);
-    });
-  }
-
-  setProgress(current, total) {
-    const p = (current * 100 / total);
-    if (p !== 100) {
-      this.sizeEl.textContent = `${toPrettySize(current)}/${toPrettySize(total)} (${p.toFixed(1)}%)`;
-    }
-    else {
-      this.sizeEl.textContent = `${toPrettySize(this.file.size)} - Finishing...`;
-    }
-    this.el.style.backgroundSize = `${p}% 100%`;
-  }
-
-  setIcon(cls) {
-    this.iconEl.classList.remove(
-      "i-wait", "i-upload", "i-upload-done", "i-error");
-    this.iconEl.classList.add(cls);
-  }
-
-  async upload() {
-    registry.chatbox.ensureNick();
-    this.setIcon("i-upload");
-    try {
-      for (let i = 0; i <= 10; ++i) {
-        if (!this.key) {
-          const key = await this.getKey();
-          this.key = key;
-          this.offset = null;
-        }
-        try {
-          const resp = await this.attemptUpload();
-          if (resp.err) {
-            const err = new Error(resp.err);
-            Object.assign(err, resp);
-            throw err;
-          }
-          if (registry.files.has(resp.key)) {
-            this.remove();
-          }
-          else {
-            registry.files.once(`file-added-${resp.key}`, () => this.remove());
-          }
-          this.setProgress(1, 1);
-          this.setIcon("i-upload-done");
-        }
-        catch (ex) {
-          if (!ex.retryable || i === 10) {
-            throw ex;
-          }
-          await new Promise(r => setTimeout(r, 10000));
-          continue;
-        }
-        break;
-      }
-    }
-    catch (ex) {
-      this.el.classList.add("error");
-      this.setIcon("i-error");
-      this.sizeEl.textContent = "Upload failed";
-      registry.messages.add({
-        volatile: true,
-        user: "Error",
-        role: "system",
-        msg: `Upload of "${this.file.name}" failed: ${ex.message || ex.toString()}`
-      });
-      setTimeout(() => this.remove(), 5000);
-    }
-  }
-}
-
-class File extends Removable {
-  constructor(file) {
-    super();
-    Object.assign(this, BASE_FILE, file);
-
-    this.el = dom("div", {classes: ["file"]});
-
-    if (!ICONS.has(this.type)) {
-      this.type = "file";
-    }
-    this.iconEl = dom("a", {
-      attrs: {
-        target: "_blank",
-        rel: "nofollow,noindex",
-        href: this.href
-      },
-      classes: ["icon", `i-${this.type}`],
-    });
-    this.el.appendChild(this.iconEl);
-
-    this.nameEl = dom("a", {
-      attrs: {
-        target: "_blank",
-        rel: "nofollow,noindex",
-        href: this.href
-      },
-      classes: ["name"],
-      text: this.name}
-    );
-    this.el.appendChild(this.nameEl);
-
-    const tagEntries = Array.from(Object.entries(this.tags));
-    tagEntries.forEach(e => e[1] = e[1].toString());
-    this.tagsMap = new Map(tagEntries);
-    tagEntries.forEach(e => e[1] = e[1].toUpperCase());
-    this.tagsMapCase = new Map(tagEntries);
-    this.tagValues = Array.from(this.tagsMap.values());
-    this.tagValuesCase = Array.from(this.tagsMapCase.values());
-
-    this.tagsEl = dom("span", {classes: ["tags"]});
-    this.el.appendChild(this.tagsEl);
-    const tags = sort(Array.from(this.tagsMap.entries()));
-    for (const [tn, tv] of tags) {
-      const tag = dom("span", {classes: ["tag", `tag-${tn}`], text: tv});
-      tag.dataset.tag = tn;
-      tag.dataset.tagValue = tv;
-      this.tagsEl.appendChild(tag);
-    }
-
-    this.detailEl = dom("span", {classes: ["detail"]});
-    this.el.appendChild(this.detailEl);
-
-    this.sizeEl = dom("span", {
-      classes: ["size"],
-      text: toPrettySize(file.size)
-    });
-    this.detailEl.appendChild(this.sizeEl);
-
-    this.ttlEl = dom("span", {
-      classes: ["ttl"],
-      text: "ttl",
-    });
-    this._updateTTL();
-    TTL.add(this);
-
-    this.ttlEl.insertBefore(
-      dom("span", {classes: ["i-clock"]}), this.ttlEl.firstChild);
-    this.detailEl.appendChild(this.ttlEl);
-  }
-
-  get ttl() {
-    return registry.roomie.diffTimes(this.expires);
-  }
-
-  get expired() {
-    return this.ttl <= 0;
-  }
-
-  _updateTTL() {
-    const diff = Math.max(0, this.ttl);
-    this.ttlEl.lastChild.textContent = toPrettyDuration(diff, true);
-  }
-
-  remove() {
-    TTL.delete(this);
-    REMOVALS.add(this);
-    super.remove();
-  }
-}
-
-File.prototype.updateTTL = APOOL.wrap(File.prototype._updateTTL);
 
 export default new class Files extends EventEmitter {
   constructor() {
@@ -402,7 +29,16 @@ export default new class Files extends EventEmitter {
     this.files = [];
     this.filemap = new Map();
     this.elmap = new WeakMap();
+
+    this.tooltipFile = null;
+    this.tooltip = null;
+    this.mousepos = Object.seal({x: 0, y: 0});
+
+    this.onmousemove = this.onmousemove.bind(this);
+    this.showTooltip = debounce(this.showTooltip.bind(this), 250);
     this.onfiles = this.onfiles.bind(this);
+    this.onfilesdeleted = this.onfilesdeleted.bind(this);
+    this.onfilesupdated = this.onfilesupdated.bind(this);
     this.applying = null;
     this.applyFilter = APOOL.wrap(this.applyFilter);
     this.clear = APOOL.wrap(this.clear);
@@ -428,7 +64,7 @@ export default new class Files extends EventEmitter {
       "click", this.clearFilter.bind(this), true);
 
     this.el.addEventListener("click", this.onclick.bind(this));
-    this.el.addEventListener("contextmenu", this.onclick.bind(this));
+    this.el.addEventListener("mouseout", this.onout.bind(this));
   }
 
   get visible() {
@@ -439,6 +75,8 @@ export default new class Files extends EventEmitter {
 
   init() {
     registry.socket.on("files", this.onfiles);
+    registry.socket.on("files-deleted", this.onfilesdeleted);
+    registry.socket.on("files-updated", this.onfilesupdated);
   }
 
   onclick(e) {
@@ -457,6 +95,54 @@ export default new class Files extends EventEmitter {
       return false;
     }
     return true;
+  }
+
+  onenter(file) {
+    if (!this.tooltipFile) {
+      this.el.addEventListener("mousemove", this.onmousemove);
+    }
+    this.tooltipFile = file;
+    this.showTooltip();
+  }
+
+  onmousemove(e) {
+    const x = this.mousepos.x = e.pageX;
+    const y = this.mousepos.y = e.pageY;
+    if (this.tooltip) {
+      this.tooltip.position(x, y);
+    }
+  }
+
+  showTooltip() {
+    if (!this.tooltipFile) {
+      return;
+    }
+    const tt = this.tooltipFile.generateTooltip();
+    if (!tt) {
+      return;
+    }
+    this.tooltip = tt;
+    document.body.appendChild(tt.el);
+    APOOL.schedule(null, () => {
+      if (!this.tooltip) {
+        return;
+      }
+      const {x, y} = this.mousepos;
+      this.tooltip.position(x, y);
+      this.tooltip.show();
+    });
+  }
+
+  onout() {
+    if (!this.tooltipFile) {
+      return;
+    }
+    this.tooltipFile = null;
+    this.el.removeEventListener("mousemove", this.onmousemove);
+    if (this.tooltip) {
+      this.tooltip.remove();
+      this.tooltip = null;
+    }
   }
 
   onfilterbutton(e) {
@@ -488,35 +174,6 @@ export default new class Files extends EventEmitter {
     this.doFilter();
   }
 
-  createFilterFunc() {
-    const filters = new Set(this.filterButtons.
-      map(e => e.classList.contains("disabled") ? null : e.id.slice(7)).
-      filter(e => e));
-    if (!filters.size) {
-      return NONE;
-    }
-    const funcs = toFilterFuncs(this.filter.value);
-    if (filters.size !== this.filterButtons.length) {
-      funcs.push(function(e) {
-        return filters.has(e.type);
-      });
-    }
-    if (funcs.length === 1) {
-      return funcs[0];
-    }
-    if (!funcs.length) {
-      return null;
-    }
-    return function(e) {
-      for (const func of funcs) {
-        if (!func(e)) {
-          return false;
-        }
-      }
-      return true;
-    };
-  }
-
   clearFilter() {
     this.filterButtons.forEach(e => e.classList.remove("disabled"));
     this.filter.value = "";
@@ -530,7 +187,8 @@ export default new class Files extends EventEmitter {
   }
 
   doFilter() {
-    this.filterFunc = this.createFilterFunc();
+    this.filterFunc = filesfilter.toFilterFuncs(
+      this.filterButtons, this.filter.value);
     this.filterClear.classList[this.filterFunc ? "remove" : "add"]("disabled");
     REMOVALS.trigger();
     if (!this.applying) {
@@ -540,7 +198,7 @@ export default new class Files extends EventEmitter {
 
   filtered(files) {
     const {filterFunc} = this;
-    if (filterFunc === NONE) {
+    if (filterFunc === filesfilter.NONE) {
       files = [];
     }
     if (filterFunc) {
@@ -658,10 +316,10 @@ export default new class Files extends EventEmitter {
   async queueUploads(entries, files) {
     try {
       await this.processEntries(entries, files);
-      sort(files, f => f.name, naturalSort).reverse();
+      sort(files, f => f.name, naturalCaseSort).reverse();
       const uploads = files.
         filter(f => !ROBOCOPFILES.test(f.name)).
-        map(f => new Upload(f));
+        map(f => new Upload(this, f));
       uploads.forEach(u => this.uploadOne(u));
       this.addUploadElements(uploads);
     }
@@ -675,13 +333,39 @@ export default new class Files extends EventEmitter {
       this.clear();
     }
     const files = data.files.map(f => {
-      f = new File(f);
+      f = new File(this, f);
       this.elmap.set(f.el, f);
       this.emit("file-added", f);
       this.emit(`file-added-${f.key}`, f);
       return f;
     });
     this.addFileElements(files);
+  }
+
+  onfilesupdated(files) {
+    console.log("update", this, files);
+    for (const f of files) {
+      const existing = this.filemap.get(f.key);
+      if (!existing) {
+        continue;
+      }
+      existing.update(f);
+    }
+  }
+
+  onfilesdeleted(files) {
+    console.log("deleted", files);
+    for (const f of files) {
+      const existing = this.filemap.get(f.key);
+      if (!existing) {
+        continue;
+      }
+      existing.remove();
+    }
+  }
+
+  has(key) {
+    return this.filemap.has(key);
   }
 
   clear() {

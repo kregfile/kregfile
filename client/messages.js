@@ -22,6 +22,7 @@ export default new class Messages extends EventEmitter {
     this.msgs = [];
     this.els = [];
     this.queue = [];
+    this.fileInfos = new WeakMap();
     this.flushing = null;
     this.store = localforage.createInstance({
       storeName: "msgs"
@@ -140,6 +141,21 @@ export default new class Messages extends EventEmitter {
       case "b":
         msg.appendChild(dom("br"));
         break;
+
+      case "f": {
+        const file = dom("a", {
+          classes: ["chatfile"],
+          attrs: {
+            target: "_blank",
+            rel: "nofollow",
+            href: p.href,
+          },
+          text: p.name
+        });
+        this.fileInfos.set(file, p);
+        msg.appendChild(file);
+        break;
+      }
 
       case "u": {
         const a = dom("a", {
