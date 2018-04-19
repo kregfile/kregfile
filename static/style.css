@@ -404,6 +404,7 @@ button:focus {
   background: var(--dark-bg);
   outline: none;
   box-shadow: none;
+  font-family: var(--base-font);
 }
 
 #files {
