@@ -30,6 +30,8 @@ const ICONS = Object.freeze(new Set([
 
 const NUM_FORMAT = new Intl.NumberFormat();
 
+const TIPMETA = Object.freeze(["duration", "codec", "bitrate"]);
+
 class Tooltip extends Removable {
   constructor(file) {
     super();
@@ -45,6 +47,12 @@ class Tooltip extends Removable {
     const {meta = {}} = file;
     if (meta.width && meta.height) {
       a(`${NUM_FORMAT.format(meta.width)} × ${NUM_FORMAT.format(meta.height)}`, "resolution");
+    }
+    for (const k of TIPMETA) {
+      if (!meta[k]) {
+        continue;
+      }
+      a(meta[k], k);
     }
 
     const diff = Math.max(0, file.ttl);
@@ -72,9 +80,24 @@ class Tooltip extends Removable {
     }
     const url = file.href + preview.ext;
     switch (preview.type) {
-    case "video":
-      console.log("IMPL");
+    case "video": {
+      const video = dom("video", {
+        attrs: {
+          autoplay: "true",
+          loop: "true",
+          preload: "auto",
+        },
+        classes: ["tooltip-preview"],
+      });
+      video.appendChild(dom("source", {
+        attrs: {
+          type: preview.mime,
+          src: url
+        }
+      }));
+      this.el.appendChild(video);
       return;
+    }
 
     case "image": {
       const img = new Image();
@@ -183,7 +206,11 @@ export default class File extends Removable {
     this.el.appendChild(this.tagsEl);
     const tags = sort(Array.from(this.tagsMap.entries()));
     for (const [tn, tv] of tags) {
-      const tag = dom("span", {classes: ["tag", `tag-${tn}`], text: tv});
+      const tag = dom("span", {
+        attrs: {title: `${tn}: ${tv}`},
+        classes: ["tag", `tag-${tn}`],
+        text: tv}
+      );
       tag.dataset.tag = tn;
       tag.dataset.tagValue = tv;
       this.tagsEl.appendChild(tag);

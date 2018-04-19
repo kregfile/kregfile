@@ -59,10 +59,7 @@ export default new class Files extends EventEmitter {
     addEventListener("dragenter", dragBody);
     addEventListener("dragover", dragBody);
     const dragEnter = e => {
-      if (this.tooltip) {
-        this.tooltip.remove();
-        this.tooltip = null;
-      }
+      this.hideTooltip();
       if (!e.dataTransfer.types.includes("Files")) {
         return;
       }
@@ -75,7 +72,6 @@ export default new class Files extends EventEmitter {
       if (e.target !== this.el) {
         return;
       }
-      console.log(e.type, e.target);
       this.adjustEmpty();
     };
     this.el.addEventListener("drop", this.ondrop.bind(this), true);
@@ -144,26 +140,6 @@ export default new class Files extends EventEmitter {
     }
   }
 
-  showTooltip() {
-    if (!this.tooltipFile) {
-      return;
-    }
-    const tt = this.tooltipFile.generateTooltip();
-    if (!tt) {
-      return;
-    }
-    this.tooltip = tt;
-    document.body.appendChild(tt.el);
-    APOOL.schedule(null, () => {
-      if (!this.tooltip) {
-        return;
-      }
-      const {x, y} = this.mousepos;
-      this.tooltip.position(x, y);
-      this.tooltip.show();
-    });
-  }
-
   onout(e) {
     if (this.el === e.target) {
       this.adjustEmpty();
@@ -174,10 +150,7 @@ export default new class Files extends EventEmitter {
     }
     this.tooltipFile = null;
     this.el.removeEventListener("mousemove", this.onmousemove);
-    if (this.tooltip) {
-      this.tooltip.remove();
-      this.tooltip = null;
-    }
+    this.hideTooltip();
   }
 
   onfilterbutton(e) {
@@ -266,6 +239,34 @@ export default new class Files extends EventEmitter {
       this.adjustEmpty();
       this.updateFilterStatus();
     }
+  }
+
+  hideTooltip() {
+    if (!this.tooltip) {
+      return;
+    }
+    this.tooltip.remove();
+    this.tooltip = null;
+  }
+
+  showTooltip() {
+    if (!this.tooltipFile) {
+      return;
+    }
+    const tt = this.tooltipFile.generateTooltip();
+    if (!tt) {
+      return;
+    }
+    this.tooltip = tt;
+    document.body.appendChild(tt.el);
+    APOOL.schedule(null, () => {
+      if (!this.tooltip) {
+        return;
+      }
+      const {x, y} = this.mousepos;
+      this.tooltip.position(x, y);
+      this.tooltip.show();
+    });
   }
 
   updateFilterStatus() {
