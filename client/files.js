@@ -264,7 +264,12 @@ class Upload extends Removable {
             Object.assign(err, resp);
             throw err;
           }
-          registry.files.once(`file-added-${resp.key}`, () => this.remove());
+          if (registry.files.has(resp.key)) {
+            this.remove();
+          }
+          else {
+            registry.files.once(`file-added-${resp.key}`, () => this.remove());
+          }
           this.setProgress(1, 1);
           this.setIcon("i-upload-done");
         }
@@ -395,7 +400,7 @@ export default new class Files extends EventEmitter {
     this.filterClear = document.querySelector("#filter-clear");
     this.filterStatus = document.querySelector("#filter-status");
     this.files = [];
-    this.fileset = new Set();
+    this.filemap = new Map();
     this.elmap = new WeakMap();
     this.onfiles = this.onfiles.bind(this);
     this.applying = null;
@@ -689,7 +694,7 @@ export default new class Files extends EventEmitter {
       }
     });
     this.files.length = 0;
-    this.fileset.clear();
+    this.filemap.clear();
     this.adjustEmpty();
     this.updateFilterStatus();
   }
@@ -722,15 +727,15 @@ export default new class Files extends EventEmitter {
       // XXX not restore save
       if (!this.files.length) {
         this.files = files;
-        this.fileset = new Set(this.files);
+        this.filemap = new Map(this.files.map(f => [f.key, f]));
       }
       else {
         this.files.push(...files);
         if (files.length > 5) {
-          this.fileset = new Set(this.files);
+          this.filemap = new Map(this.files.map(f => [f.key, f]));
         }
         else {
-          files.forEach(e => this.fileset.add(e));
+          files.forEach(e => this.filemap.set(e.key, e));
         }
       }
       this.insertFilesIntoDOM(files);
@@ -745,13 +750,13 @@ export default new class Files extends EventEmitter {
   removeFileElements(files) {
     if (files.length > 3) {
       for (const f of files) {
-        this.fileset.delete(f);
+        this.filemap.delete(f.key);
       }
-      this.files = Array.from(this.fileset);
+      this.files = Array.from(this.filemap.values());
       return;
     }
     for (const f of files) {
-      if (this.fileset.delete(f)) {
+      if (this.filemap.delete(f.key)) {
         this.files.splice(this.files.indexOf(f), 1);
       }
     }
