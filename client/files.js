@@ -21,6 +21,7 @@ export default new class Files extends EventEmitter {
   constructor() {
     super();
     this.el = document.querySelector("#files");
+    this.ubutton = document.querySelector("#upload-button");
     this.filterButtons = Array.from(document.querySelectorAll(".filterbtn"));
     this.filterFunc = null;
     this.filter = document.querySelector("#filter");
@@ -46,6 +47,7 @@ export default new class Files extends EventEmitter {
     this.addUploadElements = APOOL.wrap(this.addUploadElements);
     this.uploadOne = PromisePool.wrapNew(1, this, this.uploadOne);
     this.onfilterbutton = this.onfilterbutton.bind(this);
+    this.onuploadbutton = this.onuploadbutton.bind(this);
     Object.seal(this);
 
     const dragBody = e => {
@@ -89,6 +91,8 @@ export default new class Files extends EventEmitter {
       "input", debounce(this.onfilter.bind(this), 200));
     this.filterClear.addEventListener(
       "click", this.clearFilter.bind(this), true);
+
+    this.ubutton.addEventListener("change", this.onuploadbutton.bind(this));
 
     this.el.addEventListener("click", this.onclick.bind(this));
     this.el.addEventListener("mouseout", this.onout.bind(this));
@@ -278,13 +282,30 @@ export default new class Files extends EventEmitter {
     this.filterStatus.classList.remove("disabled");
   }
 
+  onuploadbutton() {
+    try {
+      let files = [];
+      let entries = [];
+      if (this.ubutton.webkitEntries && this.ubutton.webkitEntries.length) {
+        entries = Array.from(this.ubutton.webkitEntries);
+      }
+      else {
+        files = Array.from(this.ubutton.files);
+      }
+      this.ubutton.parentElement.reset();
+      this.queueUploads(entries, files);
+    }
+    catch (ex) {
+      console.error("failed to handle button upload", ex);
+    }
+  }
   ondrop(e) {
     e.preventDefault();
     try {
       const files = [];
       const entries = [];
       const {dataTransfer: data} = e;
-      if (data.items) {
+      if (data.items && data.items.length) {
         for (const file of Array.from(data.items)) {
           if (file.kind !== "file") {
             continue;
@@ -297,7 +318,7 @@ export default new class Files extends EventEmitter {
         }
         data.items.clear();
       }
-      else {
+      if (!entries.length) {
         for (const file of Array.from(data.files)) {
           files.push(file);
         }

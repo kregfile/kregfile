@@ -264,7 +264,7 @@ button:focus {
 #tools .btn {
   font-size: 16pt;
   display: block;
-  background: rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.7);
   color: black;
   height: cal(100% - 1ex);
   padding: 0.5ex;
@@ -274,7 +274,12 @@ button:focus {
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
   cursor: pointer;
+  transition: 0.5s background ease-in;
 }
+#tools .btn:hover {
+  background: rgba(255,255,255,0.9);
+}
+
 #tools .btn:last-child {
   border-top-right-radius: 0px;
 }
