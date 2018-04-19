@@ -2,7 +2,7 @@
 
 const {HTTP_PORT: port = 8080} = process.env;
 
-const linux = require("os").platform === "linux";
+const linux = require("os").platform() === "linux";
 
 module.exports = {
   port,
