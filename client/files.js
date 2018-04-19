@@ -254,6 +254,7 @@ export default new class Files extends EventEmitter {
   }
 
   showTooltip() {
+    this.hideTooltip();
     if (!this.tooltipFile) {
       return;
     }
