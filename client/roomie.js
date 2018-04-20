@@ -105,6 +105,9 @@ export default new class Roomie {
   }
 
   hideTooltip(id) {
+    if (this._ttinfo && this._ttinfo.id === id) {
+      this._ttinfo = null;
+    }
     if (!this.tooltip) {
       return;
     }
