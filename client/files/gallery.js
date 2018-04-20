@@ -53,7 +53,7 @@ export default class Gallery {
       return nukeEvent(e);
     }
     if (key === "ArrowRight") {
-      this.prev();
+      this.next();
       return nukeEvent(e);
     }
     return true;
