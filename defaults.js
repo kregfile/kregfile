@@ -19,4 +19,5 @@ module.exports = {
   uploadFloodDuration: 60000,
   maxAssetsProcesses: 2,
   maxMetaProcesses: 5,
+  delayServe: 0,
 };
