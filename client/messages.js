@@ -148,7 +148,7 @@ export default new class Messages extends EventEmitter {
           attrs: {
             target: "_blank",
             rel: "nofollow",
-            href: p.href,
+            href: `${p.href}/${p.name}`,
           },
           text: p.name
         });
