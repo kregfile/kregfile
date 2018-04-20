@@ -95,6 +95,7 @@ export default new class Files extends EventEmitter {
 
     this.el.addEventListener("click", this.onclick.bind(this));
     this.el.addEventListener("mouseout", this.onout.bind(this));
+    this.el.addEventListener("scroll", this.onscroll.bind(this));
   }
 
   get visible() {
@@ -134,6 +135,10 @@ export default new class Files extends EventEmitter {
       this.adjustEmpty();
     }
 
+    registry.roomie.hideTooltip(TT_ID);
+  }
+
+  onscroll() {
     registry.roomie.hideTooltip(TT_ID);
   }
 
