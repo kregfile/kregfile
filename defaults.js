@@ -41,4 +41,7 @@ module.exports = {
   maxMetaProcesses: 5,
   // For testing mostly, delay serving of assets and downloads
   delayServe: 0,
+  // For testing mostly, always create a new storage
+  // (leaking old ones, potentially)
+  forceNewStorage: false,
 };
