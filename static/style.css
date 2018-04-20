@@ -794,3 +794,12 @@ footer a {
 footer > * > a {
   margin-left: 2px;
 }
+
+#preload {
+  width: 0px !important;
+  height: 0px !important;
+  display: inline;
+  background-image: url(loader.png), url();
+
+}
+}

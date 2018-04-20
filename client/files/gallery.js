@@ -19,6 +19,8 @@ export default class Gallery {
     this.hideAux = this.hideAux.bind(this);
     this.showAux = this.showAux.bind(this);
 
+    this.onimgclick = this.onimgclick.bind(this);
+
     Object.seal(this);
 
     this.el.addEventListener("mousemove", this.startHideAux);
@@ -27,12 +29,12 @@ export default class Gallery {
 
     this.prevEl.addEventListener("click", this.prev.bind(this), true);
     this.nextEl.addEventListener("click", this.next.bind(this), true);
+  }
 
-    this.imgEl.addEventListener("click", e => {
-      this.file.open(new e.constructor(e.type, e));
-      e.preventDefault();
-      e.stopPropagation();
-    });
+  onimgclick(e) {
+    this.file.open(new e.constructor(e.type, e));
+    e.preventDefault();
+    e.stopPropagation();
   }
 
   onclose(e) {
@@ -105,7 +107,17 @@ export default class Gallery {
       return false;
     }
     this.file = file;
-    this.imgEl.src = info.img;
+    this.imgEl.src = "/static/loader.png";
+    const img = this.imgEl.cloneNode();
+    img.onload = () => {
+      if (this.file !== file) {
+        return;
+      }
+      this.imgEl.parentElement.replaceChild(img, this.imgEl);
+      this.imgEl = img;
+      this.imgEl.addEventListener("click", this.onimgclick);
+    };
+    img.src = info.img;
     this.titleEl.classList.add("visible");
     this.infoEl.textContent = info.infos.join(" — ");
     this.showAux();

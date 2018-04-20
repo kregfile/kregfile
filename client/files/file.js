@@ -73,7 +73,6 @@ class Tooltip extends Removable {
     return assets.pop();
   }
 
-  rremove() {}
   addPreview(file) {
     const preview = this.findPreview(file);
     if (!preview) {
@@ -102,11 +101,16 @@ class Tooltip extends Removable {
 
     case "image": {
       const img = new Image();
-      img.src = url;
+      img.src = "/static/loader.png";
       img.style.width = preview.width;
       img.style.height = preview.height;
       img.setAttribute("alt", `Preview for ${file.name}`);
       img.classList.add("tooltip-preview");
+      const loaded = img.cloneNode();
+      loaded.onload = () => {
+        img.parentElement.replaceChild(loaded, img);
+      };
+      loaded.src = url;
       this.el.appendChild(img);
       return;
     }
@@ -184,6 +188,7 @@ export default class File extends Removable {
     this.iconEl = dom("a", {
       attrs: {
         target: "_blank",
+        download: this.name,
         rel: "nofollow,noindex",
         href: this.url
       },

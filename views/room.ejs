@@ -2,11 +2,11 @@
 <%- include("head"); %>
 <body id="room">
   <nav id="main">
-    <div>
+    <div id="main-left">
       <button id="menu" class="i-menu"></button>
     </div>
     <h1 id="name">kregfile - better than volafile - 100% more rice</h1>
-    <div></div>
+    <div id="main-right"></div>
   </nav>
 
   <nav id="tools">
@@ -32,7 +32,10 @@
   </section>
 
   <section id="status">
-    <div id="usercountcont" title="Users online"><span class="i-users"></span><span id="usercount">0</span></div>
+    <div id="usercountcont" title="Users online">
+      <span class="i-users"></span>
+      <span id="usercount">0</span>
+    </div>
     <div id="endmarker" class="blink hidden" title="Go to new messages">▼</div>
     <input type="text" id="nick">
   </section>
@@ -52,7 +55,7 @@
   </section>
 
   <section id="gallery">
-    <img id="gallery_img"></a>
+    <img id="gallery_img" alt="" src="/favicon.ico">
     <span id="gallery_title" class="gallery_text">title</span>
     <a id="gallery_close" class="i-clear"></a>
     <a id="gallery_prev" class="gallery_prevnext i-prev"></a>
@@ -61,4 +64,5 @@
   </section>
 
   <script src="/static/client.js?v=<%=v%>"></script>
+  <div id="preload"></div>
 </body>
