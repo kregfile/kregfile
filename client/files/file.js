@@ -13,6 +13,8 @@ import {APOOL} from "../animationpool";
 import Removable from "./removable";
 import {REMOVALS, TTL} from "./tracker";
 
+export const TT_ID = Symbol();
+
 const BASE_FILE = {
   name: "",
   href: "#",
@@ -269,7 +271,11 @@ export default class File extends Removable {
   }
 
   onenter(e) {
-    this.owner.onenter(this, e);
+    const tt = this.generateTooltip();
+    if (!tt) {
+      return;
+    }
+    registry.roomie.installTooltip(TT_ID, tt, e);
   }
 
   onclick(e) {

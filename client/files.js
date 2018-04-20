@@ -15,9 +15,8 @@ import {APOOL} from "./animationpool";
 import {REMOVALS} from "./files/tracker";
 import Upload from "./files/upload";
 import File from "./files/file";
+import {TT_ID} from "./files/file";
 import Gallery from "./files/gallery";
-
-const TT_ID = Symbol();
 
 const ROBOCOPFILES =
   /^(?:thumbs.*\.db|\.ds_store.*|.*\.ds_store|.\tthn|desktop.*.ini)$/i;
@@ -128,10 +127,6 @@ export default new class Files extends EventEmitter {
     return true;
   }
 
-  onenter(file, e) {
-    this.showTooltip(file, e);
-  }
-
   onout(e) {
     if (this.el === e.target) {
       this.adjustEmpty();
@@ -235,14 +230,6 @@ export default new class Files extends EventEmitter {
 
   maybeCloseGallery(file) {
     this.gallery.maybeClose(file);
-  }
-
-  showTooltip(file, e) {
-    const tt = file.generateTooltip();
-    if (!tt) {
-      return;
-    }
-    registry.roomie.installTooltip(TT_ID, tt, e);
   }
 
   updateFilterStatus() {
