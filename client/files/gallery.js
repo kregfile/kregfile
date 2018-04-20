@@ -1,6 +1,7 @@
 "use strict";
 
 import {APOOL} from "../animationpool";
+import {nukeEvent} from "../util";
 
 export default class Gallery {
   constructor(owner) {
@@ -20,6 +21,7 @@ export default class Gallery {
     this.showAux = this.showAux.bind(this);
 
     this.onimgclick = this.onimgclick.bind(this);
+    this.onpress = this.onpress.bind(this);
 
     Object.seal(this);
 
@@ -37,6 +39,26 @@ export default class Gallery {
     e.stopPropagation();
   }
 
+  onpress(e) {
+    const {key, target: {localName}} = e;
+    if (key === "Escape") {
+      this.close();
+      return nukeEvent(e);
+    }
+    if (localName === "textarea" || localName === "input") {
+      return true;
+    }
+    if (key === "ArrowLeft") {
+      this.prev();
+      return nukeEvent(e);
+    }
+    if (key === "ArrowRight") {
+      this.prev();
+      return nukeEvent(e);
+    }
+    return true;
+  }
+
   onclose(e) {
     if (e.target !== this.el) {
       return;
@@ -46,6 +68,7 @@ export default class Gallery {
   }
 
   close() {
+    document.body.removeEventListener("keydown", this.onpress, true);
     this.el.parentElement.classList.remove("gallery");
     this.imgEl.src = "";
     this.file = null;
@@ -126,6 +149,7 @@ export default class Gallery {
       this.titleEl.textContent = file.name;
       this.startHideAux();
     });
+    document.body.addEventListener("keydown", this.onpress, true);
     return true;
   }
 }
