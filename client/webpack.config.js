@@ -13,10 +13,6 @@ class HashPlugin {
           createHmac("sha224", "kregfile").
           update(client.source()).
           digest("hex").slice(0, 10);
-        const newClient = new ConcatSource(
-          `const CLIENT_VERSION = '${d}';`,
-          client);
-        compilation.assets["client.js"] = newClient;
         compilation.assets["../lib/clientversion.js"] =
           new RawSource(`module.exports = '${d}';`);
       }
@@ -37,15 +33,8 @@ module.exports = {
   plugins: [new HashPlugin()],
   devtool: "source-map",
   resolve: {
-    alias: {
-      "localforage$": path.join(
-        __dirname,
-        "..",
-        "node_modules/localforage/dist/localforage.nopromises.min.js"),
-      "socket-io-client": path.join(
-        __dirname,
-        "..",
-        "node_modules/socket.io-client/dist/socket.io.slim.js"),
-    }
+    modules: [
+      "../node_modules",
+    ],
   }
 };
