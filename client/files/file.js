@@ -7,6 +7,7 @@ import {
   toPrettySize,
   sort,
   Rect,
+  nukeEvent,
 } from "../util";
 import {APOOL} from "../animationpool";
 import Removable from "./removable";
@@ -44,9 +45,9 @@ class Tooltip extends Removable {
     this.addPreview(file);
 
     const a = this.addTag.bind(this);
-    const {meta = {}} = file;
-    if (meta.width && meta.height) {
-      a(`${NUM_FORMAT.format(meta.width)} × ${NUM_FORMAT.format(meta.height)}`, "resolution");
+    const {meta = {}, resolution} = file;
+    if (resolution) {
+      a(resolution, "resolution");
     }
     for (const k of TIPMETA) {
       if (!meta[k]) {
@@ -199,8 +200,12 @@ export default class File extends Removable {
       classes: ["name"],
       text: this.name}
     );
+    this.linkEl = this.nameEl.cloneNode();
+    this.linkEl.style.display = "none";
     this.nameEl.addEventListener("mouseenter", this.onenter.bind(this));
+    this.nameEl.addEventListener("click", this.onclick.bind(this));
     this.el.appendChild(this.nameEl);
+    this.el.appendChild(this.linkEl);
 
     this.tagsEl = dom("span", {classes: ["tags"]});
     this.el.appendChild(this.tagsEl);
@@ -245,8 +250,89 @@ export default class File extends Removable {
     return this.ttl <= 0;
   }
 
-  onenter() {
-    this.owner.onenter(this);
+  get resolution() {
+    const {meta = {}} = this;
+    if (!meta.width && !meta.height) {
+      return "";
+    }
+    return `${NUM_FORMAT.format(meta.width)} × ${NUM_FORMAT.format(meta.height)}`;
+  }
+
+  get duration() {
+    const {meta = {}} = this;
+    return meta.duration || "";
+  }
+
+  onenter(e) {
+    this.owner.onenter(this, e);
+  }
+
+  onclick(e) {
+    try {
+      if (e.altKey || e.shiftKey || e.metaKey || e.optionKey) {
+        return true;
+      }
+      if (this.getGalleryInfo()) {
+        this.owner.openGallery(this);
+        return nukeEvent(e);
+      }
+    }
+    catch (ex) {
+      console.error(ex);
+    }
+    return true;
+  }
+
+  open(e) {
+    if (e) {
+      this.linkEl.dispatchEvent(e);
+      return;
+    }
+    console.log(e);
+    this.linkEl.click();
+  }
+
+  getGalleryInfo() {
+    if (!this.assets.size) {
+      return null;
+    }
+    const {innerWidth, innerHeight} = window;
+    const assets = Array.from(this.assets.values()).filter(e => {
+      if (e.type !== "image") {
+        return false;
+      }
+      if (e.width > innerWidth * 1.4) {
+        return false;
+      }
+      if (e.height > innerHeight * 1.4) {
+        return false;
+      }
+      return true;
+    });
+    if (!assets.length) {
+      return null;
+    }
+    const sorter = e => {
+      return [
+        !(Math.abs(e.width - innerWidth) < 100 &&
+        Math.abs(e.height - innerHeight) < 100),
+        e.width * e.height
+      ];
+    };
+    sort(assets, sorter);
+    const img = this.href + assets.pop().ext;
+    const infos = [toPrettySize(this.size), this.tags.user];
+    const {resolution, duration} = this;
+    if (duration) {
+      infos.unshift(duration);
+    }
+    if (resolution) {
+      infos.unshift(resolution);
+    }
+    return {
+      img,
+      infos
+    };
   }
 
   generateTooltip() {
@@ -265,6 +351,7 @@ export default class File extends Removable {
   remove() {
     TTL.delete(this);
     REMOVALS.add(this);
+    this.owner.maybeCloseGallery(this);
     super.remove();
   }
 }

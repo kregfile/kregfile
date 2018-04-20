@@ -8,11 +8,16 @@ import {
   debounce,
   naturalCaseSort,
   sort,
+  iter,
+  riter
 } from "./util";
 import {APOOL} from "./animationpool";
 import {REMOVALS} from "./files/tracker";
 import Upload from "./files/upload";
 import File from "./files/file";
+import Gallery from "./files/gallery";
+
+const TT_ID = Symbol();
 
 const ROBOCOPFILES =
   /^(?:thumbs.*\.db|\.ds_store.*|.*\.ds_store|.\tthn|desktop.*.ini)$/i;
@@ -22,6 +27,7 @@ export default new class Files extends EventEmitter {
     super();
     this.el = document.querySelector("#files");
     this.ubutton = document.querySelector("#upload-button");
+    this.gallery = new Gallery(this);
     this.filterButtons = Array.from(document.querySelectorAll(".filterbtn"));
     this.filterFunc = null;
     this.filter = document.querySelector("#filter");
@@ -31,12 +37,6 @@ export default new class Files extends EventEmitter {
     this.filemap = new Map();
     this.elmap = new WeakMap();
 
-    this.tooltipFile = null;
-    this.tooltip = null;
-    this.mousepos = Object.seal({x: 0, y: 0});
-
-    this.onmousemove = this.onmousemove.bind(this);
-    this.showTooltip = debounce(this.showTooltip.bind(this), 250);
     this.onfiles = this.onfiles.bind(this);
     this.onfilesdeleted = this.onfilesdeleted.bind(this);
     this.onfilesupdated = this.onfilesupdated.bind(this);
@@ -61,7 +61,7 @@ export default new class Files extends EventEmitter {
     addEventListener("dragenter", dragBody);
     addEventListener("dragover", dragBody);
     const dragEnter = e => {
-      this.hideTooltip();
+      registry.roomie.hideTooltip();
       if (!e.dataTransfer.types.includes("Files")) {
         return;
       }
@@ -128,20 +128,8 @@ export default new class Files extends EventEmitter {
     return true;
   }
 
-  onenter(file) {
-    if (!this.tooltipFile) {
-      this.el.addEventListener("mousemove", this.onmousemove);
-    }
-    this.tooltipFile = file;
-    this.showTooltip();
-  }
-
-  onmousemove(e) {
-    const x = this.mousepos.x = e.pageX;
-    const y = this.mousepos.y = e.pageY;
-    if (this.tooltip) {
-      this.tooltip.position(x, y);
-    }
+  onenter(file, e) {
+    this.showTooltip(file, e);
   }
 
   onout(e) {
@@ -149,12 +137,7 @@ export default new class Files extends EventEmitter {
       this.adjustEmpty();
     }
 
-    if (!this.tooltipFile) {
-      return;
-    }
-    this.tooltipFile = null;
-    this.el.removeEventListener("mousemove", this.onmousemove);
-    this.hideTooltip();
+    registry.roomie.hideTooltip(TT_ID);
   }
 
   onfilterbutton(e) {
@@ -245,33 +228,21 @@ export default new class Files extends EventEmitter {
     }
   }
 
-  hideTooltip() {
-    if (!this.tooltip) {
-      return;
-    }
-    this.tooltip.remove();
-    this.tooltip = null;
+  openGallery(file) {
+    registry.roomie.hideTooltip();
+    this.gallery.open(file);
   }
 
-  showTooltip() {
-    this.hideTooltip();
-    if (!this.tooltipFile) {
-      return;
-    }
-    const tt = this.tooltipFile.generateTooltip();
+  maybeCloseGallery(file) {
+    this.gallery.maybeClose(file);
+  }
+
+  showTooltip(file, e) {
+    const tt = file.generateTooltip();
     if (!tt) {
       return;
     }
-    this.tooltip = tt;
-    document.body.appendChild(tt.el);
-    APOOL.schedule(null, () => {
-      if (!this.tooltip) {
-        return;
-      }
-      const {x, y} = this.mousepos;
-      this.tooltip.position(x, y);
-      this.tooltip.show();
-    });
+    registry.roomie.installTooltip(TT_ID, tt, e);
   }
 
   updateFilterStatus() {
@@ -300,6 +271,7 @@ export default new class Files extends EventEmitter {
       console.error("failed to handle button upload", ex);
     }
   }
+
   ondrop(e) {
     e.preventDefault();
     try {
@@ -487,6 +459,22 @@ export default new class Files extends EventEmitter {
     catch (ex) {
       console.error(ex);
     }
+  }
+
+  iterfrom(file) {
+    const idx = this.files.indexOf(file);
+    if (idx < 0) {
+      return null;
+    }
+    return iter(this.files, idx);
+  }
+
+  riterfrom(file) {
+    const idx = this.files.indexOf(file);
+    if (idx < 0) {
+      return null;
+    }
+    return riter(this.files, idx);
   }
 
   removeFileElements(files) {

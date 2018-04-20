@@ -238,3 +238,5 @@ Object.assign(module.exports, require("./sorting"));
 Object.assign(module.exports, require("./promisepool"));
 Object.assign(module.exports, require("./omap"));
 Object.assign(module.exports, require("./oset"));
+Object.assign(module.exports, require("./oset"));
+Object.assign(module.exports, require("./iter"));

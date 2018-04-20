@@ -1,6 +1,8 @@
 "use strict";
 
 import registry from "./registry";
+import {debounce} from "./util";
+import {APOOL} from "./animationpool";
 
 const ALLOW_DRIFT = 200;
 
@@ -11,8 +13,14 @@ export default new class Roomie {
     this.unread = 0;
     this.hidden = document.hidden;
     this.drift = 0;
+    this.tooltip = null;
+    this.tooltipid = null;
+    this._ttinfo = null;
+    this._installTooltip = debounce(this._installTooltip.bind(this), 250);
 
     this.incrUnread = this.incrUnread.bind(this);
+    this.mousepos = Object.seal({x: 0, y: 0});
+    this.onmousemove = this.onmousemove.bind(this);
 
     Object.seal(this);
   }
@@ -31,7 +39,6 @@ export default new class Roomie {
     });
 
     registry.config.on("set-roomname", v => {
-      console.log(v);
       this.name = v;
     });
 
@@ -53,6 +60,60 @@ export default new class Roomie {
       }
       this._updateTitle();
     });
+  }
+
+  onmousemove(e) {
+    const x = this.mousepos.x = e.pageX;
+    const y = this.mousepos.y = e.pageY;
+    if (this.tooltip) {
+      this.tooltip.position(x, y);
+    }
+  }
+
+  installTooltip(id, tip, e) {
+    this._ttinfo = {id, tip};
+    if (e) {
+      this.onmousemove(e);
+    }
+    this._installTooltip();
+  }
+
+  _installTooltip() {
+    if (!this._ttinfo) {
+      return;
+    }
+    const {id, tip} = this._ttinfo;
+    this._ttinfo = null;
+    if (tip === this.tooltip) {
+      return;
+    }
+    if (this.tooltip) {
+      this.hideTooltip();
+    }
+    this.tooltip = tip;
+    this.tooltipid = id;
+    document.body.appendChild(tip.el);
+    document.body.addEventListener("mousemove", this.onmousemove);
+    APOOL.schedule(null, () => {
+      if (!this.tooltip) {
+        return;
+      }
+      const {x, y} = this.mousepos;
+      this.tooltip.position(x, y);
+      this.tooltip.show();
+    });
+  }
+
+  hideTooltip(id) {
+    if (!this.tooltip) {
+      return;
+    }
+    if (id && this.tooltipid !== id) {
+      return;
+    }
+    this.tooltip.remove();
+    this.tooltip = null;
+    document.body.removeEventListener("mousemove", this.onmousemove);
   }
 
   incrUnread() {
