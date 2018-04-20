@@ -2,7 +2,7 @@
 
 const crypto = require("crypto");
 const path = require("path");
-const {RawSource, ConcatSource} = require("webpack-sources");
+const {RawSource} = require("webpack-sources");
 
 class HashPlugin {
   apply(compiler) {
