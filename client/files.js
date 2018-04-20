@@ -115,11 +115,13 @@ export default new class Files extends EventEmitter {
       e.preventDefault();
       e.stopPropagation();
       const {tag, tagValue} = el.dataset;
+      const val = (/\s/.test(tagValue) ? `'${tagValue}'` : tagValue).
+        replace(/'/g, "\\'");
       if (e.button) {
-        this.filter.value = `${this.filter.value} -${tag}:'${tagValue.replace(/'/g, "\\'")}'`.trim();
+        this.filter.value = `${this.filter.value} -${tag}:${val}`.trim();
       }
       else {
-        this.filter.value = `${tag}:'${tagValue.replace(/'/g, "\\'")}'`;
+        this.filter.value = `${tag}:${val}`.trim();
       }
       this.doFilter();
       return false;
