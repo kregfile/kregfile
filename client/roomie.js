@@ -1,13 +1,15 @@
 "use strict";
 
+import EventEmitter from "events";
 import registry from "./registry";
 import {debounce} from "./util";
 import {APOOL} from "./animationpool";
 
 const ALLOW_DRIFT = 200;
 
-export default new class Roomie {
+export default new class Roomie extends EventEmitter {
   constructor() {
+    super();
     this._name = "New Room";
     this.motd = null;
     this.unread = 0;
@@ -21,8 +23,11 @@ export default new class Roomie {
     this.incrUnread = this.incrUnread.bind(this);
     this.mousepos = Object.seal({x: 0, y: 0});
     this.onmousemove = this.onmousemove.bind(this);
+    this.onmouseout = this.onmouseout.bind(this);
 
     Object.seal(this);
+
+    addEventListener("mouseout", this.onmouseout, true);
   }
 
   init() {
@@ -64,8 +69,11 @@ export default new class Roomie {
       this.hidden = document.hidden;
       if (!this.hidden) {
         this.unread = 0;
+        this.emit("unread", this.unread);
+        this.hideTooltip();
       }
       this._updateTitle();
+      this.emit("hidden", this.hidden);
     });
   }
 
@@ -75,6 +83,10 @@ export default new class Roomie {
     if (this.tooltip) {
       this.tooltip.position(x, y);
     }
+  }
+
+  onmouseout() {
+    this.hideTooltip();
   }
 
   installTooltip(id, tip, e) {
@@ -91,7 +103,7 @@ export default new class Roomie {
     }
     const {id, tip} = this._ttinfo;
     this._ttinfo = null;
-    if (tip === this.tooltip) {
+    if (tip === this.tooltip || this.hidden) {
       return;
     }
     if (this.tooltip) {
@@ -100,7 +112,7 @@ export default new class Roomie {
     this.tooltip = tip;
     this.tooltipid = id;
     document.body.appendChild(tip.el);
-    document.body.addEventListener("mousemove", this.onmousemove);
+    addEventListener("mousemove", this.onmousemove);
     APOOL.schedule(null, () => {
       if (!this.tooltip) {
         return;
@@ -108,11 +120,12 @@ export default new class Roomie {
       const {x, y} = this.mousepos;
       this.tooltip.position(x, y);
       this.tooltip.show();
+      this.emit("tooltip-shown", this.tooltip);
     });
   }
 
   hideTooltip(id) {
-    if (this._ttinfo && this._ttinfo.id === id) {
+    if (this._ttinfo && (!id || this._ttinfo.id === id)) {
       this._ttinfo = null;
     }
     if (!this.tooltip) {
@@ -122,8 +135,9 @@ export default new class Roomie {
       return;
     }
     this.tooltip.remove();
+    removeEventListener("mousemove", this.onmousemove);
+    this.emit("tooltip-hidden", this.tooltip);
     this.tooltip = null;
-    document.body.removeEventListener("mousemove", this.onmousemove);
   }
 
   incrUnread() {
@@ -132,6 +146,7 @@ export default new class Roomie {
     }
     this.unread++;
     this._updateTitle();
+    this.emit("unread", this.unread);
   }
 
   get name() {
@@ -141,6 +156,7 @@ export default new class Roomie {
   set name(nv) {
     this._name = nv || "";
     this._updateTitleAndName();
+    this.emit("name", this._name);
   }
 
   async displayNotification(n) {
@@ -182,7 +198,9 @@ export default new class Roomie {
 
   _updateTitle() {
     const unread = this.unread ? `(${this.unread}) ` : "";
-    document.title = `${unread}${this.name} - kregfile`;
+    const title = `${unread}${this.name}`;
+    document.title = `${title} - kregfile`;
+    this.emit("title", title);
   }
 
   _updateTitleAndName() {

@@ -49,16 +49,7 @@ export default new class Files extends EventEmitter {
     this.onuploadbutton = this.onuploadbutton.bind(this);
     Object.seal(this);
 
-    const dragBody = e => {
-      if (!e.dataTransfer.types.includes("Files")) {
-        return;
-      }
-      e.preventDefault();
-      e.stopPropagation();
-      e.dataTransfer.dropEffect = "none";
-    };
-    addEventListener("dragenter", dragBody);
-    addEventListener("dragover", dragBody);
+    let dragging = false;
     const dragEnter = e => {
       registry.roomie.hideTooltip();
       if (!e.dataTransfer.types.includes("Files")) {
@@ -68,19 +59,26 @@ export default new class Files extends EventEmitter {
       e.preventDefault();
       e.stopPropagation();
       e.dataTransfer.dropEffect = "copy";
+      if (!dragging) {
+        this.el.addEventListener("dragexit", dragExit, true);
+        this.el.addEventListener("dragleave", dragExit, true);
+        this.el.addEventListener("mouseout", dragExit, true);
+        dragging = true;
+      }
     };
     const dragExit = e => {
       if (e.target !== this.el) {
         return;
       }
+      dragging = false;
       this.adjustEmpty();
+      this.el.removeEventListener("dragexit", dragExit, true);
+      this.el.removeEventListener("dragleave", dragExit, true);
+      this.el.removeEventListener("mouseout", dragExit, true);
     };
     this.el.addEventListener("drop", this.ondrop.bind(this), true);
     this.el.addEventListener("dragenter", dragEnter, true);
     this.el.addEventListener("dragover", dragEnter, true);
-    this.el.addEventListener("dragexit", dragExit, true);
-    this.el.addEventListener("dragleave", dragExit, true);
-    this.el.addEventListener("mouseout", dragExit, true);
 
     this.filterButtons.forEach(e => {
       e.addEventListener("click", this.onfilterbutton, true);
@@ -94,7 +92,6 @@ export default new class Files extends EventEmitter {
     this.ubutton.addEventListener("change", this.onuploadbutton.bind(this));
 
     this.el.addEventListener("click", this.onclick.bind(this));
-    this.el.addEventListener("mouseout", this.onout.bind(this));
     this.el.addEventListener("scroll", this.onscroll.bind(this));
   }
 
@@ -108,6 +105,7 @@ export default new class Files extends EventEmitter {
     registry.socket.on("files", this.onfiles);
     registry.socket.on("files-deleted", this.onfilesdeleted);
     registry.socket.on("files-updated", this.onfilesupdated);
+    registry.roomie.on("tooltip-hidden", () => this.adjustEmpty());
   }
 
   onclick(e) {
@@ -128,14 +126,6 @@ export default new class Files extends EventEmitter {
       return false;
     }
     return true;
-  }
-
-  onout(e) {
-    if (this.el === e.target) {
-      this.adjustEmpty();
-    }
-
-    registry.roomie.hideTooltip(TT_ID);
   }
 
   onscroll() {
