@@ -347,12 +347,17 @@ export default new class Files extends EventEmitter {
     }
     const files = data.files.map(f => {
       f = new File(this, f);
+      if (f.expired) {
+        return null;
+      }
       this.elmap.set(f.el, f);
       this.emit("file-added", f);
       this.emit(`file-added-${f.key}`, f);
       return f;
-    });
-    this.addFileElements(files);
+    }).filter(e => e);
+    if (files.length) {
+      this.addFileElements(files);
+    }
   }
 
   onfilesupdated(files) {
