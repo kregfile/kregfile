@@ -369,6 +369,14 @@ button:focus {
   user-select: none;
 }
 
+#connection {
+  display: none;
+}
+
+#connection.visible {
+  display: block;
+}
+
 #usercount {
   display: inline-block;
   margin-left: 1ex;
@@ -801,5 +809,4 @@ footer > * > a {
   display: inline;
   background-image: url(loader.png), url();
 
-}
 }

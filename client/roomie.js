@@ -29,6 +29,13 @@ export default new class Roomie {
     registry.socket.on("usercount", v => {
       document.querySelector("#usercount").textContent = v;
     });
+    const connection = document.querySelector("#connection");
+    registry.socket.on("reconnecting", () => {
+      connection.classList.add("visible");
+    });
+    registry.socket.on("connect", () => {
+      connection.classList.remove("visible");
+    });
 
     registry.socket.on("time", v => {
       const now = Date.now();
