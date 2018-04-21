@@ -312,6 +312,10 @@ button:focus {
     border: 1px solid var(--odd-bg);
     margin-bottom: 2px
 }
+.chatfile .icon {
+  display: inline-block;
+  margin-right: 0.5ex;
+}
 
 .u{
   display: inline-block;
@@ -636,23 +640,23 @@ button:focus {
   text-overflow: ellipsis;
 }
 
-.file > .i-image {
+.icon.i-image {
     color: lightskyblue;
 }
 
-.file > .i-video {
+.icon.i-video {
     color: yellowgreen;
 }
 
-.file > .i-document {
+.icon.i-document {
     color: lightsalmon;
 }
 
-.file > .i-archive {
+.icon.i-archive {
     color: bisque;
 }
 
-.file > .i-audio {
+.icon.i-audio {
     color: orchid;
 }
 

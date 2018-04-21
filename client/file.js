@@ -9,6 +9,7 @@ import {
   toPrettySize,
   sort,
   Rect,
+  toType,
 } from "./util";
 
 const BASE_FILE = {
@@ -17,15 +18,6 @@ const BASE_FILE = {
   tags: {},
   expires: 0,
 };
-
-const ICONS = Object.freeze(new Set([
-  "video",
-  "audio",
-  "image",
-  "document",
-  "archive",
-  "file",
-]));
 
 const TIPMETA = Object.freeze(["duration", "codec", "bitrate"]);
 
@@ -172,9 +164,7 @@ export default class File extends Removable {
 
     this.assets = new Map(this.assets);
 
-    if (!ICONS.has(this.type)) {
-      this.type = "file";
-    }
+    this.type = toType(this.type);
 
     this.url = `${this.href}/${this.name}`;
   }

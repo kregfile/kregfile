@@ -77,4 +77,17 @@ export class Rect {
   }
 }
 
+const TYPES = Object.freeze(new Set([
+  "video",
+  "audio",
+  "image",
+  "document",
+  "archive",
+  "file",
+]));
+
+export function toType(type) {
+  return TYPES.has(type) && type || "file";
+}
+
 export * from "../common/index";

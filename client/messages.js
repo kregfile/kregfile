@@ -2,7 +2,7 @@
 
 import EventEmitter from "events";
 import localforage from "localforage";
-import {dom, debounce, nukeEvent} from "./util";
+import {dom, debounce, nukeEvent, toType} from "./util";
 import {APOOL} from "./animationpool";
 import registry from "./registry";
 import Tooltip from "./tooltip";
@@ -202,6 +202,9 @@ export default new class Messages extends EventEmitter {
           },
           text: p.name
         });
+        file.insertBefore(dom("span", {
+          classes: ["icon", `i-${toType(p.type)}`],
+        }), file.firstChild);
         const info = registry.files.get(p.key) || p;
         this.files.set(file, info);
         file.addEventListener("mouseenter", this.onfileenter);
