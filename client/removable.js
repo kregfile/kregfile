@@ -1,9 +1,12 @@
 "use strict";
 
-import {APOOL} from "../animationpool";
+import {APOOL} from "./animationpool";
 
 export default class Removable {
   remove() {
+    if (!this.el) {
+      return;
+    }
     try {
       if (this.el.parentElement) {
         this.el.parentElement.removeChild(this.el);

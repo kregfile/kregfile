@@ -15,7 +15,6 @@ import {APOOL} from "./animationpool";
 import {REMOVALS} from "./files/tracker";
 import Upload from "./files/upload";
 import File from "./files/file";
-import {TT_ID} from "./files/file";
 import Gallery from "./files/gallery";
 
 const ROBOCOPFILES =
@@ -129,7 +128,7 @@ export default new class Files extends EventEmitter {
   }
 
   onscroll() {
-    registry.roomie.hideTooltip(TT_ID);
+    registry.roomie.hideTooltip();
   }
 
   onfilterbutton(e) {
@@ -376,6 +375,10 @@ export default new class Files extends EventEmitter {
       }
       existing.remove();
     }
+  }
+
+  get(key) {
+    return this.filemap.get(key);
   }
 
   has(key) {

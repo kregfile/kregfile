@@ -18,6 +18,7 @@ export default new class Roomie extends EventEmitter {
     this.tooltip = null;
     this.tooltipid = null;
     this._ttinfo = null;
+    this._mouseMoveInstalled = false;
     this._installTooltip = debounce(this._installTooltip.bind(this), 250);
 
     this.incrUnread = this.incrUnread.bind(this);
@@ -89,8 +90,26 @@ export default new class Roomie extends EventEmitter {
     this.hideTooltip();
   }
 
-  installTooltip(id, tip, e) {
-    this._ttinfo = {id, tip};
+
+  _installMouseMove() {
+    if (this._mouseMoveInstalled) {
+      return;
+    }
+    addEventListener("mousemove", this.onmousemove);
+    this._mouseMoveInstalled = true;
+  }
+
+  _removeMouseMove() {
+    if (!this._mouseMoveInstalled) {
+      return;
+    }
+    addEventListener("mousemove", this.onmousemove);
+    this._mouseMoveInstalled = false;
+  }
+
+  installTooltip(tip, e) {
+    this._installMouseMove();
+    this._ttinfo = tip;
     if (e) {
       this.onmousemove(e);
     }
@@ -101,7 +120,7 @@ export default new class Roomie extends EventEmitter {
     if (!this._ttinfo) {
       return;
     }
-    const {id, tip} = this._ttinfo;
+    const tip = this._ttinfo;
     this._ttinfo = null;
     if (tip === this.tooltip || this.hidden) {
       return;
@@ -110,9 +129,7 @@ export default new class Roomie extends EventEmitter {
       this.hideTooltip();
     }
     this.tooltip = tip;
-    this.tooltipid = id;
     document.body.appendChild(tip.el);
-    addEventListener("mousemove", this.onmousemove);
     APOOL.schedule(null, () => {
       if (!this.tooltip) {
         return;
@@ -124,18 +141,15 @@ export default new class Roomie extends EventEmitter {
     });
   }
 
-  hideTooltip(id) {
-    if (this._ttinfo && (!id || this._ttinfo.id === id)) {
+  hideTooltip() {
+    if (this._ttinfo) {
       this._ttinfo = null;
     }
     if (!this.tooltip) {
       return;
     }
-    if (id && this.tooltipid !== id) {
-      return;
-    }
     this.tooltip.remove();
-    removeEventListener("mousemove", this.onmousemove);
+    this._removeMouseMove();
     this.emit("tooltip-hidden", this.tooltip);
     this.tooltip = null;
   }

@@ -2,9 +2,11 @@
 
 import EventEmitter from "events";
 import localforage from "localforage";
-import {dom, debounce} from "./util";
+import {dom, debounce, nukeEvent} from "./util";
 import {APOOL} from "./animationpool";
 import registry from "./registry";
+import Tooltip from "./tooltip";
+import File from "./file";
 
 const DATE_FORMAT_SHORT = new Intl.DateTimeFormat("en-US", {
   hour12: false,
@@ -22,7 +24,7 @@ export default new class Messages extends EventEmitter {
     this.msgs = [];
     this.els = [];
     this.queue = [];
-    this.fileInfos = new WeakMap();
+    this.files = new WeakMap();
     this.flushing = null;
     this.store = localforage.createInstance({
       storeName: "msgs"
@@ -30,6 +32,8 @@ export default new class Messages extends EventEmitter {
     this._save = debounce(this._save.bind(this));
     this.flush = APOOL.wrap(this.flush);
     this.scrollEnd = APOOL.wrap(this.scrollEnd);
+    this.onfileenter = this.onfileenter.bind(this);
+    this.onfileclick = this.onfileclick.bind(this);
     this.restoring = [];
 
     Object.seal(this);
@@ -63,6 +67,52 @@ export default new class Messages extends EventEmitter {
         this.hideEndMarker();
       }
     });
+  }
+
+  async onfileenter(e) {
+    let file = this.files.get(e.target);
+    if (!file) {
+      return;
+    }
+    if (file.unknown) {
+      registry.roomie.installTooltip(new Tooltip("File unknown"), e);
+      return;
+    }
+    if (!file.url) {
+      try {
+        file = await registry.socket.makeCall("fileinfo", file.key);
+        if (!file) {
+          throw Error("no file");
+        }
+        file.external = true;
+        file = new File(file);
+        this.files.set(e.target, file);
+      }
+      catch (ex) {
+        file.unknown = true;
+        console.error(ex);
+        return;
+      }
+    }
+    if (file.expired || file.unknown) {
+      registry.roomie.installTooltip(new Tooltip("File unknown"), e);
+      return;
+    }
+    file.showTooltip(e);
+  }
+
+  onfileclick(e) {
+    const file = this.files.get(e.target);
+    if (!file) {
+      return true;
+    }
+    if (file.expired) {
+      return nukeEvent(e);
+    }
+    if (file.external) {
+      return true;
+    }
+    return file.onclick(e);
   }
 
   _save() {
@@ -152,7 +202,10 @@ export default new class Messages extends EventEmitter {
           },
           text: p.name
         });
-        this.fileInfos.set(file, p);
+        const info = registry.files.get(p.key) || p;
+        this.files.set(file, info);
+        file.addEventListener("mouseenter", this.onfileenter);
+        file.addEventListener("click", this.onfileclick);
         msg.appendChild(file);
         break;
       }

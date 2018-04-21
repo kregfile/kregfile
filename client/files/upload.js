@@ -1,6 +1,6 @@
 "use strict";
 
-import Removable from "./removable";
+import Removable from "../removable";
 import registry from "../registry";
 import {
   dom,
@@ -160,7 +160,24 @@ export default class Upload extends Removable {
             this.remove();
           }
           else {
-            this.owner.once(`file-added-${resp.key}`, () => this.remove());
+            let to = 0;
+            const rem = () => {
+              to = 0;
+              this.remove();
+            };
+            const check = () => {
+              if (!to) {
+                return;
+              }
+              if (!this.owner.has(resp.key)) {
+                to = setTimeout(check, 1000);
+                return;
+              }
+              this.owner.removeListener(`file-added-${resp.key}`, rem);
+              rem();
+            };
+            to = setTimeout(check, 1000);
+            this.owner.once(`file-added-${resp.key}`, rem);
           }
           this.setProgress(1, 1);
           this.setIcon("i-upload-done");

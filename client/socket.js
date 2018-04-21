@@ -20,6 +20,29 @@ export default function createSocket() {
     query: params.toString(),
     transports: ["websocket"],
   });
+  socket.makeCall = (target, id, ...args) => {
+    return new Promise((resolve, reject) => {
+      try {
+        const rresolve = rv => {
+          if (rv && rv.err) {
+            reject(new Error(rv.err));
+            return;
+          }
+          resolve(rv);
+        };
+        if (!id) {
+          socket.once(target, rresolve);
+          socket.emit(target);
+        }
+        socket.once(`${target}-${id}`, rresolve);
+        socket.emit(target, id, ...args);
+      }
+      catch (ex) {
+        reject(ex);
+      }
+    });
+  };
+
   socket.on("reconnect", () => {
     registry.messages.add({
       volatile: true,
