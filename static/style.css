@@ -392,7 +392,7 @@ button:focus {
 #user-icon {
   color: white;
   display: inline-block;
-  margin-right: 0.3ex;
+  margin-right: 0.8ex;
 }
 #user-icon.user {
   color: var(--role-user-fg);
