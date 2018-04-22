@@ -1,0 +1,28 @@
+<!doctype html>
+<%- include("head"); %>
+<body id="page">
+  <nav>
+    <h1 id="name"><%=user.name%> is a kregfile user!</h1>
+  </nav>
+  <article id="userprofile">
+    <h2><%=user.name%></h2>
+    <% if (user.gravatar) { %>
+    <img id="avatar" src="<%=user.gravatar%>">
+    <% } else { %>
+    <span id="avatar" class="i-white"></span>
+    <% } %>
+    <% if (user.role === "mod") { %>
+    <p><strong>Moderator</strong></p>
+    <% } %>
+    <% if (user.pubmail && user.email) { %>
+    <p title="email"><%=user.email%></p>
+    <% } %>
+    <% if (user.message) { %>
+    <h4>Says</h4>
+    <p title="message" id="message"><%=user.message%></p>
+    <% } else { %>
+    <p title="message"><%=user.name%> didn't leave you a message, I'm afraid...</p>
+    <% } %>
+  </article>
+  <%- include("footer"); %>
+</body>

@@ -43,6 +43,31 @@ export default function createSocket() {
     });
   };
 
+  let token = null;
+  socket.on("token", t => {
+    token = t;
+  });
+
+  socket.rest = async (endp, params) => {
+    params = Object.assign({token}, params);
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    let res = await fetch(`/api/${endp}`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(params),
+      credentials: "same-origin",
+    });
+    if (!res.ok) {
+      throw new Error("Server returned an error");
+    }
+    res = await res.json();
+    if (res && res.err) {
+      throw new Error(res.err);
+    }
+    return res;
+  };
+
   socket.on("reconnect", () => {
     registry.messages.add({
       volatile: true,

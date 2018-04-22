@@ -1,5 +1,6 @@
 node_modules/
 static/client.js*
+static/register.js*
 .DS_Store
 .config.json
 lib/clientversion.js

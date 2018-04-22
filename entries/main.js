@@ -1,6 +1,6 @@
 "use strict";
 
-import registry from "./registry";
+import registry from "client/registry";
 registry.init();
 
 addEventListener("DOMContentLoaded", function load() {

@@ -361,7 +361,6 @@ export default new class Files extends EventEmitter {
   }
 
   onfilesupdated(files) {
-    console.log("update", this, files);
     for (const f of files) {
       const existing = this.filemap.get(f.key);
       if (!existing) {

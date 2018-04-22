@@ -10,7 +10,7 @@
   --upload-bg: rgb(66, 66, 66);
   --err-bg: #f75353;
   --role-user-fg: #23d16f;
-  --role-mod-fg: pink;
+  --role-mod-fg:#d880fc;
   --role-system-fg: #d880fc;
   --base-size: 12pt;
   --base-font: 'Open Sans', sans-serif;
@@ -148,6 +148,7 @@ button:focus {
 #page h1 {
   margin: 1ex 0.5ex;
   width: 800px;
+  text-align: center;
 }
 
 #room nav {
@@ -321,9 +322,11 @@ button:focus {
   display: inline-block;
   font-weight: bold;
   padding-right: 1ex;
-  white-space: no-wrap;
+  white-space: nowrap;
   color: var(--dark-fg);
+  text-decoration: none;
 }
+
 .u > .time {
   display: inline-block;
   font-weight: normal;
@@ -341,8 +344,8 @@ button:focus {
   color: var(--role-user-fg);
 }
 
-.u.admin {
-  color: var(--role-admin-fg);
+.u.mod {
+  color: var(--role-mod-fg);
 }
 
 .msg {
@@ -385,6 +388,19 @@ button:focus {
   display: inline-block;
   margin-left: 1ex;
 }
+
+#user-icon {
+  color: white;
+  display: inline-block;
+  margin-right: 0.3ex;
+}
+#user-icon.user {
+  color: var(--role-user-fg);
+}
+#user-icon.mod {
+  color: var(--role-mod-fg);
+}
+
 
 #nick {
   color: var(--text-fg);
@@ -751,6 +767,18 @@ button:focus {
   grid-column: 1;
   grid-row: span 10000;
 }
+span.tooltip-preview:before {
+  color: var(--role-user-fg);
+  font-size: 100px;
+}
+
+span.tooltip-preview.mod:before {
+  color: var(--role-mod-fg);
+}
+
+.tooltip-user img {
+  max-width: 100px;
+}
 
 #status {
   grid-area: status;
@@ -812,5 +840,279 @@ footer > * > a {
   height: 0px !important;
   display: inline;
   background-image: url(loader.png), url();
+}
 
+.tmpl {
+  display: none;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+#page textarea {
+  background: var(--main-bg);
+  color: var(--text-fg);
+  border: 0;
+  padding: 2px 10px;
+}
+
+#page textarea {
+  width: 100%;
+  min-height: calc(7px + 4em);
+}
+
+#page #register {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 60ex;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-column-gap: 1em;
+  grid-row-gap: 1ex;
+}
+#page label {
+  font-size: small;
+}
+
+#page #submit {
+  grid-column: 1 / span 2;
+  justify-self: center;
+}
+
+#page #account {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-column-gap: 1em;
+  grid-row-gap: 2ex;
+}
+#page #account h3 {
+  margin: 0;
+  margin-bottom: 1ex;
+}
+#page label[for="msg"],
+#page #account #msg {
+  grid-column: 1 / span 2;
+}
+
+#page #userprofile {
+  max-width: 60ex;
+  word-wrap: break-word;
+}
+
+#page #userprofile #avatar {
+  display: block;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#page #userprofile span#avatar:before {
+  font-size: 200px;
+}
+
+#page #userprofile #message {
+  white-space: pre;
+}
+
+ul.context-menu,
+ul.context-menu ul {
+  font-size: 16px !important;
+  position: fixed;
+  min-width: 20ex;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.9);
+  color: black;
+}
+
+.context-menu-item {
+  cursor: pointer;
+  display: flex;
+  padding: 4px 1ex;
+  vertical-align: middle;
+}
+.context-menu-item > * {
+  display: inline-block;
+  flex: 0 0 auto;
+  vertical-align: middle;
+  margin: auto;
+}
+
+.context-menu-item:hover:not(.context-menu-seperator) {
+  background: var(--lite-bg);
+  color: white;
+}
+
+.context-menu-item.disabled,
+.context-menu-item.disabled > * {
+  color: lightgray !important;
+  pointer-events: none;
+}
+
+.context-menu-seperator {
+  border-bottom: 1px solid darkgray;
+  box-shadow: 0px 1px 0px 0px rgba(220,220,220,0.5);
+  margin-left: 1ex;
+  margin-right: 1ex;
+  margin-bottom: 2px;
+  margin-top: 2px;
+  padding: 0;
+  pointer-events: none;
+}
+.context-menu-seperator > * {
+  display: none !important;
+}
+.context-menu-icon {
+  width: 16px;
+  height: 16px;
+  padding-left: 0;
+  padding-right: 0.3ex;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  margin: 0;
+  margin-right: 4px;
+}
+.context-menu-text {
+  flex: 1 1;
+  margin-right: 1ex;
+}
+
+.context-menu-expand {
+  margin-left: 1.2em;
+  font-size: 10px;
+}
+#ctx-options {
+  display: none;
+}
+
+.owner #ctx-options,
+.mod #ctx-options {
+  display: block;
+}
+
+.authed #ctx-register,
+.authed #ctx-login {
+  display: none;
+}
+
+.unauthed #ctx-account,
+.unauthed #ctx-logout {
+  display: none;
+}
+.regular #ctx-nuke,
+.regular #ctx-ban,
+.regular #ctx-unban,
+.regular #ctx-bl,
+.regular #ctx-wl,
+.regular #ctx-remove {
+  display: none;
+}
+
+.modal-holder {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+.modal {
+  background: var(--main-bg);
+  max-width: 80%;
+  max-height: 90%;
+  border: 3px solid var(--lite-bg);
+  padding: 1em;
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+  box-shadow: 4px 4px 20px rgba(200,200,200,0.2);
+}
+
+.modal input[type="text"],
+.modal input[type="password"],
+.modal input[type="email"],
+.modal textarea {
+  background: var(--dark-bg);
+  color: var(--text-fg);
+  border: 0;
+  padding: 2px 10px;
+}
+
+.modal-head {
+  margin-bottom: 1em;
+  font-size: 110%;
+  font-weight: bold;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.modal-body {
+  text-overflow: ellipsis;
+}
+
+.modal-buttons {
+  display: flex;
+  user-select: none;
+  padding-top: 4px;
+  margin-top: 1em;
+  justify-self: end;
+  justify-content: flex-end;
+}
+
+.modal-button {
+  margin-left: 1em;
+}
+
+.modal-messagebox .modal-body {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-column-gap: 1em;
+}
+
+.modal-button {
+  opacity: 0.9;
+}
+.modal-button-default {
+  opacity: 1;
+}
+
+.modal-button-cancel {
+  opacity: 0.7;
+}
+
+.modal-messagebox-icon {
+  font-size: 64px;
+}
+
+.modal-login .modal-body {
+  display: grid;
+  grid-template-columns: auto 1fr 2fr;
+  min-width: 60ex;
+  grid-column-gap: 1ex;
+  grid-row-gap: 1.3ex;
+}
+
+.modal #login-icon {
+  width: 64px;
+  font-size: 64px;
+  margin-right: 20px;
+  grid-column: 1;
+  grid-row: 1 / span 2;
+}
+
+.kf {
+  background-image: url("favicon.png");
+  background-size: 16px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  height: 16px;
+  width: 16px;
 }

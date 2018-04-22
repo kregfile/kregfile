@@ -1,0 +1,26 @@
+<!doctype html>
+<%- include("head"); %>
+<body id="page">
+  <nav>
+    <h1 id="name">Welcome again, <%=user.account%></h1>
+  </nav>
+  <article>
+    <h2>Edit your account settings</h2>
+    <form id="account" autocomplete="false" action="javascript:">
+      <input type="hidden" id="token" name="token" value="<%=token%>">
+      <label>kregfile PRO</label>
+      <div>Of course!</div>
+      <label for="email">Your gravatar email:</label>
+      <input type="email" id="email" name="email" value="<%=user.email || ""%>">
+      <label for="pubmail">Display email publicly:</label>
+      <input type="checkbox" id="pubmail" name="pubmail" <%=(user.pubmail ? "checked" : "")%>>
+      <div id="msg">
+        <h3>Say something (stupid):</h3>
+        <textarea name="msg" id="message" maxlength="2000"><%=user.message || ""%></textarea>
+      </div>
+      <input type="submit" id="submit" value="Update your data">
+    </form>
+  </article>
+  <%- include("footer"); %>
+  <script src="/static/account.js?v=<%=v%>"></script>
+</body>

@@ -6,20 +6,25 @@
   "author": "RealDolos <dolos@cock.li>",
   "license": "MIT",
   "scripts": {
-    "pack": "cd client && webpack --verbose -w",
-    "prestart": "cd client && webpack --mode=production"
+    "pack": "webpack -w",
+    "prestart": "webpack --mode=production"
   },
   "dependencies": {
     "blake2": "https://github.com/RealDolos/node-blake2",
+    "body-parser": "^1.18.2",
     "colors": "^1.2.1",
     "compression": "^1.7.2",
+    "cookie": "^0.3.1",
     "cookie-parser": "^1.4.3",
     "ejs": "^2.5.8",
     "express": "^4.16.3",
     "helmet": "^3.12.0",
     "localforage": "^1.7.1",
     "mkdirp": "^0.5.1",
+    "passlib": "https://github.com/RealDolos/node-passlib",
     "redis": "^2.8.0",
+    "request": "^2.85.0",
+    "request-promise-native": "^1.0.5",
     "send": "^0.16.2",
     "serve-static": "^1.13.2",
     "sharp": "^0.20.1",

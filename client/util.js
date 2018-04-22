@@ -90,4 +90,33 @@ export function toType(type) {
   return TYPES.has(type) && type || "file";
 }
 
+export function validateUsername(nick) {
+  if (nick.length <= 3) {
+    throw new Error("User name too short");
+  }
+  if (nick.length > 20) {
+    throw new Error("User name too long");
+  }
+  nick = nick.replace(/[^a-z\d]/gi, "");
+  if (nick.length <= 3) {
+    throw new Error("User name too short");
+  }
+  return nick;
+}
+
+export function formToJSON(data) {
+  const rv = {};
+  data.forEach(function(value, key) {
+    rv[key] = value;
+  });
+  return JSON.stringify(rv);
+}
+
+export function openInNew(href) {
+  dom("a", {attrs: {
+    href,
+    target: "_blank",
+  }}).click();
+}
+
 export * from "../common/index";

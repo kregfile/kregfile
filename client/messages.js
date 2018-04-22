@@ -16,6 +16,52 @@ const DATE_FORMAT_SHORT = new Intl.DateTimeFormat("en-US", {
 });
 const DATE_FORMAT_LONG = new Intl.DateTimeFormat("eu");
 
+class UserTooltip extends Tooltip {
+  constructor(info) {
+    super(info.name);
+    this.el.classList.add("tooltip-user");
+    if (info.gravatar) {
+      this.el.appendChild(dom("img", {
+        classes: ["tooltip-preview"],
+        attrs: {src: info.gravatar}
+      }));
+    }
+    else {
+      this.el.appendChild(dom("span", {
+        classes: [
+          "tooltip-preview",
+          info.role === "mod" ? "i-purple" : "i-green",
+          info.role
+        ],
+      }));
+    }
+
+    const add = (t, v) => {
+      this.el.appendChild(dom("span", {
+        classes: ["tooltip-tag-tag"],
+        text: `${t}:`
+      }));
+      this.el.appendChild(dom("span", {
+        classes: ["tooltip-tag-value"],
+        text: v
+      }));
+    };
+
+    switch (info.role) {
+    case "mod":
+      add("Is a", "Moderator");
+      break;
+
+    case "user":
+      add("Is a", "User");
+      break;
+    }
+    if (info.email) {
+      add("Email", info.email);
+    }
+  }
+}
+
 export default new class Messages extends EventEmitter {
   constructor() {
     super();
@@ -25,6 +71,7 @@ export default new class Messages extends EventEmitter {
     this.els = [];
     this.queue = [];
     this.files = new WeakMap();
+    this.users = new Map();
     this.flushing = null;
     this.store = localforage.createInstance({
       storeName: "msgs"
@@ -33,6 +80,7 @@ export default new class Messages extends EventEmitter {
     this.flush = APOOL.wrap(this.flush);
     this.scrollEnd = APOOL.wrap(this.scrollEnd);
     this.onfileenter = this.onfileenter.bind(this);
+    this.onuserenter = this.onuserenter.bind(this);
     this.onfileclick = this.onfileclick.bind(this);
     this.restoring = [];
 
@@ -101,6 +149,31 @@ export default new class Messages extends EventEmitter {
     file.showTooltip(e);
   }
 
+  async onuserenter(e) {
+    const {profile} = e.target.dataset;
+    if (!profile) {
+      return;
+    }
+    try {
+      let info = this.users.get(profile);
+      if (!info || info.expires < Date.now()) {
+        info = await registry.socket.makeCall("profileinfo", profile);
+        if (!info) {
+          return;
+        }
+        info.expires = Date.now() + 1200000;
+        this.users.set(profile, info);
+        if (this.users.size > 100) {
+          this.users.delete(this.users.keys().next().value);
+        }
+      }
+      registry.roomie.installTooltip(new UserTooltip(info), e);
+    }
+    catch (ex) {
+      console.error(ex);
+    }
+  }
+
   onfileclick(e) {
     const file = this.files.get(e.target);
     if (!file) {
@@ -140,12 +213,15 @@ export default new class Messages extends EventEmitter {
       return notify;
     }
 
+    if (!m.saved) {
+      this.emit("message", m);
+    }
+    m.saved = true;
     this.msgs.push(m);
     if (this.msgs.length > 100) {
       this.msgs.shift();
     }
     this._save();
-    this.emit("message", m);
     return notify;
   }
 
@@ -168,10 +244,27 @@ export default new class Messages extends EventEmitter {
     if (m.role) {
       ucls.push(m.role);
     }
-    const user = dom("span", {
-      classes: ucls,
-      text: m.me ? m.user : `${m.user}:`
-    });
+    let user;
+    if (m.role && m.role !== "white" && m.role !== "system") {
+      const profile = m.user.toLowerCase();
+      user = dom("a", {
+        classes: ucls,
+        attrs: {
+          href: `/u/${profile}`,
+          target: "_blank",
+          rel: "nofollow",
+        },
+        text: m.me ? m.user : `${m.user}:`
+      });
+      user.dataset.profile = profile;
+      user.addEventListener("mouseenter", this.onuserenter);
+    }
+    else {
+      user = dom("span", {
+        classes: ucls,
+        text: m.me ? m.user : `${m.user}:`
+      });
+    }
 
     const ts = dom("span", {
       attrs: {title: DATE_FORMAT_LONG.format(m.date)},

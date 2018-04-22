@@ -2,22 +2,107 @@
 
 import EventEmitter from "events";
 import registry from "./registry";
-import {debounce} from "./util";
+import {dom, debounce, openInNew, nukeEvent} from "./util";
 import {APOOL} from "./animationpool";
+import {ContextMenu} from "./contextmenu";
+import {MessageBox} from "./modal";
+import Modal from "./modal";
 
 const ALLOW_DRIFT = 200;
+
+class LoginModal extends Modal {
+  constructor(owner) {
+    super("login", "Login", {
+      text: "Login",
+      default: true
+    }, {
+      text: "Cancel",
+      cancel: true
+    });
+    this.owner = owner;
+    this.body.innerHTML = document.querySelector("#login-tmpl").innerHTML;
+  }
+
+  get user() {
+    return this.el.elements.u.value;
+  }
+
+  get password() {
+    return this.el.elements.p.value;
+  }
+
+  onshown() {
+    this.el.elements.u.focus();
+  }
+
+  async validate() {
+    const {user, password} = this;
+    if (!user || !password) {
+      await this.owner.showMessage(
+        "Provide a user name and password",
+        "Error",
+        "i-error");
+      return false;
+    }
+    this.disable();
+    try {
+      const res = await registry.socket.rest("login", {
+        u: this.user,
+        p: this.password,
+      });
+      if (!res || !res.session) {
+        throw new Error("Could not log in!");
+      }
+      registry.socket.emit("session", res.session);
+      registry.chatbox.setNick(user);
+      registry.messages.add({
+        user: "System",
+        role: "system",
+        volatile: true,
+        msg: "Successfully logged in!"
+      });
+      if (window.PasswordCredential) {
+        const cred = new PasswordCredential({
+          id: user.toLowerCase(),
+          password
+        });
+        try {
+          await navigator.credentials.store(cred);
+        }
+        catch (ex) {
+          console.error("Failed to save cred", ex);
+        }
+      }
+      return true;
+    }
+    catch (ex) {
+      await this.owner.showMessage(
+        ex.message || ex,
+        "Error",
+        "i-error");
+      return false;
+    }
+    finally {
+      this.enable();
+    }
+  }
+}
 
 export default new class Roomie extends EventEmitter {
   constructor() {
     super();
     this._name = "New Room";
     this.motd = null;
+    this.menu = document.querySelector("#menu");
+    this.menu.addEventListener("click", this.onmenu.bind(this));
+    this.context = new ContextMenu("#context-menu");
     this.unread = 0;
     this.hidden = document.hidden;
     this.drift = 0;
     this.tooltip = null;
     this.tooltipid = null;
     this._ttinfo = null;
+    this.modals = new Set();
     this._mouseMoveInstalled = false;
     this._installTooltip = debounce(this._installTooltip.bind(this), 250);
 
@@ -25,10 +110,77 @@ export default new class Roomie extends EventEmitter {
     this.mousepos = Object.seal({x: 0, y: 0});
     this.onmousemove = this.onmousemove.bind(this);
     this.onmouseout = this.onmouseout.bind(this);
+    this.onmodalkey = this.onmodalkey.bind(this);
 
     Object.seal(this);
 
     addEventListener("mouseout", this.onmouseout, true);
+    const ces = [
+      "home", "report", "options",
+      "ban", "unban", "bl", "wl", "remove",
+      "register", "login", "account", "logout"
+    ];
+    for (const ce of ces) {
+      this.context.on(`ctx-${ce}`, this[`onctx${ce}`].bind(this));
+    }
+  }
+
+  onctxhome() {
+    openInNew("/");
+  }
+
+  onctxreport() {
+  }
+
+  onctxoptions() {
+  }
+
+  onctxban() {
+  }
+
+  onctxunban() {
+  }
+
+  onctxbl() {
+  }
+
+  onctxwl() {
+  }
+
+  onctxremove() {
+  }
+
+  onctxregister() {
+    openInNew("/register");
+  }
+
+  async onctxlogin() {
+    try {
+      await this.showModal(new LoginModal(this));
+    }
+    catch (ex) {
+      // ignored
+    }
+  }
+
+  onctxaccount() {
+    openInNew("/account");
+  }
+
+  async onctxlogout() {
+    try {
+      await registry.socket.rest("logout");
+      registry.socket.emit("session", null);
+      registry.messages.add({
+        user: "System",
+        role: "system",
+        volatile: true,
+        msg: "Successfully logged out!"
+      });
+    }
+    catch (ex) {
+      await this.showMessage(ex.message || ex, "Error");
+    }
   }
 
   init() {
@@ -41,6 +193,14 @@ export default new class Roomie extends EventEmitter {
     });
     registry.socket.on("connect", () => {
       connection.classList.remove("visible");
+    });
+    registry.socket.on("authed", authed => {
+      document.body.classList[authed ? "add" : "remove"]("authed");
+      document.body.classList[!authed ? "add" : "remove"]("unauthed");
+    });
+    registry.socket.on("role", role => {
+      document.body.classList[role === "mod" ? "add" : "remove"]("mod");
+      document.body.classList[role !== "mod" ? "add" : "remove"]("regular");
     });
 
     registry.socket.on("time", v => {
@@ -76,6 +236,12 @@ export default new class Roomie extends EventEmitter {
       this._updateTitle();
       this.emit("hidden", this.hidden);
     });
+  }
+
+  onmenu() {
+    if (!this.context.showing) {
+      this.context.show(this.menu);
+    }
   }
 
   onmousemove(e) {
@@ -143,6 +309,7 @@ export default new class Roomie extends EventEmitter {
 
   hideTooltip() {
     if (this._ttinfo) {
+      this._removeMouseMove();
       this._ttinfo = null;
     }
     if (!this.tooltip) {
@@ -152,6 +319,92 @@ export default new class Roomie extends EventEmitter {
     this._removeMouseMove();
     this.emit("tooltip-hidden", this.tooltip);
     this.tooltip = null;
+  }
+
+  onmodalkey(e) {
+    const {key, target: {localName}} = e;
+    if (key === "Enter" && (
+      localName === "input" || localName === "textarea")) {
+      console.log(key, localName);
+      return;
+    }
+    if (key === "Enter" || key === "Escape") {
+      const modal = Array.from(this.modals).pop();
+      if (!modal) {
+        return;
+      }
+      nukeEvent(e);
+      console.log("keyaccept");
+      if (key === "Enter") {
+        modal.accept();
+      }
+      else {
+        modal.dismiss();
+      }
+    }
+  }
+
+  async showModal(modal) {
+    if (this.modals.has(modal)) {
+      return modal.promise;
+    }
+    this.hideTooltip();
+    if (!this.modals.size) {
+      addEventListener("keyup", this.onmodalkey);
+    }
+    else {
+      this.modals.forEach(e => {
+        e.disable();
+      });
+    }
+    this.modals.add(modal);
+    const holder = dom("div", {
+      classes: ["modal-holder"]
+    });
+    holder.appendChild(modal.el);
+    document.body.appendChild(holder);
+    try {
+      modal.onshown();
+      return await modal.promise;
+    }
+    finally {
+      document.body.removeChild(holder);
+      this.modals.delete(modal);
+      const newtop = Array.from(this.modals).pop();
+      if (newtop) {
+        newtop.enable();
+      }
+      else {
+        removeEventListener("keyup", this.onmodalkey);
+      }
+    }
+  }
+
+  async showMessage(text, caption, icon) {
+    try {
+      console.log(await this.showModal(
+        new MessageBox(caption || "Message", text, icon)));
+    }
+    catch (ex) {
+      console.error(ex);
+      // don't care
+    }
+  }
+
+  async question(text, caption, icon, ...buttons) {
+    if (!buttons.length) {
+      buttons = ["Yes", "No"];
+    }
+    buttons = buttons.map((e, i, a) => {
+      return {
+        id: i,
+        text: e,
+        default: !i,
+        cancel: i === a.length - 1
+      };
+    });
+    return await this.showModal(
+      new MessageBox(caption || "Message", text, icon, ...buttons));
   }
 
   incrUnread() {

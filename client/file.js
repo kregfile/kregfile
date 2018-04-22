@@ -26,6 +26,7 @@ const NUM_FORMAT = new Intl.NumberFormat();
 class FileTooltip extends Tooltip {
   constructor(file) {
     super(file.name);
+    this.file = file;
     this.el.classList.add("tooltip-file");
 
     this.addPreview(file);
@@ -112,10 +113,14 @@ class FileTooltip extends Tooltip {
       classes: ["tooltip-tag", "tooltip-tag-tag", `tooltip-tag-${tag}`],
       text: tag.replace(/\b\w/g, l => l.toUpperCase()),
     }));
-    this.el.appendChild(dom("span", {
+    const el = dom("span", {
       classes: ["tooltip-tag", "tooltip-tag-value", `tooltip-tag-${tag}`],
       text: value.toString().trim()
-    }));
+    });
+    if (tag === "user") {
+      el.classList.add("u", this.file.meta.role || "white");
+    }
+    this.el.appendChild(el);
   }
 
   position(x, y) {
@@ -153,6 +158,10 @@ export default class File extends Removable {
   constructor(file) {
     super();
     Object.assign(this, BASE_FILE, file);
+
+    if (this.ip) {
+      this.tags.ip = this.ip;
+    }
 
     const tagEntries = Array.from(Object.entries(this.tags));
     tagEntries.forEach(e => e[1] = e[1].toString());

@@ -1,0 +1,31 @@
+<!doctype html>
+<%- include("head"); %>
+<body id="page">
+  <nav>
+    <h1 id="name">Register an account</h1>
+  </nav>
+  <article>
+    <p>All you need is to choose user name and a password.
+      Registration is free, and does not require an email.
+    </p>
+    <ul id="errors"></ul>
+    <form id="register" autocomplete="off" method="post" action="javascript:">
+      <input type="hidden" name="token" value="<%= token %>">
+      <label for="u">Desired User Name:</label>
+      <input id="username" name="u" type="text" autocomplete="username">
+      <label for="pass">Password:</label>
+      <input id="pass" name="p" type="password" autocomplete="new-password">
+      <label for="c">Password Confirmation:</label>
+      <input id="confirm" name="c" type="password" autocomplete="off">
+      <input id="submit" type="submit" value="Register Your Account!">
+    </form>
+    <ul>
+      <li>User names are not case-sensitive, but passwords are!
+      <li>Passwords need to be 8 chars minimum and contain at least a number.
+      <li>Passwords are not permanently stored by kregfile, only <a href="https://github.com/RealDolos/node-passlib" target="_blank">secure hashes</a>. Therefore you will not be able to recover your account if you forgot the password!
+      <li>You cannot register those default names!
+    </ul>
+  </article>
+  <%- include("footer"); %>
+  <script src="/static/register.js?v=<%=v%>" async></script>
+</body>

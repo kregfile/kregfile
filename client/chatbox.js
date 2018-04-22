@@ -1,7 +1,7 @@
 "use strict";
 
 import EventEmitter from "events";
-import {nukeEvent, parseCommand} from "./util";
+import {nukeEvent, parseCommand, validateUsername} from "./util";
 import registry from "./registry";
 import History from "./chatbox/history";
 import Autocomplete from "./chatbox/autocomplete";
@@ -13,6 +13,8 @@ export default new class ChatBox extends EventEmitter {
     this.currentNick = "";
     this.text = document.querySelector("#text");
     this.nick = document.querySelector("#nick");
+    this.icon = document.querySelector("#user-icon");
+    this.authed = "";
     this.history = null;
     this.autocomplete = new Autocomplete(this);
     this.text.addEventListener("keypress", this.onpress.bind(this));
@@ -28,10 +30,33 @@ export default new class ChatBox extends EventEmitter {
       this.autocomplete.add(m);
     });
 
+    registry.socket.on("role", m => {
+      console.log("role", m);
+      this.icon.className = "";
+      this.icon.classList.add(m);
+      switch (m) {
+      case "user":
+        this.icon.classList.add("i-green");
+        break;
+
+      case "mod":
+        this.icon.classList.add("i-purple");
+        break;
+      default:
+        this.icon.classList.add("i-white");
+        break;
+      }
+    });
+
     registry.socket.on("nick", m => {
-      this.nick.value = m;
-      this.currentNick = m;
-      localStorage.setItem("nick", m);
+      this.setNick(m);
+    });
+
+    registry.socket.on("authed", authed => {
+      this.authed = authed;
+      if (this.authed) {
+        this.ensureNick(true);
+      }
     });
   }
 
@@ -143,38 +168,30 @@ export default new class ChatBox extends EventEmitter {
     return false;
   }
 
-  ensureNick() {
+  ensureNick(silent) {
     try {
-      const {value: onick} = this.nick;
-      if (onick.length <= 3) {
-        this.emit("error", "Nickname too short");
-        return;
+      let {value: onick} = this.nick;
+      if (!onick) {
+        onick = localStorage.getItem("nick");
       }
-      if (onick.length > 20) {
-        this.emit("error", "Nickname too long");
-        return;
+      let nick;
+      if (this.authed) {
+        nick = onick.toLowerCase() === this.authed ? onick : this.authed;
       }
-      let nick = onick;
+      else {
+        nick = validateUsername(onick);
+      }
       const oldnick = localStorage.getItem("nick");
+      localStorage.setItem("nick", nick);
+      if (onick !== nick && !silent) {
+        this.emit(
+          "warn",
+          "User name contained invalid stuff, which was removed");
+      }
       if (oldnick === nick) {
         return;
       }
-      nick = nick.replace(/[^a-z\d]/gi, "");
-      if (onick !== nick) {
-        this.emit(
-          "warn",
-          "Nickname contained invalid stuff, which was removed");
-      }
-      if (nick.length <= 3) {
-        this.emit("error", "Nickname too short");
-        return;
-      }
-      if (nick.length > 20) {
-        this.emit("error", "Nickname too long");
-        return;
-      }
       registry.socket.emit("nick", nick);
-      localStorage.setItem("nick", nick);
     }
     finally {
       this.currentNick = this.nick.value = localStorage.getItem("nick");
@@ -189,5 +206,11 @@ export default new class ChatBox extends EventEmitter {
 
   checkHighlight(str) {
     return str.toUpperCase().includes(this.currentNick.toUpperCase());
+  }
+
+  setNick(nick) {
+    this.nick.value = nick;
+    this.currentNick = nick;
+    localStorage.setItem("nick", nick);
   }
 }();

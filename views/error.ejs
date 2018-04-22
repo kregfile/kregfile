@@ -1,0 +1,12 @@
+<!doctype html>
+<%- include("head"); %>
+<body id="page">
+  <nav>
+    <h1>I'm sorry Dave, I'm afraid I cannot do that!</h1>
+  </nav>
+  <article style="display: grid;grid-column-gap: 2ex;justify-items: center;align-content: center;align-items: center;height: 100%;grid-template: 1fr / auto auto;">
+    <img alt="NOPE!" src="/static/HAL9000.svg" style="align-self: start; width:128px">
+    <p><%=error%></p>
+  </article>
+  <%- include("footer"); %>
+</body>

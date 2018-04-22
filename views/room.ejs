@@ -38,7 +38,10 @@
       <span id="usercount">0</span>
     </div>
     <div id="endmarker" class="blink hidden" title="Go to new messages">▼</div>
-    <input type="text" id="nick">
+    <div>
+      <span id="user-icon" class="i-white"></span>
+      <input type="text" id="nick">
+    </div>
   </section>
 
   <section id="chatbox">
@@ -64,6 +67,30 @@
     <span id="gallery_info" class="gallery_text">shrekt kek</span>
   </section>
 
-  <script src="/static/client.js?v=<%=v%>"></script>
   <div id="preload"></div>
+  <ul id="context-menu" style="display: none;">
+    <li id="ctx-home" data-icon="kf">Home
+    <li>-
+    <li id="ctx-report" data-icon="i-report">Report this room
+    <li id="ctx-options" data-icon="i-edit">Room options
+    <li id="ctx-ban" data-icon="i-ban">Ban
+    <li id="ctx-unban" data-icon="i-unban">Unban
+    <li id="ctx-bl" data-icon="i-blacklist">Blacklist
+    <li id="ctx-wl" data-icon="i-whitelist">Whitelist
+    <li id="ctx-remove" data-icon="i-clear">Remove
+    <li>-
+    <li id="ctx-register" data-icon="i-users">Register
+    <li id="ctx-login" data-icon="i-login">Log in
+    <li id="ctx-account" data-icon="i-white">Account
+    <li id="ctx-logout" data-icon="i-logout">Log out
+  </ul>
+
+  <form id="login-tmpl" class="tmpl">
+    <span id="login-icon" class="i-login"></span>
+    <label>User:</label>
+    <input name="u" type="text" autocomplete="username">
+    <label>Password:</label>
+    <input name="p" type="password" autocomplete="current-password">
+  </form>
+  <script src="/static/client.js?v=<%=v%>"></script>
 </body>

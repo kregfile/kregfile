@@ -1,9 +1,9 @@
 @font-face {
   font-family: 'symbols';
   src:
-    url('fonts/symbols.ttf?yfs17x') format('truetype'),
-    url('fonts/symbols.woff?yfs17x') format('woff'),
-    url('fonts/symbols.svg?yfs17x#symbols') format('svg');
+    url('fonts/symbols.ttf?6legiq') format('truetype'),
+    url('fonts/symbols.woff?6legiq') format('woff'),
+    url('fonts/symbols.svg?6legiq#symbols') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -23,6 +23,24 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.i-white:before {
+  content: "\e919";
+}
+.i-green:before {
+  content: "\e91a";
+}
+.i-purple:before {
+  content: "\e91b";
+}
+.i-logout:before {
+  content: "\e90f";
+}
+.i-login:before {
+  content: "\e910";
+}
+.i-report:before {
+  content: "\e912";
+}
 .i-users:before {
   content: "\e907";
 }
@@ -74,6 +92,12 @@
 .i-warning:before {
   content: "\e90c";
 }
+.i-info:before {
+  content: "\e91c";
+}
+.i-information:before {
+  content: "\e91c";
+}
 .i-error:before {
   content: "\ea0d";
 }
@@ -91,6 +115,15 @@
 }
 .i-images:before {
   content: "\e90e";
+}
+.i-whitelist:before {
+  content: "\e915";
+}
+.i-blacklist:before {
+  content: "\e916";
+}
+.i-unban:before {
+  content: "\e917";
 }
 .i-ban:before {
   content: "\e900";
@@ -118,4 +151,7 @@
 }
 .i-next:before {
   content: "\e90b";
+}
+.i-edit:before {
+  content: "\e918";
 }
