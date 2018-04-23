@@ -224,6 +224,10 @@ export default new class Messages extends EventEmitter {
       m.highlight = notify;
     }
 
+    if (m.saved) {
+      notify = false;
+    }
+
     if (m.volatile) {
       return notify;
     }
