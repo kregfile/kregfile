@@ -205,6 +205,9 @@ export default new class ChatBox extends EventEmitter {
   }
 
   checkHighlight(str) {
+    if (!this.currentNick) {
+      return false;
+    }
     return str.toUpperCase().includes(this.currentNick.toUpperCase());
   }
 

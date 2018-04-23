@@ -223,7 +223,12 @@ export default new class Roomie extends EventEmitter {
       registry.messages.showMOTD();
     });
 
-    registry.messages.on("message", this.incrUnread);
+    registry.messages.on("message", m => {
+      if (m.saved) {
+        return;
+      }
+      this.incrUnread();
+    });
     registry.files.on("file-added", this.incrUnread);
 
     document.addEventListener("visibilitychange", () => {

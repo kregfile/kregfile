@@ -228,9 +228,7 @@ export default new class Messages extends EventEmitter {
       return notify;
     }
 
-    if (!m.saved) {
-      this.emit("message", m);
-    }
+    this.emit("message", m);
     m.saved = true;
     this.msgs.push(m);
     if (this.msgs.length > 100) {
