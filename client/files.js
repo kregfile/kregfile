@@ -343,7 +343,8 @@ export default new class Files extends EventEmitter {
   }
 
   onfiles(data) {
-    if (data.replace) {
+    const {replace = false} = data;
+    if (replace) {
       this.clear();
     }
     const files = data.files.map(f => {
@@ -352,8 +353,8 @@ export default new class Files extends EventEmitter {
         return null;
       }
       this.elmap.set(f.el, f);
-      this.emit("file-added", f);
-      this.emit(`file-added-${f.key}`, f);
+      this.emit("file-added", f, replace);
+      this.emit(`file-added-${f.key}`, f, replace);
       return f;
     }).filter(e => e);
     if (files.length) {

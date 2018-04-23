@@ -229,7 +229,12 @@ export default new class Roomie extends EventEmitter {
       }
       this.incrUnread();
     });
-    registry.files.on("file-added", this.incrUnread);
+    registry.files.on("file-added", (_, replace) => {
+      if (replace) {
+        return;
+      }
+      this.incrUnread();
+    });
 
     document.addEventListener("visibilitychange", () => {
       this.hidden = document.hidden;
