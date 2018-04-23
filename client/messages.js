@@ -2,7 +2,14 @@
 
 import EventEmitter from "events";
 import localforage from "localforage";
-import {dom, debounce, nukeEvent, toType} from "./util";
+import {
+  debounce,
+  dom,
+  nukeEvent,
+  toPrettyInt,
+  toPrettySize,
+  toType,
+} from "./util";
 import {APOOL} from "./animationpool";
 import registry from "./registry";
 import Tooltip from "./tooltip";
@@ -58,6 +65,14 @@ class UserTooltip extends Tooltip {
     }
     if (info.email) {
       add("Email", info.email);
+    }
+    if (info.uploadStats.filesRank) {
+      const {uploadStats: s} = info;
+      add("Uploaded", `${toPrettySize(s.uploaded)} (#${toPrettyInt(s.uploadedRank)})`);
+      add("Files", `${toPrettyInt(s.files)} (#${toPrettyInt(s.filesRank)})`);
+    }
+    else {
+      add("Uploaded", "Nothing 😢");
     }
   }
 }

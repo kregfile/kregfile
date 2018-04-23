@@ -111,6 +111,16 @@ return function prettySize(n) {
 };
 })(false);
 
+const toPrettyInt = (function() {
+// eslint-disable-next-line
+const formatter = new Intl.NumberFormat(undefined, {
+  maximumFractionDigits: 0,
+});
+return function(number) {
+  return formatter.format(number);
+};
+})();
+
 function plural(s, single, plural) {
   if (s === 1) {
     return `${s} ${single}`;
@@ -229,6 +239,7 @@ module.exports = {
   memoize,
   toPrettyDuration,
   toPrettySize,
+  toPrettyInt,
   shuffle,
   randint
 };

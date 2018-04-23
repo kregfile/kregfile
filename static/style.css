@@ -747,6 +747,8 @@ button:focus {
 
 .tooltip-tag-tag {
   grid-column: 2;
+  align-self: end;
+  line-height: 150%;
 }
 
 .tooltip-tag-value {
@@ -754,6 +756,8 @@ button:focus {
   max-width: 20em;
   overflow-x: hidden;
   text-overflow: ellipsis;
+  align-self: end;
+  line-height: 150%;
 }
 
 .tooltip-name,
