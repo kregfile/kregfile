@@ -176,7 +176,7 @@ export default new class Messages extends EventEmitter {
         if (!info) {
           return;
         }
-        info.expires = Date.now() + 1200000;
+        info.expires = Date.now() + 120000;
         this.users.set(profile, info);
         if (this.users.size > 100) {
           this.users.delete(this.users.keys().next().value);
