@@ -900,7 +900,8 @@ input[type="email"],
 }
 
 #page #userprofile {
-  max-width: 60ex;
+  max-width: 70ex;
+  min-width: 55ex;
   word-wrap: break-word;
 }
 
