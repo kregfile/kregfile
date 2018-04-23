@@ -110,7 +110,7 @@ export default class File extends BaseFile {
   }
 
   getGalleryInfo() {
-    if (!this.assets.size) {
+    if (this.type === "audio" || !this.assets.size) {
       return null;
     }
     const {innerWidth, innerHeight} = window;
