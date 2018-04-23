@@ -113,10 +113,18 @@ export function formToJSON(data) {
 }
 
 export function openInNew(href) {
-  dom("a", {attrs: {
+  const link = dom("a", {attrs: {
+    style: "display: none;",
     href,
     target: "_blank",
-  }}).click();
+  }});
+  document.body.appendChild(link);
+  try {
+    link.click();
+  }
+  finally {
+    document.body.removeChild(link);
+  }
 }
 
 export * from "../common/index";
