@@ -230,6 +230,11 @@ function shuffle(array) {
   return array;
 }
 
+function sleep(to) {
+  return new Promise(r => setTimeout(r, to));
+}
+
+
 module.exports = {
   CoalescedUpdate,
   debounce,
@@ -241,7 +246,8 @@ module.exports = {
   toPrettySize,
   toPrettyInt,
   shuffle,
-  randint
+  randint,
+  sleep,
 };
 
 // No dynamic requires to not confuse webpack!
