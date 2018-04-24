@@ -28,6 +28,7 @@ class ScrollState {
     this.owner = owner;
     this.key = null;
     this.diff = 0;
+    this.pop = APOOL.wrap(this.pop);
 
     Object.seal(this);
   }
@@ -289,9 +290,9 @@ export default new class Files extends EventEmitter {
     // Add all matching files
     this.adjustEmpty();
     this.scrollState.push();
-    return this.insertFilesIntoDOM(files, remove).then(() => {
+    return this.insertFilesIntoDOM(files, remove).then(async () => {
       this.adjustEmpty();
-      this.scrollState.pop();
+      await this.scrollState.pop();
       this.delayedUpdateStatus();
     });
   }
@@ -595,7 +596,7 @@ export default new class Files extends EventEmitter {
       this.scrollState.push();
       await this.insertFilesIntoDOM(files);
       this.adjustEmpty();
-      this.scrollState.pop();
+      await this.scrollState.pop();
       if (!this.newFiles) {
         const {scrollTop, offsetTop: ot} = this.el;
         for (const file of files) {
