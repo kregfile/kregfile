@@ -130,38 +130,14 @@ export default new class Files extends EventEmitter {
     this.setFileStyle = idle(this.setFileStyle);
     this.onfilterbutton = this.onfilterbutton.bind(this);
     this.onuploadbutton = this.onuploadbutton.bind(this);
+    this.ondragenter = this.ondragenter.bind(this);
+    this.ondragexit = this.ondragexit.bind(this);
+    this.dragging = false;
     Object.seal(this);
 
-    let dragging = false;
-    const dragEnter = e => {
-      registry.roomie.hideTooltip();
-      if (!e.dataTransfer.types.includes("Files")) {
-        return;
-      }
-      this.adjustEmpty(true);
-      e.preventDefault();
-      e.stopPropagation();
-      e.dataTransfer.dropEffect = "copy";
-      if (!dragging) {
-        this.el.addEventListener("dragexit", dragExit, true);
-        this.el.addEventListener("dragleave", dragExit, true);
-        this.el.addEventListener("mouseout", dragExit, true);
-        dragging = true;
-      }
-    };
-    const dragExit = e => {
-      if (e.target !== this.el) {
-        return;
-      }
-      dragging = false;
-      this.adjustEmpty();
-      this.el.removeEventListener("dragexit", dragExit, true);
-      this.el.removeEventListener("dragleave", dragExit, true);
-      this.el.removeEventListener("mouseout", dragExit, true);
-    };
     this.el.addEventListener("drop", this.ondrop.bind(this), true);
-    this.el.addEventListener("dragenter", dragEnter, true);
-    this.el.addEventListener("dragover", dragEnter, true);
+    this.el.addEventListener("dragenter", this.ondragenter, true);
+    this.el.addEventListener("dragover", this.ondragenter, true);
 
     this.filterButtons.forEach(e => {
       e.addEventListener("click", this.onfilterbutton, true);
@@ -371,6 +347,32 @@ export default new class Files extends EventEmitter {
     }
   }
 
+  ondragenter(e) {
+    registry.roomie.hideTooltip();
+    if (!e.dataTransfer.types.includes("Files")) {
+      return;
+    }
+    this.adjustEmpty(true);
+    e.preventDefault();
+    e.stopPropagation();
+    e.dataTransfer.dropEffect = "copy";
+    if (!this.dragging) {
+      this.el.addEventListener("dragexit", this.ondragexit, true);
+      this.el.addEventListener("dragleave", this.ondragexit, true);
+      this.el.addEventListener("mouseout", this.ondragexit, true);
+      this.dragging = true;
+    }
+  }
+  ondragexit(e) {
+    if (e.target !== this.el) {
+      return;
+    }
+    this.dragging = false;
+    this.adjustEmpty();
+    this.el.removeEventListener("dragexit", this.ondragexit, true);
+    this.el.removeEventListener("dragleave", this.ondragexit, true);
+    this.el.removeEventListener("mouseout", this.ondragexit, true);
+  }
   ondrop(e) {
     e.preventDefault();
     try {
