@@ -10,7 +10,6 @@ export default class Scroller {
     this.updating = null;
     this.start = 0;
     this.off = 0;
-    this.max = 0;
 
     const diff = el.clientWidth - el.offsetWidth;
     if (!diff) {
@@ -49,18 +48,27 @@ export default class Scroller {
   adjustBar() {
     // calc visible fraction
     const {el, scroller, bar} = this;
-    const {clientHeight, scrollHeight, scrollTop} = el;
-    const visible = clientHeight / scrollHeight;
+    const {scrollTop, scrollHeight, clientHeight} = el;
+    let visible = clientHeight / scrollHeight;
     if (visible === 1) {
       scroller.classList.add("hidden");
       return;
     }
 
+    if (clientHeight > 40) {
+      const frac = 40 / clientHeight;
+      visible = Math.max(frac, visible);
+    }
+    else {
+      visible = Math.max(0.25, visible);
+    }
+    const ivisible = 1 - visible;
+
     bar.style.height = `${visible * 100}%`;
 
-    const top = (scrollTop / scrollHeight);
+    const top = (scrollTop / (scrollHeight - clientHeight));
 
-    bar.style.top = `${top * 100}%`;
+    bar.style.top = `${top * ivisible * 100}%`;
 
     scroller.classList.remove("hidden");
   }
@@ -88,8 +96,7 @@ export default class Scroller {
 
   onmousedown(e) {
     this.start = e.pageY;
-    this.off = this.bar.offsetTop - this.scroller.offsetTop;
-    this.max = this.scroller.clientHeight - this.bar.clientHeight;
+    this.off = this.bar.offsetTop;
     addEventListener("mouseup", this.onmouseup);
     addEventListener("mousemove", this.onmousemove);
     nukeEvent(e);
@@ -101,11 +108,14 @@ export default class Scroller {
   }
 
   onmousemove(e) {
-    const off = this.start - e.pageY;
+    const {off, start, el, bar} = this;
+    const {scrollHeight, clientHeight} = el;
+    const max = clientHeight - bar.clientHeight;
     const newPos = Math.max(
-      0, Math.min(this.max, this.off - off)
-    ) / this.scroller.clientHeight;
-    this.el.scrollTop = this.el.scrollHeight * newPos;
+      0, Math.min(max, off - start + e.pageY)
+    ) / max;
+    const newTop = (scrollHeight - clientHeight) * newPos;
+    el.scrollTop = newTop;
     nukeEvent(e);
   }
 }

@@ -297,7 +297,6 @@ button:focus {
 .scroller {
   width: 10px;
   height: 100%;
-  display: block;
   z-index: 1000;
   justify-self: end;
   align-self: stretch;
