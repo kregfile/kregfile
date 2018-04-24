@@ -17,6 +17,7 @@ import {REMOVALS} from "./files/tracker";
 import Upload from "./files/upload";
 import File from "./files/file";
 import Gallery from "./files/gallery";
+import Scroller from "./scroller";
 
 const ROBOCOPFILES =
   /^(?:thumbs.*\.db|\.ds_store.*|.*\.ds_store|.\tthn|desktop.*.ini)$/i;
@@ -99,6 +100,8 @@ export default new class Files extends EventEmitter {
   constructor() {
     super();
     this.el = document.querySelector("#files");
+    this.scroller = new Scroller(
+      this.el, document.querySelector("#filelist-scroller"));
     this.ubutton = document.querySelector("#upload-button");
     this.gallery = new Gallery(this);
     this.filterButtons = Array.from(document.querySelectorAll(".filterbtn"));
@@ -520,10 +523,10 @@ export default new class Files extends EventEmitter {
 
   adjustEmpty(forceOn) {
     if (!forceOn && this.el.childElementCount) {
-      this.el.parentElement.classList.remove("empty");
+      document.body.classList.remove("empty");
     }
     else {
-      this.el.parentElement.classList.add("empty");
+      document.body.classList.add("empty");
     }
   }
 

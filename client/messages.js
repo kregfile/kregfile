@@ -14,6 +14,7 @@ import {APOOL} from "./animationpool";
 import registry from "./registry";
 import Tooltip from "./tooltip";
 import File from "./file";
+import Scroller from "./scroller";
 
 const DATE_FORMAT_SHORT = new Intl.DateTimeFormat("en-US", {
   hour12: false,
@@ -80,7 +81,9 @@ class UserTooltip extends Tooltip {
 export default new class Messages extends EventEmitter {
   constructor() {
     super();
-    this.el = document.querySelector("#chat");
+    this.el = document.querySelector("#messages");
+    this.scroller = new Scroller(
+      this.el, document.querySelector("#chat-scroller"));
     this.endMarker = document.querySelector("#endmarker");
     this.msgs = [];
     this.els = [];
