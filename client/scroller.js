@@ -26,7 +26,7 @@ export default class Scroller {
     this.onmousemove = this.onmousemove.bind(this);
 
     this.bar = dom("div", {
-      classes: ["scrollbar"],
+      classes: ["scrollbar", "layer"],
     });
     scroller.appendChild(this.bar);
     this.bar.addEventListener("mousedown", this.onmousedown.bind(this));

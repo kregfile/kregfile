@@ -56,7 +56,6 @@ body#room {
     "chat files"
     "status files"
     "chatbox files";
-  backface-visibility: hidden;
 }
 
 body#page {
@@ -76,7 +75,6 @@ nav {
   align-self: center;
   border-bottom: 1px solid rgba(128,128,128,0.4);
   height: 100%;
-  backface-visibility: hidden;
 }
 
 article {
@@ -297,8 +295,7 @@ button:focus {
 }
 
 .scroller {
-  grid-area: chat;
-  width: 8px;
+  width: 10px;
   height: 100%;
   display: block;
   z-index: 1000;
@@ -310,7 +307,7 @@ button:focus {
 .scrollbar {
   position: relative;
   background: white;
-  border-radius: 6px;
+  border-radius: 8px;
   display: block;
   width: 100%;
   opacity: 0.05;
