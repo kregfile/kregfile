@@ -95,6 +95,10 @@ class FileTooltip extends Tooltip {
       img.classList.add("tooltip-preview");
       const loaded = img.cloneNode();
       loaded.onload = () => {
+        if (!img.parentElement) {
+          // Might have been removed already
+          return;
+        }
         img.parentElement.replaceChild(loaded, img);
       };
       loaded.src = url;
