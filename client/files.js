@@ -540,7 +540,9 @@ export default new class Files extends EventEmitter {
     const nameHeight = getComputedStyle(file.nameEl, null).
       getPropertyValue("height");
     rules.push(`.file > .name { height: ${nameHeight}; }`);
-    rules.push(`.file > .icon { height: ${nameHeight}; }`);
+    const iconHeight = getComputedStyle(file.iconEl, null).
+      getPropertyValue("height");
+    rules.push(`.file > .icon { height: ${iconHeight}; }`);
     const tagsHeight = getComputedStyle(file.tagsEl, null).
       getPropertyValue("height");
     rules.push(`.file > .tags { height: ${tagsHeight}; }`);
