@@ -11,14 +11,14 @@ function debounce(fn, to) {
 
   const run = function() {
     timer = 0;
-    fn();
+    fn.call(this);
   };
 
   return function() {
     if (timer) {
       return;
     }
-    timer = setTimeout(run, to);
+    timer = setTimeout(run.bind(this), to);
   };
 }
 

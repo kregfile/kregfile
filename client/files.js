@@ -6,6 +6,7 @@ import * as filesfilter from "./files/filter";
 import {
   PromisePool,
   debounce,
+  idle,
   naturalCaseSort,
   sort,
   iter,
@@ -20,6 +21,80 @@ import Gallery from "./files/gallery";
 const ROBOCOPFILES =
   /^(?:thumbs.*\.db|\.ds_store.*|.*\.ds_store|.\tthn|desktop.*.ini)$/i;
 
+class ScrollState {
+  constructor(owner) {
+    this.owner = owner;
+    this.key = null;
+    this.diff = 0;
+
+    Object.seal(this);
+  }
+
+  maybePush() {
+    const {scrollTop} = this.owner.el;
+    if (!scrollTop) {
+      return;
+    }
+  }
+
+  push() {
+    if (this.key) {
+      return;
+    }
+    const {scrollTop: st, offsetTop: ot} = this.owner.el;
+    const {visible} = this.owner;
+    if (!visible.length) {
+      return;
+    }
+
+    function calc(file) {
+      const {offsetHeight, offsetTop} = file.el;
+      const top = offsetTop - ot;
+      const bottom = top + offsetHeight;
+      const diff = st - bottom;
+      return {top, bottom, diff};
+    }
+
+    // binary search for intersection element
+    let low = 0;
+    let high = visible.length - 1;
+    while (low <= high) {
+      const pivot = ((low + high) / 2) | 0;
+      const file = visible[pivot];
+      const {top, bottom, diff} = calc(file);
+      if (bottom < st) {
+        low = pivot + 1;
+        continue;
+      }
+      if (top > st) {
+        high = pivot - 1;
+        continue;
+      }
+      this.key = file.key;
+      this.diff = diff;
+      break;
+    }
+  }
+
+  pop() {
+    if (!this.key) {
+      return false;
+    }
+    const file = this.owner.get(this.key);
+    this.key = null;
+    if (!file || !file.el || !file.el.parentElement) {
+      return false;
+    }
+    const {scrollTop, offsetTop} = this.owner.el;
+    const newScrollTop =
+      file.el.offsetTop + file.el.offsetHeight - offsetTop + this.diff;
+    if (Math.abs(scrollTop - newScrollTop) > 4) {
+      this.owner.el.scrollTop = newScrollTop;
+    }
+    return true;
+  }
+}
+
 export default new class Files extends EventEmitter {
   constructor() {
     super();
@@ -31,19 +106,23 @@ export default new class Files extends EventEmitter {
     this.filter = document.querySelector("#filter");
     this.filterClear = document.querySelector("#filter-clear");
     this.filterStatus = document.querySelector("#filter-status");
+    this.newStatus = document.querySelector("#new-status");
     this.files = [];
     this.filemap = new Map();
     this.elmap = new WeakMap();
+    this.scrollState = new ScrollState(this);
+    this.newFiles = false;
 
     this.onfiles = this.onfiles.bind(this);
     this.onfilesdeleted = this.onfilesdeleted.bind(this);
     this.onfilesupdated = this.onfilesupdated.bind(this);
     this.applying = null;
-    this.applyFilter = APOOL.wrap(this.applyFilter);
     this.clear = APOOL.wrap(this.clear);
-    this.addFileElements = APOOL.wrap(this.addFileElements);
+    this.insertFilesIntoDOM = APOOL.wrap(this.insertFilesIntoDOM);
     this.addUploadElements = APOOL.wrap(this.addUploadElements);
     this.uploadOne = PromisePool.wrapNew(1, this, this.uploadOne);
+    this.delayedUpdateStatus = debounce(
+      idle(this.updateStatus.bind(this)), 100);
     this.onfilterbutton = this.onfilterbutton.bind(this);
     this.onuploadbutton = this.onuploadbutton.bind(this);
     Object.seal(this);
@@ -84,11 +163,16 @@ export default new class Files extends EventEmitter {
       e.addEventListener("contextmenu", this.onfilterbutton, true);
     });
     this.filter.addEventListener(
-      "input", debounce(this.onfilter.bind(this), 200));
+      "input", debounce(idle(this.onfilter.bind(this), 2000), 200));
     this.filterClear.addEventListener(
       "click", this.clearFilter.bind(this), true);
 
     this.ubutton.addEventListener("change", this.onuploadbutton.bind(this));
+
+    this.newStatus.addEventListener("click", () => {
+      this.el.scrollTop = 0;
+      this.delayedUpdateStatus();
+    });
 
     this.el.addEventListener("click", this.onclick.bind(this));
     this.el.addEventListener("scroll", this.onscroll.bind(this));
@@ -129,6 +213,7 @@ export default new class Files extends EventEmitter {
   }
 
   onscroll() {
+    this.delayedUpdateStatus();
     registry.roomie.hideTooltip();
   }
 
@@ -195,29 +280,39 @@ export default new class Files extends EventEmitter {
   }
 
   applyFilter() {
-    try {
-      const files = this.filtered(this.files);
-      if (!files || !files.length) {
+    const files = this.filtered(this.files);
+    if (!files || !files.length) {
+      return APOOL.schedule(null, () => {
         this.visible.forEach(e => e.el.parentElement.removeChild(e.el));
+      });
+    }
+
+    const {visible} = this;
+    const fileset = new Set(files);
+    // Remove now hidden
+    let diff = false;
+    const remove = [];
+    visible.forEach(e => {
+      if (fileset.has(e)) {
         return;
       }
-
-      // Remove now hidden
-      const fileset = new Set(files);
-      this.visible.forEach(e => {
-        if (fileset.has(e)) {
-          return;
-        }
-        e.el.parentElement.removeChild(e.el);
-      });
-
-      // Add all matching files
-      this.insertFilesIntoDOM(files);
+      diff = true;
+      remove.push(e.el);
+      //e.el.parentElement.removeChild(e.el);
+    });
+    // unchanged
+    if (visible.length === fileset.size && !diff) {
+      return Promise.resolve();
     }
-    finally {
+
+    // Add all matching files
+    this.adjustEmpty();
+    this.scrollState.push();
+    return this.insertFilesIntoDOM(files, remove).then(() => {
       this.adjustEmpty();
-      this.updateFilterStatus();
-    }
+      this.scrollState.pop();
+      this.delayedUpdateStatus();
+    });
   }
 
   openGallery(file) {
@@ -229,13 +324,28 @@ export default new class Files extends EventEmitter {
     this.gallery.maybeClose(file);
   }
 
-  updateFilterStatus() {
+  updateStatus() {
     if (!this.files.length) {
-      this.filterStatus.classList.add("disabled");
-      return;
+      this.filterStatus.classList.add("hidden");
     }
-    this.filterStatus.textContent = `${this.visible.length} of ${this.files.length} files`;
-    this.filterStatus.classList.remove("disabled");
+    else {
+      const text = `${this.visible.length} of ${this.files.length} files`;
+      if (this.filterStatus.textContent !== text) {
+        this.filterStatus.textContent = text;
+      }
+      this.filterStatus.classList.remove("hidden");
+    }
+
+    if (!this.el.scrollTop) {
+      this.newFiles = false;
+    }
+
+    if (!this.newFiles) {
+      this.newStatus.classList.add("hidden");
+    }
+    else {
+      this.newStatus.classList.remove("hidden");
+    }
   }
 
   onuploadbutton() {
@@ -335,17 +445,19 @@ export default new class Files extends EventEmitter {
         filter(f => !ROBOCOPFILES.test(f.name)).
         map(f => new Upload(this, f));
       uploads.forEach(u => this.uploadOne(u));
-      this.addUploadElements(uploads);
+      await this.addUploadElements(uploads);
+      this.adjustEmpty();
+      uploads[0].el.scrollIntoView(false);
     }
     catch (ex) {
       console.error(ex);
     }
   }
 
-  onfiles(data) {
+  async onfiles(data) {
     const {replace = false} = data;
     if (replace) {
-      this.clear();
+      await this.clear();
     }
     const files = data.files.map(f => {
       f = new File(this, f);
@@ -358,7 +470,7 @@ export default new class Files extends EventEmitter {
       return f;
     }).filter(e => e);
     if (files.length) {
-      this.addFileElements(files);
+      await this.addFileElements(files);
     }
   }
 
@@ -403,7 +515,7 @@ export default new class Files extends EventEmitter {
     this.files.length = 0;
     this.filemap.clear();
     this.adjustEmpty();
-    this.updateFilterStatus();
+    this.updateStatus();
   }
 
   adjustEmpty(forceOn) {
@@ -415,7 +527,10 @@ export default new class Files extends EventEmitter {
     }
   }
 
-  insertFilesIntoDOM(files) {
+  insertFilesIntoDOM(files, remove) {
+    if (remove) {
+      remove.forEach(el => el.parentElement.removeChild(el));
+    }
     let head = document.querySelector(".file:not(.upload)");
     for (const f of this.filtered(files)) {
       if (head) {
@@ -428,7 +543,7 @@ export default new class Files extends EventEmitter {
     }
   }
 
-  addFileElements(files) {
+  async addFileElements(files) {
     try {
       REMOVALS.trigger();
       // XXX not restore save
@@ -445,9 +560,23 @@ export default new class Files extends EventEmitter {
           files.forEach(e => this.filemap.set(e.key, e));
         }
       }
-      this.insertFilesIntoDOM(files);
       this.adjustEmpty();
-      this.updateFilterStatus();
+      this.scrollState.push();
+      await this.insertFilesIntoDOM(files);
+      this.adjustEmpty();
+      this.scrollState.pop();
+      if (!this.newFiles) {
+        const {scrollTop, offsetTop: ot} = this.el;
+        for (const file of files) {
+          const {offsetHeight, offsetTop} = file.el;
+          const top = offsetTop - ot;
+          const bottom = top + offsetHeight;
+          if (bottom <= scrollTop) {
+            this.newFiles = true;
+          }
+        }
+      }
+      this.delayedUpdateStatus();
     }
     catch (ex) {
       console.error(ex);
@@ -484,6 +613,7 @@ export default new class Files extends EventEmitter {
       }
     }
     this.adjustEmpty();
+    this.delayedUpdateStatus();
   }
 
   addUploadElements(uploads) {
@@ -491,7 +621,6 @@ export default new class Files extends EventEmitter {
       for (const u of uploads) {
         this.el.insertBefore(u.el, this.el.firstChild);
       }
-      this.adjustEmpty();
     }
     catch (ex) {
       console.error(ex);

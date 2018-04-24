@@ -127,4 +127,37 @@ export function openInNew(href) {
   }
 }
 
+export function idle(fn, timeout) {
+  if (!window.requestIdleCallback) {
+    return function(...args) {
+      try {
+        return Promise.resolve(fn.apply(this, args));
+      }
+      catch (ex) {
+        return Promise.reject(ex);
+      }
+    };
+  }
+
+  return function idleWrapped(...args) {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      const wrapped = function() {
+        try {
+          resolve(fn.apply(self, args));
+        }
+        catch (ex) {
+          reject(ex);
+        }
+      };
+      if (timeout) {
+        requestIdleCallback(wrapped, {timeout});
+      }
+      else {
+        requestIdleCallback(wrapped);
+      }
+    });
+  };
+}
+
 export * from "../common/index";

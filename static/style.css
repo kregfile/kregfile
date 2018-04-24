@@ -242,21 +242,24 @@ button:focus {
   display: none;
 }
 
+#new-status,
 #filter-status {
   margin-left: 2em;
   font-size: xx-small;
-  font-family: var(--base-font) !important;
-}
-#filter-status.disabled {
-  display: none;
 }
 
+#filter-status {
+  font-family: var(--base-font) !important;
+}
 #filter-status.i-filter:before {
   font-family: 'symbols';
   display: inline-block;
   margin-right: 1ex;
 }
 
+#new-status {
+  cursor: pointer;
+}
 
 #tools .spacer {
   flex: 5;

@@ -18,7 +18,8 @@
     <button id="filter-file" class="filterbtn i-file-b"></button>
     <input id="filter" placeholder="Filter files…" type="text" autocomplete="off" required>
     <button id="filter-clear" class="disabled i-clear"></button>
-    <div id="filter-status" class="i-filter"></div>
+    <div id="filter-status" class="hidden i-filter"></div>
+    <div id="new-status" class="hidden blink i-arrow-up" title="New files at the top"></div>
     <div class="spacer"></div>
     <div id="nail" class="btn i-images"></div>
     <form style="display: none;">
@@ -37,7 +38,7 @@
       <span id="usercount-icon" class="i-users"></span>
       <span id="usercount">0</span>
     </div>
-    <div id="endmarker" class="blink hidden" title="Go to new messages">▼</div>
+    <div id="endmarker" class="blink hidden arrow-down" title="Go to new messages"></div>
     <div>
       <span id="user-icon" class="i-white"></span>
       <input type="text" id="nick">
