@@ -6,11 +6,12 @@ import * as filesfilter from "./files/filter";
 import {
   PromisePool,
   debounce,
+  dom,
   idle,
-  naturalCaseSort,
-  sort,
   iter,
-  riter
+  naturalCaseSort,
+  riter,
+  sort,
 } from "./util";
 import {APOOL} from "./animationpool";
 import {REMOVALS} from "./files/tracker";
@@ -126,6 +127,7 @@ export default new class Files extends EventEmitter {
     this.uploadOne = PromisePool.wrapNew(1, this, this.uploadOne);
     this.delayedUpdateStatus = debounce(
       idle(this.updateStatus.bind(this)), 100);
+    this.setFileStyle = idle(this.setFileStyle);
     this.onfilterbutton = this.onfilterbutton.bind(this);
     this.onuploadbutton = this.onuploadbutton.bind(this);
     Object.seal(this);
@@ -530,6 +532,27 @@ export default new class Files extends EventEmitter {
     }
   }
 
+  setFileStyle(file) {
+    const rules = [];
+    const height = getComputedStyle(file.el, null).
+      getPropertyValue("height");
+    rules.push(`.file { height: ${height}; }`);
+    const nameHeight = getComputedStyle(file.nameEl, null).
+      getPropertyValue("height");
+    rules.push(`.file > .name { height: ${nameHeight}; }`);
+    rules.push(`.file > .icon { height: ${nameHeight}; }`);
+    const tagsHeight = getComputedStyle(file.tagsEl, null).
+      getPropertyValue("height");
+    rules.push(`.file > .tags { height: ${tagsHeight}; }`);
+    const detailHeight = getComputedStyle(file.detailEl, null).
+      getPropertyValue("height");
+    rules.push(`.file > .detail { height: ${detailHeight}; }`);
+    document.body.appendChild(dom("style", {
+      text: rules.join("\n")
+    }));
+    this.setFileStyle = function() {};
+  }
+
   insertFilesIntoDOM(files, remove) {
     if (remove) {
       remove.forEach(el => el.parentElement.removeChild(el));
@@ -541,6 +564,7 @@ export default new class Files extends EventEmitter {
       }
       else {
         this.el.appendChild(f.el);
+        this.setFileStyle(f);
       }
       head = f.el;
     }
