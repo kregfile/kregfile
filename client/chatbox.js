@@ -31,7 +31,6 @@ export default new class ChatBox extends EventEmitter {
     });
 
     registry.socket.on("role", m => {
-      console.log("role", m);
       this.icon.className = "";
       this.icon.classList.add(m);
       switch (m) {
