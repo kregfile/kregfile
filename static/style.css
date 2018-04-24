@@ -399,15 +399,14 @@ button:focus {
   overflow-wrap: break-word;
   word-wrap: break-word;
 }
-#chat > .hi {
+#messages > .hi {
   color: var(--hi-fg);
   background: var(--hi-bg);
 }
 
-#chat > .me {
+#messages > .me {
   font-style: italic;
 }
-
 
 #status {
   display: flex;
