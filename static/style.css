@@ -289,8 +289,7 @@ button:focus {
   border-top-right-radius: 0px;
 }
 
-.layer,
-.file {
+.layer {
   backface-visibility: hidden;
   transform: translateZ(0);
 }
