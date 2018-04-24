@@ -14,6 +14,8 @@
   --role-system-fg: #d880fc;
   --base-size: 12pt;
   --base-font: 'Open Sans', sans-serif;
+  --files-size: 11pt;
+  --detail-size: 8pt;
 }
 
 html {
@@ -482,6 +484,7 @@ button:focus {
 }
 
 #filelist {
+  font-size: var(--files-size);
   grid-area: files;
   background: var(--dark-bg);
   overflow: hidden;
@@ -742,7 +745,7 @@ button:focus {
   display: flex;
   width: 180px;
   white-space: nowrap;
-  font-size: 80%;
+  font-size: var(--detail-size);
 }
 
 .file > .detail > span {
