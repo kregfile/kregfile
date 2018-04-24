@@ -1,7 +1,7 @@
 <!doctype html>
 <%- include("head"); %>
-<body id="room">
-  <nav id="main">
+<body id="room" class="layer">
+  <nav id="main" class="layer">
     <div id="main-left">
       <button id="menu" class="i-menu"></button>
     </div>
@@ -9,7 +9,7 @@
     <div id="main-right"></div>
   </nav>
 
-  <nav id="tools">
+  <nav id="tools" class="layer">
     <button id="filter-image" class="filterbtn i-image-b"></button>
     <button id="filter-video" class="filterbtn i-video-b"></button>
     <button id="filter-audio" class="filterbtn i-audio-b"></button>
@@ -28,12 +28,12 @@
     <label for="upload-button" id="up" class="btn i-upload"></label>
   </nav>
 
-  <section id="chat">
-    <section id="messages"></section>
+  <section id="chat" class="layer">
+    <section id="messages" class="layer"></section>
   </section>
-  <section id="chat-scroller" class="scroller hidden"></section>
+  <section id="chat-scroller" class="layer scroller hidden"></section>
 
-  <section id="status">
+  <section id="status" class="layer">
     <div id="connection" class="visible i-warning" title="No connection"></div>
     <div id="usercountcont" title="Users online">
       <span id="usercount-icon" class="i-users"></span>
@@ -46,24 +46,24 @@
     </div>
   </section>
 
-  <section id="chatbox">
+  <section id="chatbox" class="layer">
     <textarea id="text" placeholder="Chat…" rows="3" maxlength="300"></textarea>
   </section>
 
-  <section id="dropminder">
-  <svg version="1.1" viewBox="-25 -25 1050 1050" xmlns="http://www.w3.org/2000/svg">
-   <rect width="1e3" height="1e3" rx="1e2" fill="none" stroke="#434343" stroke-dasharray="0, 600, 360, 0" stroke-dashoffset="-100" stroke-width="50px"/>
-   <text id="dropper" x="510.76172" y="284.49219" fill="#434343" font-family="'Open Sans'" font-size="240px" font-weight="bold" text-align="center" text-anchor="middle" xml:space="preserve"><tspan y="285" text-align="center">Drop</tspan><tspan x="510" y="585" text-align="center">stuff</tspan><tspan x="511" y="885" text-align="center">here</tspan></text>
-  </svg>
+  <section id="dropminder" class="layer">
+    <svg version="1.1" viewBox="-25 -25 1050 1050" xmlns="http://www.w3.org/2000/svg">
+     <rect width="1e3" height="1e3" rx="1e2" fill="none" stroke="#434343" stroke-dasharray="0, 600, 360, 0" stroke-dashoffset="-100" stroke-width="50px"/>
+     <text id="dropper" x="510.76172" y="284.49219" fill="#434343" font-family="'Open Sans'" font-size="240px" font-weight="bold" text-align="center" text-anchor="middle" xml:space="preserve"><tspan y="285" text-align="center">Drop</tspan><tspan x="510" y="585" text-align="center">stuff</tspan><tspan x="511" y="885" text-align="center">here</tspan></text>
+    </svg>
   </section>
 
-  <section id="filelist">
-    <section id="files">
+  <section id="filelist" class="layer">
+    <section id="files" class="layer">
     </section>
   </section>
-  <section id="filelist-scroller" class="scroller hidden"></section>
+  <section id="filelist-scroller" class="layer scroller hidden"></section>
 
-  <section id="gallery">
+  <section id="gallery" class="layer">
     <img id="gallery_img" alt="" src="/favicon.ico">
     <span id="gallery_title" class="gallery_text">title</span>
     <a id="gallery_close" class="i-clear"></a>

@@ -291,6 +291,11 @@ button:focus {
   border-top-right-radius: 0px;
 }
 
+.layer {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
 .scroller {
   grid-area: chat;
   width: 8px;
@@ -498,13 +503,9 @@ button:focus {
   background: var(--dark-bg);
 }
 
-.gallery #filelist,
-.gallery #filelist-scroller {
-  filter: blur(5px);
-}
 .empty #filelist,
 .empty #filelist-scroller {
-  opacity: 0;
+  visibility: hidden;
 }
 
 #dropminder {
@@ -515,9 +516,6 @@ button:focus {
 }
 .empty #dropminder {
   display: block;
-}
-.gallery #dropminder {
-  filter: blur(5px);
 }
 
 #dropminder svg {
@@ -531,10 +529,14 @@ button:focus {
   transform-origin: 50% 50% 0px; 
 }
 
+.gallery #filelist {
+  filter: blur(5px);
+}
+
 #gallery {
   grid-area: files;
   display: none;
-  z-index: 1;
+  z-index: 2;
   background: rgba(0,0,0,0.6);
   overflow: hidden;
   grid-template-columns: 5em 1fr 5em;
@@ -654,9 +656,6 @@ button:focus {
   width: 100%;
   padding: 4px 1ex;
   border: 1px dotted rgba(128, 128, 128, 0.1);
-}
-.empty .file {
-  display: none;
 }
 .file:nth-child(even) {
   background: var(--odd-bg);
