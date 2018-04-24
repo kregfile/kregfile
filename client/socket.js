@@ -19,6 +19,9 @@ export default function createSocket() {
     path: "/w",
     query: params.toString(),
     transports: ["websocket"],
+    reconnectionDelay: 200,
+    randomizationFactor: 0.7,
+    reconnectionDelayMax: 10000,
   });
   socket.makeCall = (target, id, ...args) => {
     return new Promise((resolve, reject) => {
