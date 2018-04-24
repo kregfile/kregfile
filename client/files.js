@@ -517,7 +517,7 @@ export default new class Files extends EventEmitter {
         // ignored
       }
     });
-    this.files.length = 0;
+    this.files = [];
     this.filemap.clear();
     this.adjustEmpty();
     this.updateStatus();
