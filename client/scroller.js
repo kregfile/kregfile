@@ -1,7 +1,7 @@
 "use strict";
 
 import {dom, debounce, nukeEvent} from "./util";
-import {APOOL} from "./animationPool";
+import {APOOL} from "./animationpool";
 
 export default class Scroller {
   constructor(el, scroller) {
