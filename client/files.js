@@ -119,6 +119,7 @@ export default new class Files extends EventEmitter {
     this.newFiles = false;
 
     this.onfiles = this.onfiles.bind(this);
+    this.filesQueue = [];
     this.onfilesdeleted = this.onfilesdeleted.bind(this);
     this.onfilesupdated = this.onfilesupdated.bind(this);
     this.applying = null;
@@ -462,23 +463,42 @@ export default new class Files extends EventEmitter {
     }
   }
 
-  async onfiles(data) {
-    const {replace = false} = data;
-    if (replace) {
-      await this.clear();
+  onfiles(data) {
+    if (!this.filesQueue.length) {
+      this.filesQueue.push(data);
+      this.runOnFiles();
+      return;
     }
-    const files = data.files.map(f => {
-      f = new File(this, f);
-      if (f.expired) {
-        return null;
+    this.filesQueue.push(data);
+  }
+
+  async runOnFiles() {
+    while (this.filesQueue.length) {
+      const ridx = this.filesQueue.findIndex(e => e.replace);
+      if (ridx > 0) {
+        // drop everything before
+        this.filesQueue.splice(0, ridx);
+        continue;
       }
-      this.elmap.set(f.el, f);
-      this.emit("file-added", f, replace);
-      this.emit(`file-added-${f.key}`, f, replace);
-      return f;
-    }).filter(e => e);
-    if (files.length) {
-      await this.addFileElements(files);
+      const data = this.filesQueue.shift();
+
+      const {replace = false} = data;
+      if (replace) {
+        await this.clear();
+      }
+      const files = data.files.map(f => {
+        f = new File(this, f);
+        if (f.expired) {
+          return null;
+        }
+        this.elmap.set(f.el, f);
+        this.emit("file-added", f, replace);
+        this.emit(`file-added-${f.key}`, f, replace);
+        return f;
+      }).filter(e => e);
+      if (files.length) {
+        await this.addFileElements(files);
+      }
     }
   }
 
