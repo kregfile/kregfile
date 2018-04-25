@@ -19,7 +19,7 @@ export const TTL = {
   })),
   PERMIN: new CoalescedUpdate(60000, a => a.forEach(e => {
     e.updateTTL();
-    if (e.ttl < 60000) {
+    if (e.ttl < 60000 * 2) {
       TTL.PERSEC.add(e);
     }
     else {
@@ -28,7 +28,7 @@ export const TTL = {
   })),
   PERHOUR: new CoalescedUpdate(3600000, a => a.forEach(e => {
     e.updateTTL();
-    if (e.ttl < 3600000) {
+    if (e.ttl < 3600000 * 2) {
       TTL.PERMIN.add(e);
     }
     else {
