@@ -426,6 +426,15 @@ button:focus {
   user-select: none;
 }
 
+#ips {
+  display: none;
+  cursor: pointer;
+}
+
+.mod #ips {
+  display: block;
+}
+
 #connection {
   display: none;
 }
@@ -712,6 +721,10 @@ button:focus {
   max-width: 25ex;
   overflow-x: hidden;
   text-overflow: ellipsis;
+}
+
+.noips .tag-ip {
+  display: none !important;
 }
 
 .icon.i-image {

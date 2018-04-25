@@ -274,7 +274,7 @@ export default new class Messages extends EventEmitter {
           target: "_blank",
           rel: "nofollow",
         },
-        text: m.me ? m.user : `${m.user}:`
+        text: m.user
       });
       user.dataset.profile = profile;
       user.addEventListener("mouseenter", this.onuserenter);
@@ -282,7 +282,7 @@ export default new class Messages extends EventEmitter {
     else {
       user = dom("span", {
         classes: ucls,
-        text: m.me ? m.user : `${m.user}:`
+        text: m.user
       });
     }
 
@@ -292,6 +292,16 @@ export default new class Messages extends EventEmitter {
       text: d
     });
     user.insertBefore(ts, user.firstChild);
+
+    if (m.ip) {
+      user.appendChild(dom("span", {
+        classes: ["tag-ip"],
+        text: ` (${m.ip})`
+      }));
+    }
+    if (!m.me) {
+      user.appendChild(document.createTextNode(":"));
+    }
 
     const msg = dom("span", {
       classes: ["msg"]
