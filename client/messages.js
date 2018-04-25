@@ -6,13 +6,12 @@ import {
   debounce,
   dom,
   nukeEvent,
-  toPrettyInt,
-  toPrettySize,
   toType,
 } from "./util";
 import {APOOL} from "./animationpool";
 import registry from "./registry";
 import Tooltip from "./tooltip";
+import UserTooltip from "./messages/usertooltip";
 import File from "./file";
 import Scroller from "./scroller";
 
@@ -23,60 +22,6 @@ const DATE_FORMAT_SHORT = new Intl.DateTimeFormat("en-US", {
   second: "2-digit",
 });
 const DATE_FORMAT_LONG = new Intl.DateTimeFormat("eu");
-
-class UserTooltip extends Tooltip {
-  constructor(info) {
-    super(info.name);
-    this.el.classList.add("tooltip-user");
-    if (info.gravatar) {
-      this.el.appendChild(dom("img", {
-        classes: ["tooltip-preview"],
-        attrs: {src: info.gravatar}
-      }));
-    }
-    else {
-      this.el.appendChild(dom("span", {
-        classes: [
-          "tooltip-preview",
-          info.role === "mod" ? "i-purple" : "i-green",
-          info.role
-        ],
-      }));
-    }
-
-    const add = (t, v) => {
-      this.el.appendChild(dom("span", {
-        classes: ["tooltip-tag-tag"],
-        text: `${t}:`
-      }));
-      this.el.appendChild(dom("span", {
-        classes: ["tooltip-tag-value"],
-        text: v
-      }));
-    };
-
-    switch (info.role) {
-    case "mod":
-      add("Is a", "Moderator");
-      break;
-
-    case "user":
-      add("Is a", "User");
-      break;
-    }
-    if (info.email) {
-      add("Email", info.email);
-    }
-    if (info.uploadStats.filesRank) {
-      const {uploadStats: s} = info;
-      add("Uploaded", `${toPrettySize(s.uploaded)} (#${toPrettyInt(s.uploadedRank)})`);
-      add("Files", `${toPrettyInt(s.files)} (#${toPrettyInt(s.filesRank)})`);
-    }
-    else {
-      add("Uploaded", "Nothing 😢");
-    }
-  }
-}
 
 export default new class Messages extends EventEmitter {
   constructor() {
