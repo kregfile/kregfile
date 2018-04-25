@@ -383,6 +383,13 @@ export default new class Messages extends EventEmitter {
     e.appendChild(user);
     e.appendChild(msg);
 
+    if (m.channel) {
+      e.appendChild(dom("span", {
+        classes: ["channel"],
+        text: ` (${m.channel})`
+      }));
+    }
+
     this.queue.push(e);
     if (notify) {
       registry.roomie.displayNotification({
