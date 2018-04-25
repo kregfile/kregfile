@@ -21,7 +21,6 @@
 html {
   font-size: var(--base-size);
   font-family: var(--base-font);
-  color: white;
   background: var(--dark-bg);
   color: var(--text-fg);
   width: 100%;
@@ -34,13 +33,14 @@ a {
   color: var(--dark-fg);
   transition: color 1s;
 }
+
 a:hover {
   color: var(--text-fg);
 }
+
 a:focus, a:active {
   outline: none !important;
 }
-
 
 body#room {
   background: var(--main-bg);
@@ -127,7 +127,7 @@ ol > li {
     var(--main-bg) 30%,
     var(--main-bg) 60%,
     var(--lite-bg)
-    );
+  );
   border: 0;
 }
 
@@ -205,9 +205,11 @@ button:focus {
   color: var(--text-fg);
   font-size: var(--base-size);
 }
+
 .filterbtn:hover {
   background: rgba(128,128,128, 0.8) !important;
 }
+
 .filterbtn.disabled {
   background: transparent;
   color: var(--dark-fg);
@@ -222,6 +224,7 @@ button:focus {
   user-select: none;
   outline: 0;
 }
+
 #filter:active,
 #filter:focus,
 #filter:valid {
@@ -240,6 +243,7 @@ button:focus {
   background: transparent;
   color: var(--text-fg);
 }
+
 #filter-clear.disabled {
   display: none;
 }
@@ -253,8 +257,11 @@ button:focus {
 #filter-status {
   font-family: var(--base-font) !important;
 }
+
 #filter-status.i-filter:before {
+  /* stylelint-disable */
   font-family: 'symbols';
+  /* stylelint-enable */
   display: inline-block;
   margin-right: 1ex;
 }
@@ -282,6 +289,7 @@ button:focus {
   cursor: pointer;
   transition: 0.5s background ease-in;
 }
+
 #tools .btn:hover {
   background: rgba(255,255,255,0.9);
 }
@@ -315,14 +323,13 @@ button:focus {
   transition: 0.3s opacity ease-in;
 }
 
-.scroller:hover .scrollbar {
-  opacity: 0.3;
-}
-
 .scrollbar:hover {
   opacity: 0.7 !important;
 }
 
+.scroller:hover .scrollbar {
+  opacity: 0.3;
+}
 
 #chat {
   grid-area: chat;
@@ -349,26 +356,27 @@ button:focus {
 }
 
 .chatfile {
-    border-radius: .2em;
-    border-radius: .2em/2px;
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    line-height: 1.4em;
-    text-align: center;
-    padding: 0.2ex 1ex;
-    text-decoration: none;
-    background-color: var(--main-bg);
-    border: 1px solid var(--odd-bg);
-    margin-bottom: 2px
+  border-radius: .2em;
+  border-radius: .2em/2px;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.4em;
+  text-align: center;
+  padding: 0.2ex 1ex;
+  text-decoration: none;
+  background-color: var(--main-bg);
+  border: 1px solid var(--odd-bg);
+  margin-bottom: 2px
 }
+
 .chatfile .icon {
   display: inline-block;
   margin-right: 0.5ex;
 }
 
-.u{
+.u {
   display: inline-block;
   font-weight: bold;
   padding-right: 1ex;
@@ -405,6 +413,7 @@ button:focus {
   vertical-align: top;
   opacity: 0.3;
 }
+
 .u > .ban-btn:hover {
   opacity: 0.9;
 }
@@ -423,6 +432,7 @@ button:focus {
   overflow-wrap: break-word;
   word-wrap: break-word;
 }
+
 #messages > .hi {
   color: var(--hi-fg);
   background: var(--hi-bg);
@@ -434,14 +444,19 @@ button:focus {
 
 #status {
   display: flex;
-  padding: 1ex 2px;
+  padding: 3px;
   justify-content: flex-end;
   align-items: center;
   align-content: center;
+  grid-area: status;
+  font-size: x-small;
+  text-align: right;
 }
+
 #status > * {
   margin-left: 3ex;
 }
+
 #status > div {
   user-select: none;
 }
@@ -473,13 +488,14 @@ button:focus {
   display: inline-block;
   margin-right: 0.8ex;
 }
+
 #user-icon.user {
   color: var(--role-user-fg);
 }
+
 #user-icon.mod {
   color: var(--role-mod-fg);
 }
-
 
 #nick {
   color: var(--text-fg);
@@ -517,6 +533,7 @@ button:focus {
   grid-area: splitter;
   cursor: col-resize;
 }
+
 #splitter.dragging {
   background: white;
   position: absolute;
@@ -533,6 +550,7 @@ button:focus {
   overflow: hidden;
   user-select: none;
 }
+
 #filelist-scroller {
   grid-area: files;
 }
@@ -556,6 +574,7 @@ button:focus {
   background: var(--dark-bg);
   padding: 10vh 10%;
 }
+
 .empty #dropminder {
   display: block;
 }
@@ -566,9 +585,10 @@ button:focus {
   height: 100%;
   margin-left: auto;
 }
+
 .empty rect {
   animation: 5s linear infinite spin, 10s ease-in infinite opulse;
-  transform-origin: 50% 50% 0px; 
+  transform-origin: 50% 50% 0px;
 }
 
 .gallery #filelist {
@@ -585,15 +605,17 @@ button:focus {
   grid-template-rows: auto 1fr auto;
   user-select: none;
 }
+
 #gallery > * {
   cursor: pointer;
 }
+
 .gallery #gallery {
   display: grid;
 }
 
 #gallery_img {
-  display: inline-block;
+  display: block;
   grid-column: 1 / span 3;
   grid-row: 1 / span 3;
   justify-self: center;
@@ -671,12 +693,6 @@ button:focus {
   margin-top: 2ex;
 }
 
-#gallery_img {
-  display: block;
-  max-height: 100%;
-  max-width: 100%;
-}
-
 #gallery_info {
   grid-column: 2 / span 2;
   grid-row: 3;
@@ -699,9 +715,11 @@ button:focus {
   padding: 4px 1ex;
   border: 1px dotted rgba(128, 128, 128, 0.1);
 }
+
 #files > .file:nth-child(even) {
   background: var(--odd-bg);
 }
+
 #files > .file.upload {
   background: var(--upload-bg);
   background-image: repeating-linear-gradient(
@@ -714,6 +732,7 @@ button:focus {
   background-size: 0% 100%;
   background-repeat: no-repeat;
 }
+
 #files > .file.error {
   background: var(--err-bg);
 }
@@ -761,23 +780,23 @@ button:focus {
 }
 
 .icon.i-image {
-    color: lightskyblue !important;
+  color: lightskyblue !important;
 }
 
 .icon.i-video {
-    color: yellowgreen !important;
+  color: yellowgreen !important;
 }
 
 .icon.i-document {
-    color: lightsalmon !important;
+  color: lightsalmon !important;
 }
 
 .icon.i-archive {
-    color: bisque !important;
+  color: bisque !important;
 }
 
 .icon.i-audio {
-    color: orchid !important;
+  color: orchid !important;
 }
 
 #files > .file > .i-upload {
@@ -803,6 +822,7 @@ button:focus {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 #files > .file > .detail > .ttl {
   flex: 3;
 }
@@ -875,6 +895,7 @@ button:focus {
   grid-column: 1;
   grid-row: span 10000;
 }
+
 span.tooltip-preview:before {
   color: var(--role-user-fg);
   font-size: 100px;
@@ -888,24 +909,24 @@ span.tooltip-preview.mod:before {
   max-width: 100px;
 }
 
-#status {
-  grid-area: status;
-  padding: 3px;
-  font-size: x-small;
-  text-align: right;
-}
-
 @keyframes spin {
   50% {
     transform: scale(0.9);
   }
 }
 
-
 @keyframes opulse {
-  0% { opacity: 0.2; }
-  50% { opacity: 1; }
-  100% { opacity: 0.2; }
+  0% {
+    opacity: 0.2;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.2;
+  }
 }
 
 @keyframes toolfadein {
@@ -914,6 +935,7 @@ span.tooltip-preview.mod:before {
     border-color: var(--main-bg);
     background-color: var(--lite-bg);
   }
+
   100% {
     opacity: 1;
   }
@@ -929,16 +951,19 @@ footer {
     2deg,
     var(--dark-bg),
     var(--main-bg)
-    );
+  );
 }
+
 footer > * {
   display: inline-block;
   margin-left: 2em;
 }
+
 footer a {
   display: inline-block;
   text-decoration: none;
 }
+
 footer > * > a {
   margin-left: 2px;
 }
@@ -978,6 +1003,7 @@ input[type="email"],
   grid-column-gap: 1em;
   grid-row-gap: 1ex;
 }
+
 #page label {
   font-size: small;
 }
@@ -994,10 +1020,12 @@ input[type="email"],
   grid-column-gap: 1em;
   grid-row-gap: 2ex;
 }
+
 #page #account h3 {
   margin: 0;
   margin-bottom: 1ex;
 }
+
 #page label[for="msg"],
 #page #account #msg {
   grid-column: 1 / span 2;
@@ -1043,6 +1071,7 @@ ul.context-menu ul {
   padding: 4px 1ex;
   vertical-align: middle;
 }
+
 .context-menu-item > * {
   display: inline-block;
   flex: 0 0 auto;
@@ -1071,9 +1100,11 @@ ul.context-menu ul {
   padding: 0;
   pointer-events: none;
 }
+
 .context-menu-seperator > * {
   display: none !important;
 }
+
 .context-menu-icon {
   width: 16px;
   height: 16px;
@@ -1084,6 +1115,7 @@ ul.context-menu ul {
   margin: 0;
   margin-right: 4px;
 }
+
 .context-menu-text {
   flex: 1 1;
   margin-right: 1ex;
@@ -1093,6 +1125,7 @@ ul.context-menu ul {
   margin-left: 1.2em;
   font-size: 10px;
 }
+
 #ctx-options {
   display: none;
 }
@@ -1111,6 +1144,7 @@ ul.context-menu ul {
 .unauthed #ctx-logout {
   display: none;
 }
+
 .regular #ctx-nuke,
 .regular #ctx-ban,
 .regular #ctx-unban,
@@ -1178,6 +1212,7 @@ ul.context-menu ul {
 
 .modal-button {
   margin-left: 1em;
+  opacity: 0.9;
 }
 
 .modal-messagebox .modal-body {
@@ -1186,9 +1221,6 @@ ul.context-menu ul {
   grid-column-gap: 1em;
 }
 
-.modal-button {
-  opacity: 0.9;
-}
 .modal-button-default {
   opacity: 1;
 }

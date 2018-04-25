@@ -1,0 +1,16 @@
+{
+  "extends": "stylelint-config-recommended",
+  "rules": {
+    "no-descending-specificity": null,
+    "indentation": 2,
+    "no-eol-whitespace": true,
+    "max-empty-lines": 1,
+    "rule-empty-line-before": ["always", {
+      "except": "first-nested"
+    }],
+    "block-closing-brace-empty-line-before": "never",
+    "block-closing-brace-newline-before": "always",
+    "block-opening-brace-newline-after": "always",
+    "block-opening-brace-space-before": "always"
+  }
+}
