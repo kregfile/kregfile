@@ -98,7 +98,7 @@ export function validateUsername(nick) {
     throw new Error("User name too long");
   }
   nick = nick.replace(/[^a-z\d]/gi, "");
-  if (nick.length <= 3) {
+  if (nick.length < 3) {
     throw new Error("User name too short");
   }
   return nick;
