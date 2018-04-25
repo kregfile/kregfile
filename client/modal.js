@@ -42,6 +42,7 @@ export default class Modal {
         if (this.default) {
           throw new Error("Two default buttons!");
         }
+        this.default = button;
         cls.push("modal-button-default");
       }
       const btn = dom("button", {
@@ -114,6 +115,9 @@ export default class Modal {
   accept() {
     if (this.default) {
       this.default.btn.click();
+    }
+    else {
+      console.log("no default");
     }
   }
 }

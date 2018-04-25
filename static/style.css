@@ -399,6 +399,17 @@ button:focus {
   color: var(--role-mod-fg);
 }
 
+.u > .ban-btn {
+  color: var(--text-fg);
+  display: inline-block;
+  font-size: 6pt;
+  vertical-align: top;
+  opacity: 0.3;
+}
+.u > .ban-btn:hover {
+  opacity: 0.9;
+}
+
 .msg {
   overflow-wrap: break-word;
   word-wrap: break-word;

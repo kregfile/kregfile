@@ -348,7 +348,6 @@ export default new class Roomie extends EventEmitter {
         return;
       }
       nukeEvent(e);
-      console.log("keyaccept");
       if (key === "Enter") {
         modal.accept();
       }
@@ -364,7 +363,7 @@ export default new class Roomie extends EventEmitter {
     }
     this.hideTooltip();
     if (!this.modals.size) {
-      addEventListener("keyup", this.onmodalkey);
+      addEventListener("keydown", this.onmodalkey);
     }
     else {
       this.modals.forEach(e => {
@@ -389,7 +388,7 @@ export default new class Roomie extends EventEmitter {
         newtop.enable();
       }
       else {
-        removeEventListener("keyup", this.onmodalkey);
+        removeEventListener("keydown", this.onmodalkey);
       }
     }
   }

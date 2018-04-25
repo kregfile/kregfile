@@ -100,6 +100,7 @@ export default new class Messages extends EventEmitter {
     this.onfileenter = this.onfileenter.bind(this);
     this.onuserenter = this.onuserenter.bind(this);
     this.onfileclick = this.onfileclick.bind(this);
+    this.onbanclick = this.onbanclick.bind(this);
     this.restoring = [];
 
     Object.seal(this);
@@ -206,6 +207,11 @@ export default new class Messages extends EventEmitter {
     return file.onclick(e);
   }
 
+  onbanclick(e) {
+    nukeEvent(e);
+    registry.roomie.showMessage("Imma ban u!", "Stub");
+  }
+
   _save() {
     this.store.setItem(registry.roomid, this.msgs).
       catch(console.error);
@@ -301,6 +307,14 @@ export default new class Messages extends EventEmitter {
     }
     if (!m.me) {
       user.appendChild(document.createTextNode(":"));
+    }
+
+    if (m.admin) {
+      const ban = dom("span", {
+        classes: ["ban-btn", "i-ban"],
+      });
+      user.appendChild(ban);
+      ban.onclick = this.onbanclick;
     }
 
     const msg = dom("span", {
