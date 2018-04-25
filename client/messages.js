@@ -93,14 +93,18 @@ export default new class Messages extends EventEmitter {
     }, 500));
   }
 
-  async onfileenter(e) {
-    let file = this.files.get(e.target);
+  async completeFile(f) {
+    let file = this.files.get(f);
+    const local = registry.files.get(file.key);
+    if (local) {
+      this.files.set(f, local);
+      return local;
+    }
     if (!file) {
-      return;
+      return null;
     }
     if (file.unknown) {
-      registry.roomie.installTooltip(new Tooltip("File unknown"), e);
-      return;
+      return null;
     }
     if (!file.url) {
       try {
@@ -110,15 +114,19 @@ export default new class Messages extends EventEmitter {
         }
         file.external = true;
         file = new File(file);
-        this.files.set(e.target, file);
       }
       catch (ex) {
         file.unknown = true;
-        console.error(ex);
-        return;
+        return null;
       }
     }
-    if (file.expired || file.unknown) {
+    this.files.set(f, file);
+    return file;
+  }
+
+  async onfileenter(e) {
+    const file = await this.completeFile(e.target);
+    if (!file || file.expired || file.unknown) {
       registry.roomie.installTooltip(new Tooltip("File unknown"), e);
       return;
     }
@@ -287,20 +295,31 @@ export default new class Messages extends EventEmitter {
         break;
 
       case "f": {
+        const info = registry.files.get(p.key) || p;
         const file = dom("a", {
           classes: ["chatfile"],
           attrs: {
             target: "_blank",
             rel: "nofollow",
-            href: `${p.href}/${p.name}`,
+            href: `${info.href}/${info.name}`,
           },
-          text: p.name
+          text: info.name
         });
-        file.insertBefore(dom("span", {
-          classes: ["icon", `i-${toType(p.type)}`],
-        }), file.firstChild);
-        const info = registry.files.get(p.key) || p;
+        const icon = dom("span", {
+          classes: ["icon", `i-${toType(info.type)}`],
+        });
+        file.insertBefore(icon, file.firstChild);
         this.files.set(file, info);
+        if (info.client) {
+          this.completeFile(file).then(f => {
+            if (!f || f.unknown) {
+              return;
+            }
+            icon.className = `icon  i-${toType(f.type)}`;
+            file.href = f.url;
+            file.lastChild.textContent = f.name;
+          }).catch(console.error);
+        }
         file.addEventListener("mouseenter", this.onfileenter);
         file.addEventListener("click", this.onfileclick);
         msg.appendChild(file);

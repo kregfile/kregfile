@@ -155,6 +155,18 @@ export default new class ChatBox extends EventEmitter {
     return true;
   }
 
+  cmd_p(value) {
+    registry.privmsg.command(value).catch(ex => {
+      registry.messages.add({
+        volatile: true,
+        user: "Error",
+        role: "system",
+        msg: `Could not send privmsg: ${ex}`
+      });
+    });
+    return true;
+  }
+
   doCommand(cmd) {
     const fn = this[`cmd_${cmd.cmd}`];
     if (!fn) {

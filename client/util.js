@@ -1,5 +1,7 @@
 "use strict";
 
+import message from "../common/message";
+
 export function dom(type, options) {
   const {attrs = {}, text = "", classes = []} = options || {};
   const el = document.createElement(type);
@@ -159,5 +161,23 @@ export function idle(fn, timeout) {
     });
   };
 }
+
+function resolveRoom(v) {
+  return v;
+}
+
+function resolveFile(v) {
+  return {
+    key: v,
+    name: "Some file",
+    type: "file",
+    href: `/g/${v}`,
+    client: true
+  };
+}
+
+export const normalizeURL = message.normalizeURL.bind(null, URL);
+export const toMessage = message.toMessage.bind(
+  null, URL, resolveRoom, resolveFile);
 
 export * from "../common/index";

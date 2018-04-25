@@ -8,6 +8,7 @@ import chatbox from "./chatbox";
 import files from "./files";
 import reload from "./reload";
 import splitter from "./splitter";
+import privmsg from "./privmsg";
 
 export default new class Registry {
   constructor() {
@@ -27,6 +28,7 @@ export default new class Registry {
       files,
       reload,
       splitter,
+      privmsg,
     };
     for (const [k, component] of Object.entries(components)) {
       this[k] = component;
