@@ -91,7 +91,7 @@ export function toType(type) {
 }
 
 export function validateUsername(nick) {
-  if (nick.length <= 3) {
+  if (nick.length < 3) {
     throw new Error("User name too short");
   }
   if (nick.length > 20) {
