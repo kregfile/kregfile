@@ -109,6 +109,14 @@ export default new class Messages extends EventEmitter {
   init() {
     registry.socket.on("message", this.add.bind(this));
 
+    registry.splitter.on("adjusted", () => {
+      this.scrollEnd();
+    });
+
+    registry.roomie.on("ips", () => {
+      this.scrollEnd();
+    });
+
     registry.chatbox.on("error", e => {
       this.add({
         volatile: true,
@@ -134,6 +142,10 @@ export default new class Messages extends EventEmitter {
         this.hideEndMarker();
       }
     });
+
+    addEventListener("resize", debounce(() => {
+      this.scrollEnd();
+    }, 500));
   }
 
   async onfileenter(e) {
@@ -434,6 +446,9 @@ export default new class Messages extends EventEmitter {
   }
 
   scrollEnd() {
+    if (!this.els.length) {
+      return;
+    }
     this.els[this.els.length - 1].scrollIntoView();
     this.hideEndMarker();
   }

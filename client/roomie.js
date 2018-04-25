@@ -114,8 +114,9 @@ export default new class Roomie extends EventEmitter {
 
     Object.seal(this);
 
-    document.querySelector("#ips").addEventListener("click", function() {
+    document.querySelector("#ips").addEventListener("click", () => {
       document.body.classList.toggle("noips");
+      this.emit("ips");
     });
 
     addEventListener("mouseout", this.onmouseout, true);

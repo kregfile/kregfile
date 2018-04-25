@@ -1,10 +1,12 @@
 "use strict";
 
+import EventEmitter from "events";
 import {nukeEvent} from "./util";
 import registry from "./registry";
 
-export default new class Splitter {
+export default new class Splitter extends EventEmitter {
   constructor() {
+    super();
     this.el = document.querySelector("#splitter");
     this.chat = document.querySelector("#chat");
     this.onmouseup = this.onmouseup.bind(this);
@@ -56,6 +58,7 @@ export default new class Splitter {
       width,
       page: document.body.clientWidth,
     }));
+    this.emit("adjusted");
   }
 
   abort() {
