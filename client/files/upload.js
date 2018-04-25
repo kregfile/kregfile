@@ -16,6 +16,8 @@ export default class Upload extends Removable {
     this.file = file;
     this.key = null;
     this.offset = null;
+    this.req = null;
+    this.aborted = false;
 
     this.el = dom("div", {classes: ["file", "upload"]});
 
@@ -23,6 +25,12 @@ export default class Upload extends Removable {
       classes: ["icon", "i-wait"],
     });
     this.el.appendChild(this.iconEl);
+
+    this.abortEl = dom("span", {
+      classes: ["icon", "abort", "i-clear"],
+    });
+    this.el.appendChild(this.abortEl);
+    this.abortEl.onclick = this.abort.bind(this);
 
     this.nameEl = dom("span", {classes: ["name"], text: this.file.name});
     this.el.appendChild(this.nameEl);
@@ -80,6 +88,15 @@ export default class Upload extends Removable {
     });
   }
 
+  abort() {
+    this.aborted = true;
+    this.remove();
+    if (!this.req) {
+      return;
+    }
+    this.req.abort();
+  }
+
   async attemptUpload() {
     if (this.offset !== null) {
       this.offset = await this.queryOffset();
@@ -91,35 +108,37 @@ export default class Upload extends Removable {
     params.set("name", this.file.name);
     params.set("key", this.key);
     params.set("offset", this.offset);
-    return new Promise((resolve, reject) => {
-      const req = new XMLHttpRequest();
-      req.onerror = () => {
-        console.error("onerror");
-        reject(new Error("Connection lost"));
-      };
-      req.onabort = () => {
-        console.error("onabort");
-        const err = new Error("Aborted");
-        err.retryable = true;
-        reject(err);
-      };
-      req.onload = () => {
-        resolve(req.response);
-      };
-      req.responseType = "json";
-      req.upload.addEventListener("progress", e => {
-        if (this.offset === 0 && e.loaded > (1 << 20)) {
+    try {
+      const req = this.req = new XMLHttpRequest();
+      return await new Promise((resolve, reject) => {
+        req.onerror = () => {
+          console.error("onerror");
+          reject(new Error("Connection lost"));
+        };
+        req.onabort = () => {
+          reject(new Error("Aborted"));
+        };
+        req.onload = () => {
+          resolve(req.response);
+        };
+        req.responseType = "json";
+        req.upload.addEventListener("progress", e => {
+          if (this.offset === 0 && e.loaded > (1 << 20)) {
           //req.abort();
+          }
+          this.setProgress(this.offset + e.loaded, this.offset + e.total);
+        });
+        req.open("PUT", `/api/upload?${params.toString()}`);
+        let {file} = this;
+        if (this.offset) {
+          file = file.slice(this.offset);
         }
-        this.setProgress(this.offset + e.loaded, this.offset + e.total);
+        req.send(file);
       });
-      req.open("PUT", `/api/upload?${params.toString()}`);
-      let {file} = this;
-      if (this.offset) {
-        file = file.slice(this.offset);
-      }
-      req.send(file);
-    });
+    }
+    finally {
+      this.req = null;
+    }
   }
 
   setProgress(current, total) {
@@ -140,6 +159,9 @@ export default class Upload extends Removable {
   }
 
   async upload() {
+    if (this.aborted) {
+      return;
+    }
     registry.chatbox.ensureNick();
     this.setIcon("i-upload");
     try {
@@ -193,6 +215,9 @@ export default class Upload extends Removable {
       }
     }
     catch (ex) {
+      if (this.aborted) {
+        return;
+      }
       this.el.classList.add("error");
       this.setIcon("i-error");
       this.sizeEl.textContent = "Upload failed";

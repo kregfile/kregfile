@@ -733,6 +733,10 @@ button:focus {
   background-repeat: no-repeat;
 }
 
+#files > .file.upload > .icon.abort {
+  cursor: pointer;
+}
+
 #files > .file.error {
   background: var(--err-bg);
 }
