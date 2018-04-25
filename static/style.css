@@ -115,7 +115,7 @@ ol > li {
   font-size: 12pt;
 }
 
-#page nav {
+#page > nav {
   box-sizing: border-box;
   width: 100%;
   display: flex;
@@ -154,14 +154,14 @@ button:focus {
   text-align: center;
 }
 
-#room nav {
+#room > nav {
   display: flex;
   align-items: center;
   align-content: center;
   justify-content: space-between;
 }
 
-#room nav#main > div {
+#room > nav#main > div {
   width: 3ex;
 }
 
@@ -188,7 +188,7 @@ button:focus {
   animation: opulse 5s infinite ease-in;
 }
 
-#tools {
+#room > #tools {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -331,6 +331,7 @@ button:focus {
   background: var(--dark-bg);
   min-width: 380px;
 }
+
 #chat-scroller {
   grid-area: chat;
 }
@@ -648,7 +649,7 @@ button:focus {
   margin-bottom: 4ex;
 }
 
-.file {
+#files > .file {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -656,10 +657,10 @@ button:focus {
   padding: 4px 1ex;
   border: 1px dotted rgba(128, 128, 128, 0.1);
 }
-.file:nth-child(even) {
+#files > .file:nth-child(even) {
   background: var(--odd-bg);
 }
-.file.upload {
+#files > .file.upload {
   background: var(--upload-bg);
   background-image: repeating-linear-gradient(
     60deg,
@@ -671,12 +672,12 @@ button:focus {
   background-size: 0% 100%;
   background-repeat: no-repeat;
 }
-.file.error {
+#files > .file.error {
   background: var(--err-bg);
 }
 
-.file a,
-.file span {
+#files > .file a,
+#files > .file span {
   display: inline-block;
   padding-right: 1ex;
   color: var(--text-fg);
@@ -684,17 +685,17 @@ button:focus {
   white-space: nowrap;
 }
 
-.file a:hover {
+#files > .file a:hover {
   color: var(--dark-fg);
 }
 
-.file > .name {
+#files > .file > .name {
   flex: 1;
   overflow-x: hidden;
   text-overflow: ellipsis;
 }
 
-.file > .tags {
+#files > .file > .tags {
   text-align: right;
   display: inline-block;
   padding: 0 1em;
@@ -702,7 +703,7 @@ button:focus {
   overflow-x: hidden;
 }
 
-.file > .tags > .tag {
+#files > .file > .tags > .tag {
   font-size: xx-small;
   background: rgba(128, 128, 128, 0.4);
   padding: 1px 0.8ex;
@@ -714,41 +715,41 @@ button:focus {
 }
 
 .icon.i-image {
-    color: lightskyblue;
+    color: lightskyblue !important;
 }
 
 .icon.i-video {
-    color: yellowgreen;
+    color: yellowgreen !important;
 }
 
 .icon.i-document {
-    color: lightsalmon;
+    color: lightsalmon !important;
 }
 
 .icon.i-archive {
-    color: bisque;
+    color: bisque !important;
 }
 
 .icon.i-audio {
-    color: orchid;
+    color: orchid !important;
 }
 
-.file > .i-upload {
+#files > .file > .i-upload {
   animation: opulse 2s infinite ease-in;
 }
 
-.file > .i-wait {
+#files > .file > .i-wait {
   opacity: 0.5;
 }
 
-.file > .detail {
+#files > .file > .detail {
   display: flex;
   width: 180px;
   white-space: nowrap;
   font-size: var(--detail-size);
 }
 
-.file > .detail > span {
+#files > .file > .detail > span {
   display: inline-block;
   border-left: 2px solid rgba(128,128,128,0.5);
   padding-left: 1ex;
@@ -756,7 +757,7 @@ button:focus {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.file > .detail > .ttl {
+#files > .file > .detail > .ttl {
   flex: 3;
 }
 

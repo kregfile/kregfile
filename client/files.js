@@ -539,19 +539,19 @@ export default new class Files extends EventEmitter {
     const rules = [];
     const height = getComputedStyle(file.el, null).
       getPropertyValue("height");
-    rules.push(`.file { height: ${height}; }`);
+    rules.push(`#files > .file { height: ${height}; }`);
     const nameHeight = getComputedStyle(file.nameEl, null).
       getPropertyValue("height");
-    rules.push(`.file > .name { height: ${nameHeight}; }`);
+    rules.push(`#files > .file > .name { height: ${nameHeight}; }`);
     const iconHeight = getComputedStyle(file.iconEl, null).
       getPropertyValue("height");
-    rules.push(`.file > .icon { height: ${iconHeight}; }`);
+    rules.push(`#files > .file > .icon { height: ${iconHeight}; }`);
     const tagsHeight = getComputedStyle(file.tagsEl, null).
       getPropertyValue("height");
-    rules.push(`.file > .tags { height: ${tagsHeight}; }`);
+    rules.push(`#files > .file > .tags { height: ${tagsHeight}; }`);
     const detailHeight = getComputedStyle(file.detailEl, null).
       getPropertyValue("height");
-    rules.push(`.file > .detail { height: ${detailHeight}; }`);
+    rules.push(`#files > .file > .detail { height: ${detailHeight}; }`);
     document.body.appendChild(dom("style", {
       text: rules.join("\n")
     }));

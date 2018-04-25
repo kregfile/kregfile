@@ -11,8 +11,11 @@ export default class Scroller {
     this.start = 0;
     this.off = 0;
 
+    el.addEventListener("wheel", () => {});
+
     const diff = el.clientWidth - el.offsetWidth;
     if (!diff) {
+      el.addEventListener("scroll", () => {});
       // no need to do anything, aka macos and some gtk themes
       Object.seal(this);
       return;
@@ -25,7 +28,7 @@ export default class Scroller {
     this.onmousemove = this.onmousemove.bind(this);
 
     this.bar = dom("div", {
-      classes: ["scrollbar", "layer"],
+      classes: ["scrollbar"],
     });
     scroller.appendChild(this.bar);
     this.bar.addEventListener("mousedown", this.onmousedown.bind(this));
