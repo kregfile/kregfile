@@ -7,6 +7,7 @@ import roomie from "./roomie";
 import chatbox from "./chatbox";
 import files from "./files";
 import reload from "./reload";
+import splitter from "./splitter";
 
 export default new class Registry {
   constructor() {
@@ -25,6 +26,7 @@ export default new class Registry {
       chatbox,
       files,
       reload,
+      splitter,
     };
     for (const [k, component] of Object.entries(components)) {
       this[k] = component;

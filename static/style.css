@@ -50,14 +50,13 @@ body#room {
   padding: 0;
   margin: 0;
 
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1fr 1ex 2fr;
   grid-template-rows: auto 1fr auto auto;
-  grid-column-gap: 1ex;
   grid-template-areas:
-    "nav tools"
-    "chat files"
-    "status files"
-    "chatbox files";
+    "nav splitter tools"
+    "chat splitter files"
+    "status splitter files"
+    "chatbox splitter files";
 }
 
 body#page {
@@ -512,6 +511,19 @@ button:focus {
   outline: none;
   box-shadow: none;
   font-family: var(--base-font);
+}
+
+#splitter {
+  grid-area: splitter;
+  cursor: col-resize;
+}
+#splitter.dragging {
+  background: white;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0.3ex;
+  z-index: 100000;
 }
 
 #filelist {
