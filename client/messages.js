@@ -186,7 +186,6 @@ export default new class Messages extends EventEmitter {
     m.date = m.date || new Date();
     let notify = false;
     if (!("notify" in m)) {
-      m.notify = false;
       for (const p of m.msg) {
         if (p.t === "t" && registry.chatbox.checkHighlight(p.v)) {
           notify = true;
@@ -194,6 +193,11 @@ export default new class Messages extends EventEmitter {
         }
       }
     }
+    else if (m.notify) {
+      notify = true;
+    }
+    m.notify = false;
+
     if (!("highlight" in m)) {
       m.highlight = notify;
     }
