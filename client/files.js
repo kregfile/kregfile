@@ -60,14 +60,14 @@ export default new class Files extends EventEmitter {
     this.onuploadbutton = this.onuploadbutton.bind(this);
     this.ondragenter = this.ondragenter.bind(this);
     this.ondragover = this.ondragover.bind(this);
-    this.ondragexit = this.ondragexit.bind(this);
+    this.ondragleave = this.ondragleave.bind(this);
     this.dragging = false;
     Object.seal(this);
 
     this.el.addEventListener("drop", this.ondrop.bind(this), true);
-    this.el.addEventListener("dragenter", this.ondragenter, true);
-    this.el.addEventListener("dragover", this.ondragover, true);
-    this.el.addEventListener("dragleave", this.ondragexit, true);
+    this.el.addEventListener("dragenter", this.ondragenter, false);
+    this.el.addEventListener("dragover", this.ondragover, false);
+    this.el.addEventListener("dragleave", this.ondragleave, false);
 
     this.filterButtons.forEach(e => {
       e.addEventListener("click", this.onfilterbutton, true);
@@ -278,15 +278,20 @@ export default new class Files extends EventEmitter {
   }
 
   ondragenter(e) {
+    if (!this.el.contains(e.target)) {
+      return;
+    }
     registry.roomie.hideTooltip();
     if (!e.dataTransfer.types.includes("Files")) {
       return;
     }
-    this.adjustEmpty(true);
     e.preventDefault();
     e.stopPropagation();
     e.dataTransfer.dropEffect = "copy";
-    this.dragging = true;
+    if (!this.dragging) {
+      this.adjustEmpty(true);
+      this.dragging = true;
+    }
   }
 
   ondragover(e) {
@@ -299,8 +304,8 @@ export default new class Files extends EventEmitter {
   }
 
 
-  ondragexit(e) {
-    if (e.target !== this.el) {
+  ondragleave(e) {
+    if (this.el.contains(e.relatedTarget)) {
       return;
     }
     this.dragging = false;
