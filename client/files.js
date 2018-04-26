@@ -66,6 +66,7 @@ export default new class Files extends EventEmitter {
     this.el.addEventListener("drop", this.ondrop.bind(this), true);
     this.el.addEventListener("dragenter", this.ondragenter, true);
     this.el.addEventListener("dragover", this.ondragenter, true);
+    this.el.addEventListener("dragleave", this.ondragexit, true);
 
     this.filterButtons.forEach(e => {
       e.addEventListener("click", this.onfilterbutton, true);
@@ -284,21 +285,12 @@ export default new class Files extends EventEmitter {
     e.preventDefault();
     e.stopPropagation();
     e.dataTransfer.dropEffect = "copy";
-    if (!this.dragging) {
-      this.el.addEventListener("dragleave", this.ondragexit, true);
-      addEventListener("mouseout", this.ondragexit, true);
-      this.dragging = true;
-    }
+    this.dragging = true;
   }
 
   ondragexit(e) {
-    if (e.type === "mouseout" && e.target !== this.el) {
-      return;
-    }
     this.dragging = false;
     this.adjustEmpty();
-    this.el.removeEventListener("dragleave", this.ondragexit, true);
-    removeEventListener("mouseout", this.ondragexit, true);
   }
 
   ondrop(e) {
