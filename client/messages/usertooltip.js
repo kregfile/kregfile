@@ -1,7 +1,7 @@
 "use strict";
 
 import Tooltip from "../tooltip";
-import { dom, toPrettyInt, toPrettySize } from "../util";
+import { dom, roleToIcon, toPrettyInt, toPrettySize } from "../util";
 
 export default class UserTooltip extends Tooltip {
   constructor(info) {
@@ -17,7 +17,7 @@ export default class UserTooltip extends Tooltip {
       this.el.appendChild(dom("span", {
         classes: [
           "tooltip-preview",
-          info.role === "mod" ? "i-purple" : "i-green",
+          roleToIcon(info.role),
           info.role
         ],
       }));
@@ -26,7 +26,7 @@ export default class UserTooltip extends Tooltip {
     const add = (t, v) => {
       this.el.appendChild(dom("span", {
         classes: ["tooltip-tag-tag"],
-        text: `${t}:`
+        text: t ? `${t}:` : "",
       }));
       this.el.appendChild(dom("span", {
         classes: ["tooltip-tag-value"],
@@ -42,6 +42,9 @@ export default class UserTooltip extends Tooltip {
     case "user":
       add("Is a", "User");
       break;
+    }
+    if (info.owner === "true") {
+      add("", "Room Owner");
     }
     if (info.email) {
       add("Email", info.email);

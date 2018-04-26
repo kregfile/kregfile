@@ -180,4 +180,19 @@ export const normalizeURL = message.normalizeURL.bind(null, URL);
 export const toMessage = message.toMessage.bind(
   null, URL, resolveRoom, resolveFile);
 
+export function roleToIcon(role) {
+  switch (role) {
+  case "system":
+    return "i-sytem32";
+
+  case "mod":
+    return "i-purple";
+
+  case "user":
+    return "i-green";
+  default:
+    return "i-white";
+  }
+}
+
 export * from "../common/index";

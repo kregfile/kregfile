@@ -414,6 +414,15 @@ button:focus {
   opacity: 0.3;
 }
 
+.u > .role,
+.u > .i-owner {
+  display: inline-block;
+  width: 16px;
+  padding-right: 0.5ex;
+  text-align: center;
+  opacity: 0.7;
+}
+
 .u > .ban-btn:hover {
   opacity: 0.9;
 }

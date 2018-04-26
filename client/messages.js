@@ -6,6 +6,7 @@ import {
   debounce,
   dom,
   nukeEvent,
+  roleToIcon,
   toType,
 } from "./util";
 import {APOOL} from "./animationpool";
@@ -134,7 +135,7 @@ export default new class Messages extends EventEmitter {
   }
 
   async onuserenter(e) {
-    const {profile} = e.target.dataset;
+    const {profile, owner} = e.target.dataset;
     if (!profile) {
       return;
     }
@@ -146,6 +147,7 @@ export default new class Messages extends EventEmitter {
           return;
         }
         info.expires = Date.now() + 120000;
+        info.owner = owner;
         this.users.set(profile, info);
         if (this.users.size > 100) {
           this.users.delete(this.users.keys().next().value);
@@ -252,6 +254,7 @@ export default new class Messages extends EventEmitter {
         text: m.user
       });
       user.dataset.profile = profile;
+      user.dataset.owner = m.owner;
       user.addEventListener("mouseenter", this.onuserenter);
     }
     else {
@@ -261,12 +264,25 @@ export default new class Messages extends EventEmitter {
       });
     }
 
+    if (!m.owner && m.role) {
+      user.insertBefore(dom("span", {
+        classes: ["role", roleToIcon(m.role)],
+      }), user.firstChild);
+    }
+    if (m.owner) {
+      user.insertBefore(dom("span", {
+        classes: ["i-owner"],
+        attrs: {title: "Room Owner"},
+      }), user.firstChild);
+    }
     const ts = dom("span", {
       attrs: {title: DATE_FORMAT_LONG.format(m.date)},
       classes: ["time"],
       text: d
     });
     user.insertBefore(ts, user.firstChild);
+
+
 
     if (m.ip) {
       user.appendChild(dom("span", {
