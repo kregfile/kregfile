@@ -1254,12 +1254,12 @@ ul.context-menu ul {
   grid-row-gap: 1.3ex;
 }
 
-.modal #login-icon {
+.modal .login-icon {
   width: 64px;
   font-size: 64px;
   margin-right: 20px;
   grid-column: 1;
-  grid-row: 1 / span 2;
+  grid-row: 1 / span 3;
 }
 
 .kf {

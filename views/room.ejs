@@ -94,11 +94,13 @@
   </ul>
 
   <form id="login-tmpl" class="tmpl">
-    <span id="login-icon" class="i-login"></span>
+    <span class="login-icon i-login"></span>
     <label>User:</label>
     <input name="u" type="text" autocomplete="username">
     <label>Password:</label>
     <input name="p" type="password" autocomplete="current-password">
+    <label class="tfa-label hidden">Two factor:</label>
+    <input class="tfa hidden" name="t" type="text" autocomplete="off">
   </form>
   <script src="/static/client.js?v=<%=v%>"></script>
 </body>

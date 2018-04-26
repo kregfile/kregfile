@@ -20,6 +20,20 @@
       </div>
       <input type="submit" id="submit" value="Update your data">
     </form>
+    <form autocomplete="false" action="javascript:">
+      <h3>Two factor authentication</h3>
+      <button id="tfa" data-enabled="<%=!!user.twofactor%>"><%=user.twofactor ? "Disable" : "Enable"%></button>
+      <div id="challenger" style="display: none;">
+        <figure>
+          <canvas id="qr" width="400" height="400"></canvas>
+        </figure>
+        <div>
+          <label>Your response? <input id="challenged" type="text" width="6"></label>
+        </div>
+        <div><input id="tfasubmit" type="submit" value="Do it!">
+        </div>
+      </div>
+    </form>
   </article>
   <%- include("footer"); %>
   <script src="/static/account.js?v=<%=v%>"></script>

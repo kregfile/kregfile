@@ -28,6 +28,7 @@ module.exports = {
   entry: {
     client: "./main.js",
     register: "./register.js",
+    account: "./account.js",
   },
   output: {
     filename: "[name].js",

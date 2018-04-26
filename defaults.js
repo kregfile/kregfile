@@ -8,6 +8,9 @@ const linux = require("os").platform() === "linux";
 // Overwrite with a .config.json or config.js (module)
 
 module.exports = {
+  // Your site's name
+  name: "kregfile",
+
   // redis_* = options for redis
   // Listen port
   port,
