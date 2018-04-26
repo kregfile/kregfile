@@ -285,22 +285,22 @@ export default new class Files extends EventEmitter {
     e.stopPropagation();
     e.dataTransfer.dropEffect = "copy";
     if (!this.dragging) {
-      this.el.addEventListener("dragexit", this.ondragexit, true);
       this.el.addEventListener("dragleave", this.ondragexit, true);
-      this.el.addEventListener("mouseout", this.ondragexit, true);
+      addEventListener("mouseout", this.ondragexit, true);
       this.dragging = true;
     }
   }
+
   ondragexit(e) {
-    if (e.target !== this.el) {
+    if (e.type === "mouseout" && e.target !== this.el) {
       return;
     }
     this.dragging = false;
     this.adjustEmpty();
-    this.el.removeEventListener("dragexit", this.ondragexit, true);
     this.el.removeEventListener("dragleave", this.ondragexit, true);
-    this.el.removeEventListener("mouseout", this.ondragexit, true);
+    removeEventListener("mouseout", this.ondragexit, true);
   }
+
   ondrop(e) {
     e.preventDefault();
     try {
