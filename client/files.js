@@ -278,9 +278,6 @@ export default new class Files extends EventEmitter {
   }
 
   ondragenter(e) {
-    if (e.target !== this.el) {
-      return;
-    }
     registry.roomie.hideTooltip();
     if (!e.dataTransfer.types.includes("Files")) {
       return;
