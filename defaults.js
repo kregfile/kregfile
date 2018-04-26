@@ -48,6 +48,11 @@ module.exports = {
   // Number of ms to block login attempts from flooding user
   accountFloodDuration: 21600000,
 
+  // Number of created rooms before considered flooding
+  roomFloodTrigger: 10,
+  // Number of ms to block new rooms from flooding user
+  roomFloodDuration: 60 * 60 * 1000,
+
   // Use firejail when calling potential dangerous external commands,
   // see jail.profile
   jail: linux,
