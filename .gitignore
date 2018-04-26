@@ -1,9 +1,10 @@
-node_modules/
-static/client.js*
-static/register.js*
 .DS_Store
 .config.json
-lib/clientversion.js
 data/
 kregfile-v1.0.0.tgz
+lib/clientversion.js
+node_modules/
+static/account.js*
+static/client.js*
+static/register.js*
 yarn-error.log
