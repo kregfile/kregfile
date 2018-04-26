@@ -204,6 +204,8 @@ button:focus {
   transition: background 0.5s, color 0.5s ease-in;
   color: var(--text-fg);
   font-size: var(--base-size);
+  width: 32px;
+  text-align: center;
 }
 
 .filterbtn:hover {
@@ -276,7 +278,8 @@ button:focus {
 
 #tools .btn {
   font-size: 16pt;
-  display: block;
+  width: 38px;
+  text-align: center;
   background: rgba(255,255,255,0.7);
   color: black;
   height: cal(100% - 1ex);
@@ -297,6 +300,16 @@ button:focus {
 #tools .btn:last-child {
   border-top-right-radius: 0px;
 }
+
+#trash {
+  display: none;
+}
+
+.owner #trash,
+.mod #trash {
+  display: block;
+}
+
 
 .layer {
   backface-visibility: hidden;

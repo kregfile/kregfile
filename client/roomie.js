@@ -222,6 +222,9 @@ export default new class Roomie extends EventEmitter {
       document.body.classList[role === "mod" ? "add" : "remove"]("mod");
       document.body.classList[role !== "mod" ? "add" : "remove"]("regular");
     });
+    registry.socket.on("owner", owner => {
+      document.body.classList[owner ? "add" : "remove"]("owner");
+    });
 
     registry.socket.on("time", v => {
       const now = Date.now();
