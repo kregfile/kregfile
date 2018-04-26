@@ -59,7 +59,8 @@ export default new class PrivMessage {
     if (!idx) {
       throw new Error("Invalid private messgae, use <user> <msg");
     }
-    const user = m.slice(0, idx.index).trim().toLowerCase();
+    const u = m.slice(0, idx.index).trim();
+    const user = u.toLowerCase();
     m = m.slice(idx.index).trim();
     validateUsername(user);
 
@@ -78,7 +79,7 @@ export default new class PrivMessage {
       user
     });
     registry.messages.add({
-      user: `Private to ${user}`,
+      user: `Private to ${u}`,
       role: "system",
       msg: toMessage(`${m}`)
     });
