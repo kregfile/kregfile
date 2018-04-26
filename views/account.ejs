@@ -25,6 +25,10 @@
       <button id="tfa" data-enabled="<%=!!user.twofactor%>"><%=user.twofactor ? "Disable" : "Enable"%></button>
       <div id="challenger" style="display: none;">
         <figure>
+          <figcaption>
+            Scan this QR code with Google Authenticator, Authy, MS Authenticator<br>
+            or any other compatible 2fa app
+          </figcaption>
           <canvas id="qr" width="400" height="400"></canvas>
         </figure>
         <div>
