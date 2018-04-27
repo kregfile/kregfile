@@ -478,7 +478,7 @@ export default new class Roomie extends EventEmitter {
       noscreen: true,
     };
     const notification = new Notification(
-      `${n.user} | ${this.name} | kregfile`,
+      `${n.user} | ${this.name} | ${registry.config.get("name")}`,
       opts);
     setTimeout(notification.close.bind(notification), 10000);
   }
@@ -498,7 +498,7 @@ export default new class Roomie extends EventEmitter {
   _updateTitle() {
     const unread = this.unread ? `(${this.unread}) ` : "";
     const title = `${unread}${this.name}`;
-    document.title = `${title} - kregfile`;
+    document.title = `${title} - ${registry.config.get("name")}`;
     this.emit("title", title);
   }
 

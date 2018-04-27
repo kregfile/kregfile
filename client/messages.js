@@ -473,7 +473,7 @@ export default new class Messages extends EventEmitter {
         role: "system",
         user: "System",
         msg: [
-          {t: "t", v: "Welcome to kregfile"},
+          {t: "t", v: `Welcome to ${registry.config.get("name")}`},
           {t: "b"},
           {t: "t", v: "Share this room with somebody: "},
           {t: "b"},
