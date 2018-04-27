@@ -43,6 +43,7 @@ export default new class Files extends EventEmitter {
     this.elmap = new WeakMap();
     this.scrollState = new ScrollState(this);
     this.newFiles = false;
+    this.selectionStart = null;
 
     this.onfiles = this.onfiles.bind(this);
     this.filesQueue = [];
@@ -87,6 +88,12 @@ export default new class Files extends EventEmitter {
 
     this.el.addEventListener("click", this.onclick.bind(this));
     this.el.addEventListener("scroll", this.onscroll.bind(this));
+
+    document.querySelector("#clearselection").addEventListener(
+      "click", this.clearSelection.bind(this));
+
+    document.querySelector("#trash").addEventListener(
+      "click", this.trash.bind(this));
   }
 
   get visible() {
@@ -450,9 +457,8 @@ export default new class Files extends EventEmitter {
   }
 
   onfilesdeleted(files) {
-    console.log("deleted", files);
-    for (const f of files) {
-      const existing = this.filemap.get(f.key);
+    for (const key of files) {
+      const existing = this.filemap.get(key);
       if (!existing) {
         continue;
       }
@@ -589,20 +595,24 @@ export default new class Files extends EventEmitter {
   }
 
   removeFileElements(files) {
-    if (files.length > 3) {
+    try {
+      if (files.length > 3) {
+        for (const f of files) {
+          this.filemap.delete(f.key);
+        }
+        this.files = Array.from(this.filemap.values());
+        return;
+      }
       for (const f of files) {
-        this.filemap.delete(f.key);
-      }
-      this.files = Array.from(this.filemap.values());
-      return;
-    }
-    for (const f of files) {
-      if (this.filemap.delete(f.key)) {
-        this.files.splice(this.files.indexOf(f), 1);
+        if (this.filemap.delete(f.key)) {
+          this.files.splice(this.files.indexOf(f), 1);
+        }
       }
     }
-    this.adjustEmpty();
-    this.delayedUpdateStatus();
+    finally {
+      this.adjustEmpty();
+      this.delayedUpdateStatus();
+    }
   }
 
   addUploadElements(uploads) {
@@ -614,6 +624,62 @@ export default new class Files extends EventEmitter {
     catch (ex) {
       console.error(ex);
     }
+  }
+
+  get selection() {
+    return Array.from(document.querySelectorAll(".file.selected")).
+      map(e => this.elmap.get(e)).
+      filter(e => e);
+  }
+
+  select(file, e) {
+    const {metaKey: ctrl, shiftKey: shift} = e;
+    // Windows style of engagement
+    if (shift) {
+      // must select range
+      // if there is no start, just assume start is the list head
+      const {visible} = this;
+      let startIdx;
+      if (!this.selectionStart) {
+        [this.selectionStart] = visible;
+        startIdx = 0;
+      }
+      else {
+        startIdx = visible.indexOf(this.selectionStart);
+        if (startIdx < 0) {
+          [this.selectionStart] = visible;
+          startIdx = 0;
+        }
+      }
+      let endIdx = visible.indexOf(file);
+      if (startIdx > endIdx) {
+        [startIdx, endIdx] = [endIdx, startIdx];
+      }
+      this.clearSelection();
+      visible.slice(startIdx, endIdx + 1).
+        forEach(e => e.el.classList.add("selected"));
+    }
+    else if (ctrl) {
+      file.el.classList.toggle("selected");
+    }
+    else {
+      this.clearSelection();
+      file.el.classList.add("selected");
+      this.selectionStart = file;
+    }
+  }
+
+  clearSelection() {
+    this.selection.forEach(e => e.el.classList.remove("selected"));
+  }
+
+  trash() {
+    const selected = this.selection.map(e => e.key);
+    if (!selected.length) {
+      return;
+    }
+    this.clearSelection();
+    registry.socket.emit("trash", selected);
   }
 
   async uploadOne(u) {

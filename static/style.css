@@ -7,6 +7,8 @@
   --hi-fg: #f4f3f3;
   --hi-bg: #282828;
   --odd-bg: #202020;
+  --sel-bg: #444444;
+  --odd-sel-bg: #555555;
   --upload-bg: rgb(66, 66, 66);
   --err-bg: #f75353;
   --role-user-fg: #23d16f;
@@ -301,15 +303,10 @@ button:focus {
   border-top-right-radius: 0px;
 }
 
-#trash {
+.regular #trash,
+.regular #clearselection {
   display: none;
 }
-
-.owner #trash,
-.mod #trash {
-  display: block;
-}
-
 
 .layer {
   backface-visibility: hidden;
@@ -740,6 +737,14 @@ button:focus {
 
 #files > .file:nth-child(even) {
   background: var(--odd-bg);
+}
+
+#files > .file.selected {
+  background: var(--sel-bg) !important;
+}
+
+#files > .file.selected:nth-child(even) {
+  background: var(--odd-sel-bg) !important;
 }
 
 #files > .file.upload {
@@ -1175,8 +1180,7 @@ ul.context-menu ul {
 .regular #ctx-ban,
 .regular #ctx-unban,
 .regular #ctx-bl,
-.regular #ctx-wl,
-.regular #ctx-remove {
+.regular #ctx-wl {
   display: none;
 }
 

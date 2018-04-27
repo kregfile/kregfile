@@ -27,6 +27,7 @@ export default class File extends BaseFile {
       },
       classes: ["icon", `i-${this.type}`],
     });
+    this.iconEl.addEventListener("click", this.oniconclick.bind(this));
     this.el.appendChild(this.iconEl);
 
     this.nameEl = dom("a", {
@@ -98,6 +99,15 @@ export default class File extends BaseFile {
       console.error(ex);
     }
     return true;
+  }
+
+  oniconclick(e) {
+    const {classList} = document.body;
+    if (!classList.contains("mod") && !classList.contains("owner")) {
+      return;
+    }
+    nukeEvent(e);
+    this.owner.select(this, e);
   }
 
   open(e) {
