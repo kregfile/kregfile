@@ -48,17 +48,7 @@ export default class File extends BaseFile {
 
     this.tagsEl = dom("span", {classes: ["tags"]});
     this.el.appendChild(this.tagsEl);
-    const tags = sort(Array.from(this.tagsMap.entries()));
-    for (const [tn, tv] of tags) {
-      const tag = dom("span", {
-        attrs: {title: `${tn}: ${tv}`},
-        classes: ["tag", `tag-${tn}`],
-        text: tv}
-      );
-      tag.dataset.tag = tn;
-      tag.dataset.tagValue = tv;
-      this.tagsEl.appendChild(tag);
-    }
+    this.setupTags();
 
     this.detailEl = dom("span", {classes: ["detail"]});
     this.el.appendChild(this.detailEl);
@@ -79,6 +69,36 @@ export default class File extends BaseFile {
     this.ttlEl.insertBefore(
       dom("span", {classes: ["i-clock"]}), this.ttlEl.firstChild);
     this.detailEl.appendChild(this.ttlEl);
+  }
+
+  update(file) {
+    super.update(file);
+    if (!this.el) {
+      return;
+    }
+    this.setupTags();
+  }
+
+  setupTags() {
+    const tags = sort(Array.from(this.tagsMap.entries()));
+    this.el.classList.remove("hidden-file");
+    this.tagsEl.textContent = "";
+    for (const [tn, tv] of tags) {
+      if (tn === "hidden") {
+        if (!tv || tv === "false") {
+          continue;
+        }
+        this.el.classList.add("hidden-file");
+      }
+      const tag = dom("span", {
+        attrs: {title: `${tn}: ${tv}`},
+        classes: ["tag", `tag-${tn}`],
+        text: tv === "true" || tv === "false" ? tn : tv
+      });
+      tag.dataset.tag = tn;
+      tag.dataset.tagValue = tv;
+      this.tagsEl.appendChild(tag);
+    }
   }
 
   onenter(e) {

@@ -161,25 +161,8 @@ class FileTooltip extends Tooltip {
 export default class File extends Removable {
   constructor(file) {
     super();
-    Object.assign(this, BASE_FILE, file);
-
-    if (this.ip) {
-      this.tags.ip = this.ip;
-    }
-
-    const tagEntries = Array.from(Object.entries(this.tags));
-    tagEntries.forEach(e => e[1] = e[1].toString());
-    this.tagsMap = new Map(tagEntries);
-    tagEntries.forEach(e => e[1] = e[1].toUpperCase());
-    this.tagsMapCase = new Map(tagEntries);
-    this.tagValues = Array.from(this.tagsMap.values());
-    this.tagValuesCase = Array.from(this.tagsMapCase.values());
-
-    this.assets = new Map(this.assets);
-
-    this.type = toType(this.type);
-
-    this.url = `${this.href}/${this.name}`;
+    Object.assign(this, BASE_FILE);
+    this.update(file);
   }
 
   get ttl() {
@@ -204,7 +187,23 @@ export default class File extends Removable {
   }
 
   update(other) {
-    this.assets = new Map(other.assets);
+    Object.assign(this, other);
+
+    if (this.ip) {
+      this.tags.ip = this.ip;
+    }
+
+    const tagEntries = Array.from(Object.entries(this.tags));
+    tagEntries.forEach(e => e[1] = e[1].toString());
+    this.tagsMap = new Map(tagEntries);
+    tagEntries.forEach(e => e[1] = e[1].toUpperCase());
+    this.tagsMapCase = new Map(tagEntries);
+    this.tagValues = Array.from(this.tagsMap.values());
+    this.tagValuesCase = Array.from(this.tagsMapCase.values());
+
+    this.assets = new Map(this.assets);
+    this.type = toType(this.type);
+    this.url = `${this.href}/${this.name}`;
   }
 
   generateTooltip() {

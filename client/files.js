@@ -115,9 +115,12 @@ export default new class Files extends EventEmitter {
       e.preventDefault();
       e.stopPropagation();
       const {tag, tagValue} = el.dataset;
-      const val = /[\s'"]/.test(tagValue) ?
+      let val = /[\s'"]/.test(tagValue) ?
         `'${tagValue.replace(/'/g, "\\'")}'` :
         tagValue;
+      if (val === "true") {
+        val = "";
+      }
       if (e.button) {
         this.filter.value = `${this.filter.value} -${tag}:${val}`.trim();
       }
@@ -216,7 +219,6 @@ export default new class Files extends EventEmitter {
       }
       diff = true;
       remove.push(e.el);
-      //e.el.parentElement.removeChild(e.el);
     });
     // unchanged
     if (visible.length === fileset.size && !diff) {
@@ -227,6 +229,7 @@ export default new class Files extends EventEmitter {
     this.adjustEmpty();
     this.scrollState.push();
     return this.insertFilesIntoDOM(files, remove).then(async () => {
+      this.sortFiles();
       this.adjustEmpty();
       await this.scrollState.pop();
       this.delayedUpdateStatus();
@@ -408,17 +411,15 @@ export default new class Files extends EventEmitter {
   }
 
   onfiles(data) {
-    if (!this.filesQueue.length) {
-      this.filesQueue.push(data);
-      this.runOnFiles();
-      return;
-    }
     this.filesQueue.push(data);
+    if (this.filesQueue.length === 1) {
+      this.runOnFiles();
+    }
   }
 
   async runOnFiles() {
     while (this.filesQueue.length) {
-      const ridx = this.filesQueue.findIndex(e => e.replace);
+      const ridx = this.filesQueue.findIndex((e, i) => i && e.replace);
       if (ridx > 0) {
         // drop everything before
         this.filesQueue.splice(0, ridx);
@@ -430,20 +431,30 @@ export default new class Files extends EventEmitter {
       if (replace) {
         await this.clear();
       }
-      const files = data.files.map(f => {
-        f = new File(this, f);
-        if (f.expired) {
-          return null;
-        }
-        this.elmap.set(f.el, f);
-        this.emit("file-added", f, replace);
-        this.emit(`file-added-${f.key}`, f, replace);
-        return f;
-      }).filter(e => e);
+      const files = data.files.
+        filter(f => {
+          const existing = this.filemap.get(f.key);
+          if (!existing) {
+            return true;
+          }
+          existing.update(f);
+          return false;
+        }).
+        map(f => {
+          f = new File(this, f);
+          if (f.expired) {
+            return null;
+          }
+          this.elmap.set(f.el, f);
+          this.emit("file-added", f, replace);
+          this.emit(`file-added-${f.key}`, f, replace);
+          return f;
+        }).filter(e => e);
       if (files.length) {
         await this.addFileElements(files);
       }
     }
+    this.sortFiles();
   }
 
   onfilesupdated(files) {
@@ -575,6 +586,31 @@ export default new class Files extends EventEmitter {
     }
     catch (ex) {
       console.error(ex);
+    }
+  }
+
+  sortFiles() {
+    const {visible} = this;
+    if (!visible.length) {
+      return;
+    }
+    const [head] = visible;
+    sort(visible, e => e.uploaded).
+      reverse();
+    let idx = 0;
+    const {el} = this;
+    for (; idx < el.childElementCount; ++idx) {
+      if (el.children[idx] === head.el) {
+        break;
+      }
+    }
+    for (const v of visible) {
+      if (el.children[idx] === v.el) {
+        ++idx;
+        continue;
+      }
+      el.insertBefore(v.el, el.children[idx]);
+      ++idx;
     }
   }
 
