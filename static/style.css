@@ -12,8 +12,8 @@
   --upload-bg: rgb(66, 66, 66);
   --err-bg: #f75353;
   --role-user-fg: #23d16f;
-  --role-mod-fg:#d880fc;
-  --role-system-fg: #d880fc;
+  --role-mod-fg: #d880fc;
+  --role-system-fg: #ff6c00;
   --base-size: 12pt;
   --base-font: 'Open Sans', sans-serif;
   --files-size: 11pt;
