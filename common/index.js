@@ -248,6 +248,7 @@ module.exports = {
   shuffle,
   randint,
   sleep,
+  plural,
 };
 
 // No dynamic requires to not confuse webpack!

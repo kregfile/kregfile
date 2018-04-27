@@ -204,6 +204,12 @@ export default new class Messages extends EventEmitter {
       m.highlight = notify;
     }
 
+    if (m.channel === "log") {
+      notify = m.highlight = null;
+      delete m.channel;
+      delete m.owner;
+    }
+
     if (m.saved) {
       notify = false;
     }
@@ -281,8 +287,6 @@ export default new class Messages extends EventEmitter {
       text: d
     });
     user.insertBefore(ts, user.firstChild);
-
-
 
     if (m.ip) {
       user.appendChild(dom("span", {
