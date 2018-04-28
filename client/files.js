@@ -672,8 +672,6 @@ export default new class Files extends EventEmitter {
     const {metaKey: ctrl, shiftKey: shift} = e;
     // Windows style of engagement
     if (shift) {
-      // must select range
-      // if there is no start, just assume start is the list head
       const {visible} = this;
       let startIdx;
       if (!this.selectionStart) {
@@ -691,7 +689,7 @@ export default new class Files extends EventEmitter {
       if (startIdx > endIdx) {
         [startIdx, endIdx] = [endIdx, startIdx];
       }
-      this.clearSelection();
+      this._clearSelection();
       visible.slice(startIdx, endIdx + 1).
         forEach(e => e.el.classList.add("selected"));
     }
@@ -699,14 +697,19 @@ export default new class Files extends EventEmitter {
       file.el.classList.toggle("selected");
     }
     else {
-      this.clearSelection();
+      this._clearSelection();
       file.el.classList.add("selected");
       this.selectionStart = file;
     }
   }
 
-  clearSelection() {
+  _clearSelection() {
     this.selection.forEach(e => e.el.classList.remove("selected"));
+  }
+
+  clearSelection() {
+    this.selectionStart = null;
+    this._clearSelection();
   }
 
   trash() {
