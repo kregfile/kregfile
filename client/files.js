@@ -656,7 +656,7 @@ export default new class Files extends EventEmitter {
   }
 
   select(file, e) {
-    const {metaKey: ctrl, shiftKey: shift} = e;
+    const {metaKey: meta, ctrlKey: ctrl, shiftKey: shift} = e;
     // Windows style of engagement
     if (shift) {
       const {visible} = this;
@@ -680,7 +680,7 @@ export default new class Files extends EventEmitter {
       visible.slice(startIdx, endIdx + 1).
         forEach(e => e.el.classList.add("selected"));
     }
-    else if (ctrl) {
+    else if (ctrl || meta) {
       file.el.classList.toggle("selected");
     }
     else {
