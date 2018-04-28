@@ -64,10 +64,11 @@ export default new class Files extends EventEmitter {
     this.dragging = false;
     Object.seal(this);
 
-    this.el.addEventListener("drop", this.ondrop.bind(this), true);
-    addEventListener("dragenter", this.ondragenter, false);
-    addEventListener("dragover", this.ondragenter, false);
-    addEventListener("dragleave", this.ondragleave, false);
+    addEventListener("drop", this.ondrop.bind(this), true);
+    addEventListener("dragenter", this.ondragenter, true);
+    addEventListener("dragover", this.ondragenter, true);
+    addEventListener("dragleave", this.ondragleave, true);
+    addEventListener("mouseout", this.ondragleave, true);
 
     this.filterButtons.forEach(e => {
       e.addEventListener("click", this.onfilterbutton, true);
@@ -287,9 +288,6 @@ export default new class Files extends EventEmitter {
   }
 
   ondragenter(e) {
-    if (!this.el.contains(e.target)) {
-      return;
-    }
     registry.roomie.hideTooltip();
     if (!e.dataTransfer.types.includes("Files")) {
       return;
@@ -304,7 +302,7 @@ export default new class Files extends EventEmitter {
   }
 
   ondragleave(e) {
-    if (this.el.contains(e.relatedTarget)) {
+    if (e.relatedTarget) {
       return;
     }
     this.dragging = false;
