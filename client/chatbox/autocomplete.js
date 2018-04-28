@@ -14,9 +14,9 @@ export default class Autocomplete {
   }
 
   add(m) {
-    const {user} = m;
+    const {user, role} = m;
     const {completes} = this;
-    if (!user) {
+    if (!user || role === "system") {
       return;
     }
     const uuser = user.toUpperCase();
