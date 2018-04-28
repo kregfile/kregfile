@@ -303,9 +303,16 @@ button:focus {
   border-top-right-radius: 0px;
 }
 
-.regular #trash,
-.regular #clearselection {
+#trash,
+#clearselection {
   display: none;
+}
+
+.mod #trash,
+.mod #clearselection,
+.owner #trash,
+.owner #clearselection {
+  display: block;
 }
 
 .layer {
@@ -584,18 +591,13 @@ button:focus {
 
 .empty #filelist,
 .empty #filelist-scroller {
-  opacity: 0;
+  display: none;
 }
 
 #dropminder {
   grid-area: files;
-  display: none;
   background: var(--dark-bg);
   padding: 10vh 10%;
-}
-
-.empty #dropminder {
-  display: block;
 }
 
 #dropminder svg {
