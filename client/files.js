@@ -60,15 +60,14 @@ export default new class Files extends EventEmitter {
     this.onfilterbutton = this.onfilterbutton.bind(this);
     this.onuploadbutton = this.onuploadbutton.bind(this);
     this.ondragenter = this.ondragenter.bind(this);
-    this.ondragover = this.ondragover.bind(this);
     this.ondragleave = this.ondragleave.bind(this);
     this.dragging = false;
     Object.seal(this);
 
     this.el.addEventListener("drop", this.ondrop.bind(this), true);
-    this.el.addEventListener("dragenter", this.ondragenter, false);
-    this.el.addEventListener("dragover", this.ondragover, false);
-    this.el.addEventListener("dragleave", this.ondragleave, false);
+    addEventListener("dragenter", this.ondragenter, false);
+    addEventListener("dragover", this.ondragenter, false);
+    addEventListener("dragleave", this.ondragleave, false);
 
     this.filterButtons.forEach(e => {
       e.addEventListener("click", this.onfilterbutton, true);
@@ -303,16 +302,6 @@ export default new class Files extends EventEmitter {
       this.dragging = true;
     }
   }
-
-  ondragover(e) {
-    if (!e.dataTransfer.types.includes("Files")) {
-      return;
-    }
-    e.preventDefault();
-    e.stopPropagation();
-    e.dataTransfer.dropEffect = "copy";
-  }
-
 
   ondragleave(e) {
     if (this.el.contains(e.relatedTarget)) {
