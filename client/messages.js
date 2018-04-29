@@ -507,7 +507,7 @@ export default new class Messages extends EventEmitter {
       this.addWelcome();
     }
     else {
-      await new Promise(r => registry.config.on("changed-name", r));
+      await new Promise(r => registry.config.on("change-name", r));
       this.addWelcome();
     }
     this.queue.push(dom("div", {classes: ["hr"]}));
