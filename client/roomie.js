@@ -64,14 +64,12 @@ export default new class Roomie extends EventEmitter {
   onctxoptions() {
   }
 
-  onctxban() {
+  async onctxban() {
+    await this.showBanModal();
   }
 
-  onctxunban() {
-    const subjects = this.subjectsFromSelection();
-    if (!subjects) {
-      return;
-    }
+  async onctxunban() {
+    await this.showUnbanModal();
   }
 
   onctxregister() {
