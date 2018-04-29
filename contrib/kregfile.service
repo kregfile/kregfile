@@ -1,0 +1,21 @@
+[Unit]
+Description=kregfile
+After=network.target
+Requires=redis.service network.target
+
+[Service]
+Type=simple
+Environment=ENV=production
+Environment=env=production
+ExecStartPre=/usr/bin/git pull
+ExecStartPre=/usr/bin/yarn
+ExecStart=/usr/bin/yarn start
+WorkingDirectory=/root/kregfile
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=kregfile
+
+[Install]
+WantedBy=multi-user.target
+Alias=kregfile.service
