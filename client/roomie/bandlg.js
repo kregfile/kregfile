@@ -101,6 +101,9 @@ export class BanModal extends Modal {
         throw new Error("Pls, invalid duration!");
       }
       registry.socket.emit("ban", subjects, options);
+      if (this.purge.checked) {
+        await registry.files.purgeFrom(subjects);
+      }
       return true;
     }
     catch (ex) {

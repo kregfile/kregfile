@@ -714,12 +714,16 @@ export default new class Files extends EventEmitter {
   }
 
   trash() {
-    const selected = this.selection.map(e => e.key);
-    if (!selected.length) {
+    const {selection} = this;
+    if (!selection.length) {
       return;
     }
     this.clearSelection();
-    registry.socket.emit("trash", selected);
+    this.trashFiles(selection);
+  }
+
+  trashFiles(files) {
+    registry.socket.emit("trash", files.map(e => e.key).filter(e => e));
   }
 
   subjectsFromSelection() {
@@ -771,6 +775,16 @@ export default new class Files extends EventEmitter {
       return;
     }
     registry.socket.emit("whitelist", selected);
+  }
+
+  purgeFrom(subjects) {
+    const ips = new Set(subjects.ips);
+    const accounts = new Set(subjects.accounts);
+    const a = accounts.size > 0;
+    const purges = this.files.filter(f => {
+      return ips.has(f.ip) || (a && f.meta && accounts.has(f.meta.account));
+    });
+    this.trashFiles(purges);
   }
 
   async uploadOne(u) {
