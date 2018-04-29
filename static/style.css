@@ -1212,6 +1212,7 @@ ul.context-menu ul {
   justify-content: center;
   align-items: center;
   align-content: center;
+  z-index: 3000;
 }
 
 .modal {
