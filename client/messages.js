@@ -479,6 +479,23 @@ export default new class Messages extends EventEmitter {
     this.endMarker.classList.add("hidden");
   }
 
+  addWelcome() {
+    this.add({
+      volatile: true,
+      highlight: true,
+      notify: false,
+      role: "system",
+      user: "System",
+      msg: [
+        {t: "t", v: `Welcome to ${registry.config.get("name")}`},
+        {t: "b"},
+        {t: "t", v: "Share this room with somebody: "},
+        {t: "b"},
+        {t: "u", v: document.location.href.toString()},
+      ]
+    });
+  }
+
   async restore() {
     const stored = await this.store.getItem(registry.roomid);
     const {restoring} = this;
@@ -486,21 +503,12 @@ export default new class Messages extends EventEmitter {
     if (stored) {
       stored.forEach(this.add.bind(this));
     }
+    else if (registry.config.has("name")) {
+      this.addWelcome();
+    }
     else {
-      this.add({
-        volatile: true,
-        highlight: true,
-        notify: false,
-        role: "system",
-        user: "System",
-        msg: [
-          {t: "t", v: `Welcome to ${registry.config.get("name")}`},
-          {t: "b"},
-          {t: "t", v: "Share this room with somebody: "},
-          {t: "b"},
-          {t: "u", v: document.location.href.toString()},
-        ]
-      });
+      await new Promise(r => registry.config.on("changed-name", r));
+      this.addWelcome();
     }
     this.queue.push(dom("div", {classes: ["hr"]}));
     restoring.forEach(this.add.bind(this));
