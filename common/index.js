@@ -171,10 +171,12 @@ function toPrettyDuration(s, short) {
     rv.push(plural(Math.floor(c), "min", "mins"));
     s %= 60;
   }
-  if (short) {
-    return `${Math.round(s)} s`;
+  if (s) {
+    if (short) {
+      return `${Math.round(s)} s`;
+    }
+    rv.push(`${Math.floor(s)} s`);
   }
-  rv.push(`${Math.floor(s)} s`);
   return rv.join(" ");
 }
 

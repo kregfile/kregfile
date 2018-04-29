@@ -279,20 +279,21 @@ button:focus {
 }
 
 #tools .btn {
-  font-size: 16pt;
-  width: 38px;
+  font-size: 12pt;
+  width: 32px;
   text-align: center;
   background: rgba(255,255,255,0.7);
   color: black;
   height: cal(100% - 1ex);
   padding: 0.5ex;
   margin-top: 0.5ex;
-  margin-left: 1ex;
+  margin-left: 0.7ex;
   box-sizing: border-box;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
   cursor: pointer;
   transition: 0.5s background ease-in;
+  align-self: flex-end;
 }
 
 #tools .btn:hover {
@@ -300,15 +301,26 @@ button:focus {
 }
 
 #tools .btn:last-child {
+  font-size: 16pt;
+  width: 38px;
   border-top-right-radius: 0px;
+  margin-left: 1em;
 }
 
 #trash,
+#banfiles,
+#unbanfiles,
+#whitelist,
+#blacklist,
 #clearselection {
   display: none;
 }
 
 .mod #trash,
+.mod #banfiles,
+.mod #unbanfiles,
+.mod #whitelist,
+.mod #blacklist,
 .mod #clearselection,
 .owner #trash,
 .owner #clearselection {
@@ -747,6 +759,10 @@ button:focus {
 
 #files > .file.selected:nth-child(even) {
   background: var(--odd-sel-bg) !important;
+}
+
+#files > .file.hidden-file .name {
+  text-decoration: line-through !important;
 }
 
 #files > .file.upload {
@@ -1214,11 +1230,23 @@ ul.context-menu ul {
 .modal input[type="text"],
 .modal input[type="password"],
 .modal input[type="email"],
+.modal select,
 .modal textarea {
   background: var(--dark-bg);
   color: var(--text-fg);
   border: 0;
   padding: 2px 10px;
+}
+
+.modal .icon {
+  width: 64px;
+  font-size: 64px;
+  margin-right: 20px;
+  grid-area: icon;
+}
+
+.modal .wide {
+  grid-column-end: span 2;
 }
 
 .modal-head {
@@ -1265,20 +1293,59 @@ ul.context-menu ul {
   font-size: 64px;
 }
 
-.modal-login .modal-body {
+.modal-login .modal-body,
+.modal-bandlg .modal-body,
+.modal-unbandlg .modal-body,
+.modal-bldlg .modal-body {
   display: grid;
   grid-template-columns: auto 1fr 2fr;
   min-width: 60ex;
   grid-column-gap: 1ex;
+}
+
+.modal-login .modal-body {
+  grid-template-areas:
+    "icon . ."
+    "icon . ."
+    "icon . .";
   grid-row-gap: 1.3ex;
 }
 
-.modal .login-icon {
-  width: 64px;
-  font-size: 64px;
-  margin-right: 20px;
-  grid-column: 1;
-  grid-row: 1 / span 3;
+.modal-bandlg .modal-body {
+  grid-template-areas:
+    "icon . ."
+    "icon . ."
+    "icon . ."
+    "icon . ."
+    "icon . ."
+    "icon . ."
+    "icon . ."
+    "icon . .";
+  grid-row-gap: 0.4em;
+  grid-column-gap: 1em;
+}
+
+.modal-unbandlg .modal-body {
+  grid-template-areas:
+    "icon . ."
+    "icon . ."
+    "icon . ."
+    "icon . ."
+    "icon . .";
+  grid-row-gap: 0.4em;
+  grid-column-gap: 1em;
+}
+
+.modal-bldlg .modal-body {
+  grid-template-areas:
+    "icon . ."
+    "icon . ."
+    "icon . ."
+    "icon . ."
+    "icon . ."
+    "icon . .";
+  grid-row-gap: 0.4em;
+  grid-column-gap: 1em;
 }
 
 .kf {

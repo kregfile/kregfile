@@ -92,8 +92,14 @@ export default new class Files extends EventEmitter {
     document.querySelector("#clearselection").addEventListener(
       "click", this.clearSelection.bind(this));
 
-    document.querySelector("#trash").addEventListener(
-      "click", this.trash.bind(this));
+    const actions = [
+      "banFiles", "unbanFiles",
+      "whitelist", "blacklist",
+      "trash"];
+    for (const a of actions) {
+      document.querySelector(`#${a.toLowerCase()}`).addEventListener(
+        "click", this[a].bind(this));
+    }
   }
 
   get visible() {
@@ -310,6 +316,9 @@ export default new class Files extends EventEmitter {
   }
 
   ondrop(e) {
+    if (!e.dataTransfer.types.includes("Files")) {
+      return;
+    }
     e.preventDefault();
     try {
       const files = [];
@@ -339,7 +348,6 @@ export default new class Files extends EventEmitter {
     catch (ex) {
       console.error("failed to handle drop", ex);
     }
-    return false;
   }
 
   async processEntries(entries, files) {
@@ -684,9 +692,15 @@ export default new class Files extends EventEmitter {
       file.el.classList.toggle("selected");
     }
     else {
+      const already = file.el.classList.contains("selected");
       this._clearSelection();
-      file.el.classList.add("selected");
-      this.selectionStart = file;
+      if (!already) {
+        file.el.classList.add("selected");
+        this.selectionStart = file;
+      }
+      else {
+        this.selectionStart = null;
+      }
     }
   }
 
@@ -706,6 +720,57 @@ export default new class Files extends EventEmitter {
     }
     this.clearSelection();
     registry.socket.emit("trash", selected);
+  }
+
+  subjectsFromSelection() {
+    const {selection} = this;
+    const subjects = {
+      ips: [],
+      accounts: []
+    };
+    if (!selection.length) {
+      return subjects;
+    }
+    selection.forEach(f => {
+      if (f.ip) {
+        subjects.ips.push(f.ip);
+      }
+      if (f.meta && f.meta.account) {
+        subjects.accounts.push(f.meta.account);
+      }
+    });
+    subjects.ips = Array.from(new Set(subjects.ips));
+    subjects.accounts = Array.from(new Set(subjects.accounts));
+    return subjects;
+  }
+
+  banFiles() {
+    const subjects = this.subjectsFromSelection();
+    registry.roomie.showBanModal(subjects, "greyzone");
+  }
+
+  unbanFiles() {
+    const subjects = this.subjectsFromSelection();
+    registry.roomie.showUnbanModal(subjects);
+  }
+
+  blacklist() {
+    const selected = this.selection.
+      map(e => e.key);
+    if (!selected.length) {
+      return;
+    }
+    registry.roomie.showBlacklistModal(selected);
+  }
+
+  whitelist() {
+    const selected = this.selection.
+      filter(e => e.tagsMap.has("hidden")).
+      map(e => e.key);
+    if (!selected.length) {
+      return;
+    }
+    registry.socket.emit("whitelist", selected);
   }
 
   async uploadOne(u) {

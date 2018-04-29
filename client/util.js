@@ -163,7 +163,7 @@ export function idle(fn, timeout) {
 }
 
 function resolveRoom(v) {
-  return v;
+  return {v};
 }
 
 function resolveFile(v) {

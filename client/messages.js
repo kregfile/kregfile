@@ -48,6 +48,7 @@ export default new class Messages extends EventEmitter {
     this.onfileclick = this.onfileclick.bind(this);
     this.onbanclick = this.onbanclick.bind(this);
     this.restoring = [];
+    this.bannable = new WeakMap();
 
     Object.seal(this);
   }
@@ -176,7 +177,13 @@ export default new class Messages extends EventEmitter {
 
   onbanclick(e) {
     nukeEvent(e);
-    registry.roomie.showMessage("Imma ban u!", "Stub");
+    const subjects = this.bannable.get(e.target);
+    if (e.shiftKey) {
+      registry.roomie.showUnbanModal(subjects);
+    }
+    else {
+      registry.roomie.showBanModal(subjects, "spamming");
+    }
   }
 
   _save() {
@@ -302,6 +309,7 @@ export default new class Messages extends EventEmitter {
       const ban = dom("span", {
         classes: ["ban-btn", "i-ban"],
       });
+      this.bannable.set(ban, m.admin);
       user.appendChild(ban);
       ban.onclick = this.onbanclick;
     }
@@ -357,7 +365,16 @@ export default new class Messages extends EventEmitter {
             rel: "nofollow,noopener,noreferrer",
             href: p.v,
           },
-          text: p.v.replace(/^https?:\/\//, ""),
+          text: p.n || p.v.replace(/^https?:\/\//, ""),
+        });
+        msg.appendChild(a);
+        break;
+      }
+
+      case "p": {
+        const a = dom("span", {
+          classes: ["u", p.r],
+          text: p.v
         });
         msg.appendChild(a);
         break;

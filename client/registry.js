@@ -9,6 +9,7 @@ import files from "./files";
 import reload from "./reload";
 import splitter from "./splitter";
 import privmsg from "./privmsg";
+import "./templates";
 
 export default new class Registry {
   constructor() {

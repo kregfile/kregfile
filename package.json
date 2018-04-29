@@ -37,6 +37,7 @@
     "tweetnacl": "^1.0.0",
     "tweetnacl-util": "^0.15.0",
     "url-regex": "^4.1.1",
+    "uuid": "^3.2.1",
     "xregexp": "^4.1.1"
   },
   "devDependencies": {

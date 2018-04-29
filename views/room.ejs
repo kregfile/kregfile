@@ -22,6 +22,10 @@
     <div id="new-status" class="hidden blink i-arrow-up" title="New files at the top"></div>
     <div class="spacer"></div>
     <div id="clearselection" class="btn i-clear" title="Clear selection"></div>
+    <div id="banfiles" class="btn i-ban" title="Ban files"></div>
+    <div id="unbanfiles" class="btn i-unban" title="Unban files"></div>
+    <div id="blacklist" class="btn i-blacklist" title="Blacklist files"></div>
+    <div id="whitelist" class="btn i-whitelist" title="Whitelist files"></div>
     <div id="trash" class="btn i-trash" title="Remove files"></div>
     <div id="nail" class="btn i-images hidden"></div>
     <form style="display: none;">
@@ -85,8 +89,6 @@
     <li id="ctx-options" data-icon="i-edit">Room options
     <li id="ctx-ban" data-icon="i-ban">Ban
     <li id="ctx-unban" data-icon="i-unban">Unban
-    <li id="ctx-bl" data-icon="i-blacklist">Blacklist
-    <li id="ctx-wl" data-icon="i-whitelist">Whitelist
     <li>-
     <li id="ctx-register" data-icon="i-users">Register
     <li id="ctx-login" data-icon="i-login">Log in
@@ -95,7 +97,7 @@
   </ul>
 
   <form id="login-tmpl" class="tmpl">
-    <span class="login-icon i-login"></span>
+    <span class="icon i-login"></span>
     <label>User:</label>
     <input name="u" type="text" autocomplete="username">
     <label>Password:</label>
@@ -103,5 +105,56 @@
     <label class="tfa-label hidden">Two factor:</label>
     <input class="tfa hidden" name="t" type="text" autocomplete="off">
   </form>
+
+  <form id="ban-tmpl" class="tmpl">
+    <span class="icon i-ban"></span>
+    <label>Subjects</label>
+    <input name="s" type="text" autocomplete="off">
+    <label>Make them suffer!</label>
+    <label><input type="checkbox" name="mute"> Mute</label>
+    <label></label>
+    <label><input type="checkbox" name="upload"> Ban uploads</label>
+    <label></label>
+    <label><input type="checkbox" name="hellban"> Hellban</label>
+    <label></label>
+    <label><input type="checkbox" name="purge"> Purge Files</label>
+    <label>Duration (in hours)</label>
+    <input name="hours" type="text" autocomplete="off">
+    <label>Reason</label>
+    <textarea name="reason" cols="20" rows="4"></textarea>
+    <label>Template</label>
+    <select name="templates"></select>
+  </form>
+
+  <form id="bl-tmpl" class="tmpl">
+    <span class="icon i-blacklist"></span>
+    <label>Make them suffer!</label>
+    <label><input type="checkbox" name="mute"> Mute</label>
+    <label></label>
+    <label><input type="checkbox" name="upload"> Ban uploads</label>
+    <label></label>
+    <label><input type="checkbox" name="hellban"> Hellban</label>
+    <label>Duration (in hours)</label>
+    <input name="hours" type="text" autocomplete="off">
+    <label>Reason</label>
+    <textarea name="reason" cols="20" rows="4"></textarea>
+    <label>Template</label>
+    <select name="templates"></select>
+  </form>
+
+  <form id="unban-tmpl" class="tmpl">
+    <span class="icon i-unban"></span>
+    <label>Subjects</label>
+    <input name="s" type="text" autocomplete="off">
+    <label></label>
+    <label><input type="checkbox" name="mute" checked> Unmute</label>
+    <label></label>
+    <label><input type="checkbox" name="upload" checked> Allow uploads</label>
+    <label></label>
+    <label><input type="checkbox" name="hellban" checked> Un-hellban</label>
+    <label>Reason</label>
+    <textarea name="reason" cols="20" rows="4"></textarea>
+  </form>
+
   <script src="/static/client.js?v=<%=v%>"></script>
 </body>

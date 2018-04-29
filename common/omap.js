@@ -10,9 +10,18 @@ class ObservableMap extends Map {
   }
 
   set(k, v) {
+    const exists = super.has(k);
     super.set(k, v);
-    this.emit("set", k, v);
-    this.emit(`set-${k}`, v);
+    if (!exists) {
+      this.emit("set", k, v);
+      this.emit(`set-${k}`, v);
+    }
+    else {
+      this.emit("update", k, v);
+      this.emit(`update-${k}`, v);
+    }
+    this.emit("change", k, v);
+    this.emit(`change-${k}`, v);
     return this;
   }
 

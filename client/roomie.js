@@ -6,102 +6,11 @@ import {dom, debounce, openInNew, nukeEvent} from "./util";
 import {APOOL} from "./animationpool";
 import {ContextMenu} from "./contextmenu";
 import {MessageBox} from "./modal";
-import Modal from "./modal";
+import {LoginModal} from "./roomie/logindlg";
+import {BanModal, UnbanModal} from "./roomie/bandlg";
+import {BlacklistModal} from "./roomie/bldlg";
 
 const ALLOW_DRIFT = 200;
-
-class LoginModal extends Modal {
-  constructor(owner) {
-    super("login", "Login", {
-      text: "Login",
-      default: true
-    }, {
-      text: "Cancel",
-      cancel: true
-    });
-    this.owner = owner;
-    this.body.innerHTML = document.querySelector("#login-tmpl").innerHTML;
-  }
-
-  get user() {
-    return this.el.elements.u.value;
-  }
-
-  get password() {
-    return this.el.elements.p.value;
-  }
-
-  get tfa() {
-    return this.el.elements.t.value;
-  }
-
-  onshown() {
-    this.el.elements.u.focus();
-  }
-
-  async validate() {
-    const {user, password, tfa} = this;
-    if (!user || !password) {
-      await this.owner.showMessage(
-        "Provide a user name and password",
-        "Error",
-        "i-error");
-      return false;
-    }
-    this.disable();
-    try {
-      const res = await registry.socket.rest("login", {
-        u: user,
-        p: password,
-        t: tfa
-      });
-      if (!res) {
-        throw new Error("Could not log in!");
-      }
-      if (res.twofactor) {
-        this.el.querySelector(".tfa-label").classList.remove("hidden");
-        const tfa = this.el.querySelector(".tfa");
-        tfa.classList.remove("hidden");
-        tfa.focus();
-        return false;
-      }
-      if (!res.session) {
-        throw new Error("Could not log in!");
-      }
-      registry.socket.emit("session", res.session);
-      registry.chatbox.setNick(user);
-      registry.messages.add({
-        user: "System",
-        role: "system",
-        volatile: true,
-        msg: "Successfully logged in!"
-      });
-      if (window.PasswordCredential) {
-        const cred = new PasswordCredential({
-          id: user.toLowerCase(),
-          password
-        });
-        try {
-          await navigator.credentials.store(cred);
-        }
-        catch (ex) {
-          console.error("Failed to save cred", ex);
-        }
-      }
-      return true;
-    }
-    catch (ex) {
-      await this.owner.showMessage(
-        ex.message || ex,
-        "Error",
-        "i-error");
-      return false;
-    }
-    finally {
-      this.enable();
-    }
-  }
-}
 
 export default new class Roomie extends EventEmitter {
   constructor() {
@@ -137,7 +46,7 @@ export default new class Roomie extends EventEmitter {
     addEventListener("mouseout", this.onmouseout, true);
     const ces = [
       "home", "report", "options",
-      "ban", "unban", "bl", "wl",
+      "ban", "unban",
       "register", "login", "account", "logout"
     ];
     for (const ce of ces) {
@@ -159,12 +68,10 @@ export default new class Roomie extends EventEmitter {
   }
 
   onctxunban() {
-  }
-
-  onctxbl() {
-  }
-
-  onctxwl() {
+    const subjects = this.subjectsFromSelection();
+    if (!subjects) {
+      return;
+    }
   }
 
   onctxregister() {
@@ -231,11 +138,11 @@ export default new class Roomie extends EventEmitter {
         (drift < 0 ? -ALLOW_DRIFT : ALLOW_DRIFT);
     });
 
-    registry.config.on("set-roomname", v => {
+    registry.config.on("change-roomname", v => {
       this.name = v;
     });
 
-    registry.config.on("set-motd", v => {
+    registry.config.on("change-motd", v => {
       if (JSON.stringify(this.motd) === JSON.stringify(v)) {
         return;
       }
@@ -435,6 +342,40 @@ export default new class Roomie extends EventEmitter {
     return await this.showModal(
       new MessageBox(caption || "Message", text, icon, ...buttons));
   }
+
+  async showBanModal(subjects, template) {
+    try {
+      await this.showModal(new BanModal(this, subjects, template));
+    }
+    catch (ex) {
+      if (ex) {
+        console.error(ex);
+      }
+    }
+  }
+
+  async showUnbanModal(subjects) {
+    try {
+      await this.showModal(new UnbanModal(this, subjects));
+    }
+    catch (ex) {
+      if (ex) {
+        console.error(ex);
+      }
+    }
+  }
+
+  async showBlacklistModal(files, template) {
+    try {
+      await this.showModal(new BlacklistModal(this, files, template));
+    }
+    catch (ex) {
+      if (ex) {
+        console.error(ex);
+      }
+    }
+  }
+
 
   incrUnread() {
     if (!this.hidden) {
