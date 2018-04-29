@@ -34,7 +34,7 @@ export default new class PrivMessage {
     registry.socket.emit("pubkey", nutil.encodeBase64(this.publicKey));
   }
 
-  onprivmsg(m) {
+  async onprivmsg(m) {
     let {msg, nounce, publicKey} = m;
     delete m.msg;
     delete m.nounce;
@@ -42,7 +42,7 @@ export default new class PrivMessage {
     try {
       [msg, nounce, publicKey] =
         [msg, nounce, publicKey].map(nutil.decodeBase64);
-      m.msg = toMessage(nutil.encodeUTF8(
+      m.msg = await toMessage(nutil.encodeUTF8(
         nacl.box.open(msg, nounce, publicKey, this.secretKey)));
       m.channel = "Private";
       m.notify = true;
@@ -81,7 +81,7 @@ export default new class PrivMessage {
     registry.messages.add({
       user: `Private to ${u}`,
       role: "system",
-      msg: toMessage(`${m}`)
+      msg: await toMessage(`${m}`)
     });
     return true;
   }

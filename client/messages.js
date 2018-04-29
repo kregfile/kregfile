@@ -320,7 +320,31 @@ export default new class Messages extends EventEmitter {
     if (!Array.isArray(m.msg)) {
       m.msg = [{t: "t", v: m.msg}];
     }
-    for (const p of m.msg) {
+    this.addMessageParts(msg, m.msg);
+    e.appendChild(user);
+    e.appendChild(msg);
+
+    if (m.channel) {
+      e.appendChild(dom("span", {
+        classes: ["channel"],
+        text: ` (${m.channel})`
+      }));
+    }
+
+    this.queue.push(e);
+    if (notify) {
+      registry.roomie.displayNotification({
+        user: m.user,
+        msg: msg.textContent
+      }).catch(console.error);
+    }
+    if (!this.flushing) {
+      this.flushing = this.flush();
+    }
+  }
+
+  addMessageParts(msg, parts) {
+    for (const p of parts) {
       switch (p.t) {
       case "b":
         msg.appendChild(dom("br"));
@@ -386,7 +410,7 @@ export default new class Messages extends EventEmitter {
             target: "_blank",
             href: `/r/${p.v}`,
           },
-          text: `#${p.v}`,
+          text: `${p.n || p.v}`,
         });
         msg.appendChild(a);
         break;
@@ -396,26 +420,6 @@ export default new class Messages extends EventEmitter {
         msg.appendChild(document.createTextNode(p.v));
         break;
       }
-    }
-    e.appendChild(user);
-    e.appendChild(msg);
-
-    if (m.channel) {
-      e.appendChild(dom("span", {
-        classes: ["channel"],
-        text: ` (${m.channel})`
-      }));
-    }
-
-    this.queue.push(e);
-    if (notify) {
-      registry.roomie.displayNotification({
-        user: m.user,
-        msg: msg.textContent
-      }).catch(console.error);
-    }
-    if (!this.flushing) {
-      this.flushing = this.flush();
     }
   }
 

@@ -14,45 +14,71 @@ function normalizeURL(URL, url) {
   return url.toString();
 }
 
-function toMessage(URL, resolveRoom, resolveFile, msg) {
+async function mapMessagePart(v, i, rec) {
+  if (!(i % 2)) {
+    return {t: "t", v};
+  }
+  try {
+    if (v.startsWith("#")) {
+      if (rec.rooms < 10) {
+        let r = rec.resolveRoom(v.slice(1));
+        if (r && r.then) {
+          r = await r;
+        }
+        if (r) {
+          rec.rooms++;
+          return Object.assign({t: "r"}, r);
+        }
+      }
+      return {t: "t", v};
+    }
+    if (v.startsWith("@")) {
+      if (rec.files < 5) {
+        let f = rec.resolveFile(v.slice(1));
+        if (f && f.then) {
+          f = await f;
+        }
+        if (f) {
+          rec.files++;
+          return Object.assign({t: "f"}, f);
+        }
+      }
+      return {t: "t", v};
+    }
+    if (WHITE_REGEX.test(v)) {
+      if (rec.breaks++ > 1) {
+        return {t: "t", v: " "};
+      }
+      return {t: "b"};
+    }
+    return {t: "u", v: normalizeURL(rec.URL, v)};
+  }
+  catch (ex) {
+    console.error(ex);
+  }
+  return {t: "t", v};
+}
+
+async function toMessage(URL, resolveRoom, resolveFile, msg) {
   msg = msg.trim();
   if (msg.length > 300) {
     throw new Error("Message too long");
   }
-  let breaks = 0;
-  msg = msg.split(URL_REGEX).map((v, i) => {
-    if (!(i % 2)) {
-      return {t: "t", v};
-    }
-    try {
-      if (v.startsWith("#")) {
-        const r = resolveRoom(v.slice(1));
-        if (r) {
-          return Object.assign({t: "r"}, r);
-        }
-        return {t: "t", v};
-      }
-      if (v.startsWith("@")) {
-        const f = resolveFile(v.slice(1));
-        if (f) {
-          return Object.assign({t: "f"}, f);
-        }
-        return {t: "t", v};
-      }
-      if (WHITE_REGEX.test(v)) {
-        if (breaks++ > 1) {
-          return {t: "t", v: " "};
-        }
-        return {t: "b"};
-      }
-      return {t: "u", v: normalizeURL(URL, v)};
-    }
-    catch (ex) {
-      console.error(ex);
-    }
-    return {t: "t", v};
-  });
-  return msg;
+
+  const records = {
+    breaks: 0,
+    files: 0,
+    rooms: 0,
+    URL,
+    resolveFile,
+    resolveRoom,
+  };
+  let i = 0;
+  const rv = [];
+  for (const p of msg.split(URL_REGEX)) {
+    rv.push(await mapMessagePart(p, i++, records));
+  }
+  return rv;
 }
 
 module.exports = {
