@@ -414,6 +414,10 @@ button:focus {
   text-decoration: none;
 }
 
+.msg .u {
+  padding: 0;
+}
+
 .u > .time {
   display: inline-block;
   font-weight: normal;
@@ -466,7 +470,7 @@ button:focus {
   opacity: 0.7;
 }
 
-.msg {
+#messages > * {
   overflow-wrap: break-word;
   word-wrap: break-word;
 }
@@ -878,21 +882,18 @@ button:focus {
 
 .tooltip {
   visibility: hidden;
-  font-size: 95%;
+  font-size: 90%;
   display: grid;
   position: fixed;
   z-index: 1000;
+  padding-bottom: 1em;
   background: var(--main-bg);
-  padding: 1em;
-  padding-left: 1ex;
-  padding-bottom: 1.2em;
-  padding-right: 3em;
   border: 1px solid var(--lite-bg);
   border-left-width: 1ex;
   border-top-left-radius: 1ex;
   border-bottom-right-radius: 1ex;
-
   grid-template-columns: auto auto 1fr;
+  grid-template-rows: repeat(10, auto);
 }
 
 .tooltip.visible {
@@ -906,22 +907,25 @@ button:focus {
 
 .tooltip > * {
   display: block;
-  padding-left: 1em;
+  padding-right: 1em;
   white-space: nowrap;
 }
 
 .tooltip-name {
+  grid-row: 1;
   grid-column: 1 / span 4;
-  margin-bottom: 1ex;
+  padding: 0.5ex 1em;
+  margin-bottom: 1em;
   max-width: 40em;
   overflow-x: hidden;
   text-overflow: ellipsis;
+  background: var(--lite-bg);
 }
 
 .tooltip-tag-tag {
   grid-column: 2;
   align-self: end;
-  line-height: 150%;
+  line-height: 166%;
 }
 
 .tooltip-tag-value {
@@ -930,7 +934,7 @@ button:focus {
   overflow-x: hidden;
   text-overflow: ellipsis;
   align-self: end;
-  line-height: 150%;
+  line-height: 166%;
 }
 
 .tooltip-name,
@@ -939,15 +943,21 @@ button:focus {
 }
 
 .tooltip-preview {
+  display: inline-block;
+  line-height: 100%;
+  overflow: hidden;
+  padding-left: 1em;
   max-width: 200px;
   max-height: 200px;
   grid-column: 1;
-  grid-row: span 10000;
+  grid-row: 2;
+  grid-row-end: -1;
 }
 
 span.tooltip-preview:before {
   color: var(--role-user-fg);
-  font-size: 100px;
+  font-size: 80px;
+  line-height: 80px;
 }
 
 span.tooltip-preview.mod:before {
@@ -1036,6 +1046,12 @@ input[type="email"],
   color: var(--text-fg);
   border: 0;
   padding: 2px 10px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  border: 1px solid var(--lite-bg) !important;
 }
 
 #page textarea {
@@ -1219,13 +1235,13 @@ ul.context-menu ul {
   background: var(--main-bg);
   max-width: 80%;
   max-height: 90%;
-  border: 3px solid var(--lite-bg);
-  padding: 1em;
+  border-left: 4px solid var(--lite-bg);
+  border-right: 4px solid var(--lite-bg);
   display: grid;
   grid-template-columns: auto;
   grid-template-rows: auto 1fr auto;
   overflow: hidden;
-  box-shadow: 4px 4px 20px rgba(200,200,200,0.2);
+  box-shadow: 4px 4px 20px rgba(200,200,200,0.1);
 }
 
 .modal input[type="text"],
@@ -1251,7 +1267,9 @@ ul.context-menu ul {
 }
 
 .modal-head {
-  margin-bottom: 1em;
+  padding: 0.5ex 1em;
+  margin-bottom: 1ex;
+  background: var(--lite-bg);
   font-size: 110%;
   font-weight: bold;
   white-space: nowrap;
@@ -1259,15 +1277,18 @@ ul.context-menu ul {
 }
 
 .modal-body {
+  font-size: 95%;
   text-overflow: ellipsis;
+  padding: 0.5ex 1em;
 }
 
 .modal-buttons {
   display: flex;
   user-select: none;
-  padding-top: 4px;
-  margin-top: 1em;
-  justify-self: end;
+  padding: 1ex 1em;
+  margin-top: 1ex;
+  background: var(--lite-bg);
+  justify-self: stretch;
   justify-content: flex-end;
 }
 
