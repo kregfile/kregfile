@@ -926,6 +926,7 @@ button:focus {
   grid-column: 2;
   align-self: end;
   line-height: 166%;
+  padding-left: 1em;
 }
 
 .tooltip-tag-value {
@@ -947,6 +948,7 @@ button:focus {
   line-height: 100%;
   overflow: hidden;
   padding-left: 1em;
+  padding-right: 0;
   max-width: 200px;
   max-height: 200px;
   grid-column: 1;
