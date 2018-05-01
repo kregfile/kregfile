@@ -123,7 +123,9 @@ export default class Upload extends Removable {
       return await new Promise((resolve, reject) => {
         req.onerror = () => {
           console.error("onerror");
-          reject(new Error("Connection lost"));
+          const err = new Error("Connection lost");
+          err.retryable = true;
+          reject(err);
         };
         req.onabort = () => {
           reject(new Error("Aborted"));
