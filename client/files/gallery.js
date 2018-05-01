@@ -31,6 +31,16 @@ export default class Gallery {
 
     this.prevEl.addEventListener("click", this.prev.bind(this), true);
     this.nextEl.addEventListener("click", this.next.bind(this), true);
+
+    this.owner.on("replaced", () => {
+      if (document.location.hash) {
+        const key = document.location.hash.slice(1);
+        const file = this.owner.get(key);
+        if (!file || !this.open(file)) {
+          this.close();
+        }
+      }
+    });
   }
 
   onimgclick(e) {
@@ -72,6 +82,11 @@ export default class Gallery {
     this.el.parentElement.classList.remove("gallery");
     this.imgEl.src = "";
     this.file = null;
+    if (document.location.hash) {
+      const u = new URL(document.location);
+      u.hash = "";
+      history.replaceState(null, "", u.href);
+    }
   }
 
   maybeClose(file) {
@@ -144,6 +159,14 @@ export default class Gallery {
     this.titleEl.classList.add("visible");
     this.infoEl.textContent = info.infos.join(" — ");
     this.showAux();
+    const u = new URL(document.location);
+    u.hash = `#${file.key}`;
+    if (document.location.hash) {
+      history.replaceState(null, "", u.href);
+    }
+    else {
+      history.pushState(null, "", u.href);
+    }
     APOOL.schedule(null, () => {
       this.el.parentElement.classList.add("gallery");
       this.titleEl.textContent = file.name;

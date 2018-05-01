@@ -448,6 +448,9 @@ export default new class Files extends EventEmitter {
       if (files.length) {
         await this.addFileElements(files);
       }
+      if (replace) {
+        this.emit("replaced");
+      }
     }
     this.sortFiles();
   }
