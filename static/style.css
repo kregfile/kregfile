@@ -884,8 +884,12 @@ button:focus {
 
 #files > .file > .detail {
   display: flex;
-  width: 180px;
+  width: 160px;
   white-space: nowrap;
+}
+
+#files > .file > .detail,
+#files > .file > .detail-progress {
   font-size: var(--detail-size);
 }
 

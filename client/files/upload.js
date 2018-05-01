@@ -9,6 +9,13 @@ import {
 } from "../util";
 import {APOOL} from "../animationpool";
 
+// eslint-disable-next-line
+const PER = new Intl.NumberFormat(undefined, {
+  style: "percent",
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 1
+});
+
 export default class Upload extends Removable {
   constructor(owner, file) {
     super();
@@ -34,6 +41,9 @@ export default class Upload extends Removable {
 
     this.nameEl = dom("span", {classes: ["name"], text: this.file.name});
     this.el.appendChild(this.nameEl);
+
+    this.progressEl = dom("span", {classes: ["detail-progress"]});
+    this.el.appendChild(this.progressEl);
 
     this.detailEl = dom("span", {classes: ["detail"]});
     this.el.appendChild(this.detailEl);
@@ -122,11 +132,19 @@ export default class Upload extends Removable {
           resolve(req.response);
         };
         req.responseType = "json";
+        let last = Date.now();
+        let bytes = 0;
+        let rate = 0;
         req.upload.addEventListener("progress", e => {
-          if (this.offset === 0 && e.loaded > (1 << 20)) {
-          //req.abort();
+          const now = Date.now();
+          const diff = Date.now() - last;
+          if (diff > 1000 || !rate) {
+            const cur = (e.loaded - bytes) / diff * 1000;
+            bytes = e.loaded;
+            rate = cur * 0.8 + rate * 0.2;
+            last = now;
           }
-          this.setProgress(this.offset + e.loaded, this.offset + e.total);
+          this.setProgress(this.offset + e.loaded, this.offset + e.total, rate);
         });
         req.open("PUT", `/api/upload?${params.toString()}`);
         let {file} = this;
@@ -141,12 +159,15 @@ export default class Upload extends Removable {
     }
   }
 
-  setProgress(current, total) {
-    const p = (current * 100 / total);
-    if (p !== 100) {
-      this.sizeEl.textContent = `${toPrettySize(current)}/${toPrettySize(total)} (${p.toFixed(1)}%)`;
+  setProgress(current, total, rate) {
+    const p = (current / total);
+    if (p !== 1) {
+      rate = `${toPrettySize(rate)}/s`;
+      this.progressEl.textContent = PER.format(p);
+      this.sizeEl.textContent = `${toPrettySize(current)}/${toPrettySize(total)} ${rate}`;
     }
     else {
+      this.progressEl.textContent = "";
       this.sizeEl.textContent = `${toPrettySize(this.file.size)} - Finishing...`;
     }
     this.el.style.backgroundSize = `${p}% 100%`;
