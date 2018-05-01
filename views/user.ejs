@@ -17,9 +17,9 @@
     <p><strong>Moderator</strong></p>
     <% } %>
 
-    <% if (info.files) { %>
-    <p><%=info.uploaded%></p>
-    <p><%=info.files%></p>
+    <% if (info.filesRank) { %>
+    <p>Uploaded <%=info.uploaded%>, which makes them <a href="/top/uploaded"><%=info.uploadedRank%></a>.</p>
+    <p>Uploaded <%=info.files%> files, or <a href="/top/files"><%=info.filesRank%></a>.</p>
     <% } %>
 
     <% if (info.email) { %>

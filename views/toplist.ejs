@@ -1,0 +1,30 @@
+<!doctype html>
+<%- include("head"); %>
+<body id="page">
+  <%- include(`toplist_${list}`); %>
+    <table id="toplist">
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th></th>
+      </tr>
+    <% for (r of stats.results) { %>
+      <tr>
+        <td><%=(r.rank)%></td>
+        <td><a href="/u/<%=r.user.account%>" class="u <%=r.user.role%>"><%=(r.user.name)%></a></td>
+        <td><%=(r.num)%></td>
+      </tr>
+    <% } %>
+    </table>
+    <p id="toplist-nav">
+    <% if (stats.page) { %>
+    <a href="/top/<%=list%>/<%=(stats.page - 1)%>">« Previous page</a>
+    <% } %>
+    &nbsp;
+    <% if (stats.next) { %>
+    <a href="/top/<%=list%>/<%=(stats.page + 1)%>">Next page »</a>
+    <% } %>
+    </p>
+  </article>
+  <%- include("footer"); %>
+</body>

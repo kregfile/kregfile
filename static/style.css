@@ -110,6 +110,28 @@ ol > li {
   margin-bottom: 1ex;
 }
 
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--lite-bg);
+}
+
+table, th {
+  border: 1px solid var(--lite-bg);
+}
+
+th {
+  background: var(--main-bg);
+}
+
+td {
+  border: 1px dotted var(--lite-bg);
+}
+
+td, th {
+  padding: 0.3ex 1em;
+}
+
 #room h1 {
   margin: 0;
   padding: 0;
@@ -1379,4 +1401,26 @@ ul.context-menu ul {
   background-position: center center;
   height: 16px;
   width: 16px;
+}
+
+#toplist {
+  min-width: 70ex;
+}
+
+#toplist tr :first-child {
+  white-space: nowrap;
+  text-align: right;
+  width: 2ex;
+}
+
+#toplist tr :last-child {
+  white-space: nowrap;
+  text-align: right;
+  width: 2ex;
+}
+
+#toplist-nav {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
 }
