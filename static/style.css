@@ -884,7 +884,7 @@ button:focus {
 
 #files > .file > .detail {
   display: flex;
-  width: 160px;
+  width: 170px;
   white-space: nowrap;
 }
 
