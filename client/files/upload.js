@@ -172,7 +172,7 @@ export default class Upload extends Removable {
       this.progressEl.textContent = "";
       this.sizeEl.textContent = `${toPrettySize(this.file.size)} - Finishing...`;
     }
-    this.el.style.backgroundSize = `${p}% 100%`;
+    this.el.style.backgroundSize = `${p * 100}% 100%`;
   }
 
   setIcon(cls) {
