@@ -164,7 +164,7 @@ export default class Upload extends Removable {
     if (p !== 1) {
       rate = `${toPrettySize(rate)}/s`;
       this.progressEl.textContent = PER.format(p);
-      this.sizeEl.textContent = `${toPrettySize(current)}/${toPrettySize(total)} ${rate}`;
+      this.sizeEl.textContent = `${toPrettySize(current)}/${toPrettySize(total)} — ${rate}`;
     }
     else {
       this.progressEl.textContent = "";
