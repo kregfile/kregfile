@@ -352,12 +352,14 @@ export default new class Messages extends EventEmitter {
 
       case "f": {
         const info = registry.files.get(p.key) || p;
+        const url = new URL(info.href, document.location);
+        url.pathname += `/${info.name}`;
         const file = dom("a", {
           classes: ["chatfile"],
           attrs: {
             target: "_blank",
             rel: "nofollow",
-            href: `${info.href}/${info.name}`,
+            href: url.href,
           },
           text: info.name
         });

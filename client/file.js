@@ -203,7 +203,9 @@ export default class File extends Removable {
 
     this.assets = new Map(this.assets);
     this.type = toType(this.type);
-    this.url = `${this.href}/${this.name}`;
+    const url = new URL(this.href, document.location);
+    url.pathname += `/${this.name}`;
+    this.url = url.href;
   }
 
   generateTooltip() {
