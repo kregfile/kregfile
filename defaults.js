@@ -1,6 +1,7 @@
 "use strict";
 
 const {HTTP_PORT: port = 8080} = process.env;
+const {HTTPS_PORT: tlsport = 8443} = process.env;
 
 const linux = require("os").platform() === "linux";
 
@@ -14,6 +15,13 @@ module.exports = {
   // redis_* = options for redis
   // Listen port
   port,
+
+  // run tls server
+  tls: false,
+  tlsonly: false,
+  tlskey: "",
+  tlscert: "",
+  tlsport,
 
   // For crypto shit, probably wanna customize it, or not, not that important
   secret: "kregfile",
