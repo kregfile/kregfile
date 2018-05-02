@@ -321,6 +321,9 @@ export default new class Files extends EventEmitter {
       return;
     }
     e.preventDefault();
+    e.stopPropagation();
+    this.dragging = false;
+    this.adjustEmpty();
     try {
       const files = [];
       const entries = [];
