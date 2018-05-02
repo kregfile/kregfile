@@ -198,7 +198,7 @@ export default new class Files extends EventEmitter {
   filtered(files) {
     const {filterFunc} = this;
     if (filterFunc === filesfilter.NONE) {
-      files = [];
+      return [];
     }
     if (filterFunc) {
       return files.filter(filterFunc);
