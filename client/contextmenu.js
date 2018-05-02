@@ -107,7 +107,7 @@ class SubMenuItem extends MenuItemBase {
       0,
       0,
       this.elem.clientWidth - 2,
-      this.elem.clientHeight,
+      this.elem.clientHeight
     );
   }
 

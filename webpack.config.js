@@ -24,6 +24,9 @@ class HashPlugin {
 
 module.exports = {
   mode: "development",
+  node: {
+    Buffer: false,
+  },
   context: path.join(__dirname, "entries"),
   entry: {
     client: "./main.js",
@@ -34,12 +37,17 @@ module.exports = {
     filename: "[name].js",
     path: path.join(__dirname, "static"),
   },
-  plugins: [new HashPlugin()],
+  plugins: [
+    new HashPlugin(),
+  ],
   devtool: "source-map",
   resolve: {
     modules: [
       "./",
       "node_modules",
     ],
+    alias: {
+      localforage: "node_modules/localforage/dist/localforage.nopromises.js",
+    }
   }
 };
