@@ -24,6 +24,9 @@ export default class ScrollState {
       return;
     }
     const {scrollTop: st, offsetTop: ot} = this.owner.el;
+    if (st === 0) {
+      return;
+    }
     const {visible} = this.owner;
     if (!visible.length) {
       return;
