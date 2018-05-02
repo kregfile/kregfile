@@ -286,7 +286,7 @@ class ContextMenu extends EventEmitter {
     }
     el.parentElement.removeChild(el);
     this.id = el.id || this.id;
-    for (const child of el.children) {
+    for (const child of Array.from(el.children)) {
       let text = [];
       let sub = null;
       for (const sc of child.childNodes) {
