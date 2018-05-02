@@ -16,6 +16,10 @@ function normalizeURL(URL, url) {
 
 async function mapMessagePart(v, i, rec) {
   if (!(i % 2)) {
+    if (!v.trim()) {
+      return null;
+    }
+    rec.previousText = true;
     return {t: "t", v};
   }
   try {
@@ -27,9 +31,11 @@ async function mapMessagePart(v, i, rec) {
         }
         if (r) {
           rec.rooms++;
+          rec.previousText = true;
           return Object.assign({t: "r"}, r);
         }
       }
+      rec.previousText = true;
       return {t: "t", v};
     }
     if (v.startsWith("@")) {
@@ -40,22 +46,28 @@ async function mapMessagePart(v, i, rec) {
         }
         if (f) {
           rec.files++;
+          rec.previousText = false;
           return Object.assign({t: "f"}, f);
         }
       }
+      rec.previousText = true;
       return {t: "t", v};
     }
     if (WHITE_REGEX.test(v)) {
-      if (rec.breaks++ > 1) {
+      if (!rec.previousText || rec.breaks++ > 1) {
+        rec.previousText = true;
         return {t: "t", v: " "};
       }
+      rec.previousText = false;
       return {t: "b"};
     }
+    rec.previousText = true;
     return {t: "u", v: normalizeURL(rec.URL, v)};
   }
   catch (ex) {
     console.error(ex);
   }
+  rec.previousText = true;
   return {t: "t", v};
 }
 
@@ -69,6 +81,7 @@ async function toMessage(URL, resolveRoom, resolveFile, msg) {
     breaks: 0,
     files: 0,
     rooms: 0,
+    previousText: true,
     URL,
     resolveFile,
     resolveRoom,
@@ -76,7 +89,10 @@ async function toMessage(URL, resolveRoom, resolveFile, msg) {
   let i = 0;
   const rv = [];
   for (const p of msg.split(URL_REGEX)) {
-    rv.push(await mapMessagePart(p, i++, records));
+    const part = await mapMessagePart(p, i++, records);
+    if (part) {
+      rv.push(part);
+    }
   }
   return rv;
 }
