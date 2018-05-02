@@ -295,8 +295,10 @@ export default new class Files extends EventEmitter {
   }
 
   ondragenter(e) {
+    console.log("enter", e.type, e.target);
     registry.roomie.hideTooltip();
     if (!e.dataTransfer.types.includes("Files")) {
+      console.log("no drag files");
       return;
     }
     e.preventDefault();
@@ -309,7 +311,9 @@ export default new class Files extends EventEmitter {
   }
 
   ondragleave(e) {
+    console.log("leave", e.type, e.target);
     if (e.relatedTarget) {
+      console.log("unrelated");
       return;
     }
     this.dragging = false;
@@ -317,13 +321,15 @@ export default new class Files extends EventEmitter {
   }
 
   ondrop(e) {
+    console.log("drop", e.type, e.target);
+    this.dragging = false;
+    this.adjustEmpty();
     if (!e.dataTransfer.types.includes("Files")) {
+      console.log("no files");
       return;
     }
     e.preventDefault();
     e.stopPropagation();
-    this.dragging = false;
-    this.adjustEmpty();
     try {
       const files = [];
       const entries = [];
@@ -339,14 +345,19 @@ export default new class Files extends EventEmitter {
           }
           files.push(file.getAsFile());
         }
+        if (entries.length) {
+          console.log("push entries");
+        }
         data.items.clear();
       }
       if (!entries.length) {
+        console.log("push files");
         for (const file of Array.from(data.files)) {
           files.push(file);
         }
         data.clearData();
       }
+      console.log(entries, files);
       this.queueUploads(entries, files);
     }
     catch (ex) {
