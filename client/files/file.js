@@ -20,7 +20,6 @@ export default class File extends BaseFile {
 
     this.iconEl = dom("a", {
       attrs: {
-        target: "_blank",
         download: this.name,
         rel: "nofollow,noindex",
         href: this.url
@@ -29,6 +28,16 @@ export default class File extends BaseFile {
     });
     this.iconEl.addEventListener("click", this.oniconclick.bind(this));
     this.el.appendChild(this.iconEl);
+
+    this.downloadEl = dom("a", {
+      attrs: {
+        download: this.name,
+        rel: "nofollow,noindex",
+        href: this.url
+      },
+      classes: ["hidden"],
+    });
+    this.el.appendChild(this.downloadEl);
 
     this.nameEl = dom("a", {
       attrs: {
@@ -39,11 +48,18 @@ export default class File extends BaseFile {
       classes: ["name"],
       text: this.name}
     );
-    this.linkEl = this.nameEl.cloneNode();
-    this.linkEl.style.display = "none";
     this.nameEl.addEventListener("mouseenter", this.onenter.bind(this));
     this.nameEl.addEventListener("click", this.onclick.bind(this));
     this.el.appendChild(this.nameEl);
+
+    this.linkEl = dom("a", {
+      attrs: {
+        target: "_blank",
+        rel: "nofollow,noindex",
+        href: this.url
+      },
+      classes: ["hidden"],
+    });
     this.el.appendChild(this.linkEl);
 
     this.tagsEl = dom("span", {classes: ["tags"]});
@@ -135,8 +151,15 @@ export default class File extends BaseFile {
       this.linkEl.dispatchEvent(e);
       return;
     }
-    console.log(e);
     this.linkEl.click();
+  }
+
+  download(e) {
+    if (e) {
+      this.downloadEl.dispatchEvent(e);
+      return;
+    }
+    this.downloadEl.click();
   }
 
   getGalleryInfo() {

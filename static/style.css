@@ -204,7 +204,7 @@ button:focus {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .blink {
@@ -591,6 +591,7 @@ button:focus {
   outline: none;
   box-shadow: none;
   font-family: var(--base-font);
+  font-size: 12px;
 }
 
 #splitter {
@@ -689,7 +690,6 @@ button:focus {
   border-radius: 16px;
   background: rgba(30, 30, 30, 0.7);
   user-select: none;
-  pointer-events: none;
   font-size: small;
 }
 
@@ -760,6 +760,7 @@ button:focus {
   margin: 4ex;
   margin-bottom: -10ex;
   transition: 0.3s margin-bottom linear;
+  pointer-events: none;
 }
 
 .aux #gallery_info {

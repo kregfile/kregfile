@@ -21,6 +21,7 @@ export default class Gallery {
     this.showAux = this.showAux.bind(this);
 
     this.onimgclick = this.onimgclick.bind(this);
+    this.ontitleclick = this.ontitleclick.bind(this);
     this.onpress = this.onpress.bind(this);
 
     Object.seal(this);
@@ -28,6 +29,7 @@ export default class Gallery {
     this.el.addEventListener("mousemove", this.startHideAux);
     this.el.addEventListener("click", this.onclose.bind(this), true);
     this.closeEl.addEventListener("click", this.close.bind(this), true);
+    this.titleEl.addEventListener("click", this.ontitleclick);
 
     this.prevEl.addEventListener("click", this.prev.bind(this), true);
     this.nextEl.addEventListener("click", this.next.bind(this), true);
@@ -45,6 +47,12 @@ export default class Gallery {
 
   onimgclick(e) {
     this.file.open(new e.constructor(e.type, e));
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  ontitleclick(e) {
+    this.file.download(new e.constructor(e.type, e));
     e.preventDefault();
     e.stopPropagation();
   }
