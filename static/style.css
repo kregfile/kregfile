@@ -404,6 +404,12 @@ button:focus {
 
 #messages > div {
   padding: 0.3ex 1ex;
+  padding-left: 2ex;
+  text-indent: -1ex;
+}
+
+#messages > div > * {
+  text-indent: initial;
 }
 
 .chatfile {
