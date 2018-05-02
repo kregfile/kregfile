@@ -636,7 +636,7 @@ button:focus {
 
 .empty #filelist,
 .empty #filelist-scroller {
-  display: none;
+  opacity: 0;
 }
 
 #dropminder {
