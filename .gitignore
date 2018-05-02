@@ -8,3 +8,6 @@ static/account.js*
 static/client.js*
 static/register.js*
 yarn-error.log
+*.pem
+*.key
+*.crt
