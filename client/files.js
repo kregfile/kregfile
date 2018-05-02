@@ -87,6 +87,7 @@ export default new class Files extends EventEmitter {
     });
 
     this.el.addEventListener("click", this.onclick.bind(this));
+    this.el.addEventListener("contextmenu", this.onclick.bind(this));
     this.el.addEventListener("scroll", this.onscroll.bind(this));
 
     document.querySelector("#clearselection").addEventListener(
@@ -127,7 +128,7 @@ export default new class Files extends EventEmitter {
       if (val === "true") {
         val = "";
       }
-      if (e.button) {
+      if (e.button || e.shiftKey) {
         this.filter.value = `${this.filter.value} -${tag}:${val}`.trim();
       }
       else {
