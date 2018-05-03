@@ -631,12 +631,11 @@ button:focus {
   overflow-x: hidden;
   overflow-y: scroll;
   box-sizing: border-box;
-  background: var(--dark-bg);
 }
 
 .empty #filelist,
 .empty #filelist-scroller {
-  opacity: 0;
+  opacity: 0.3;
 }
 
 #dropminder {
