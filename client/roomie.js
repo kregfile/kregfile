@@ -161,8 +161,8 @@ export default new class Roomie extends EventEmitter {
       this.incrUnread();
     });
 
-    document.addEventListener("visibilitychange", () => {
-      this.hidden = document.hidden;
+    const updateVisible = () => {
+      this.hidden = document.hidden || !document.hasFocus();
       if (!this.hidden) {
         this.unread = 0;
         this.emit("unread", this.unread);
@@ -170,7 +170,11 @@ export default new class Roomie extends EventEmitter {
       }
       this._updateTitle();
       this.emit("hidden", this.hidden);
-    });
+    };
+
+    addEventListener("focus", updateVisible, false);
+    addEventListener("blur", updateVisible, false);
+    addEventListener("visibilitychange", updateVisible, false);
   }
 
   onmenu() {
