@@ -57,7 +57,7 @@ export default new class PrivMessage {
     const {socket: s} = registry;
     const idx = m.match(/\s/);
     if (!idx) {
-      throw new Error("Invalid private messgae, use <user> <msg");
+      throw new Error("Invalid private message, use <user> <msg>");
     }
     const u = m.slice(0, idx.index).trim();
     const user = u.toLowerCase();
