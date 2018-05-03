@@ -108,9 +108,9 @@ export function validateUsername(nick) {
 
 export function formToJSON(data) {
   const rv = {};
-  data.forEach(function(value, key) {
+  for (const [key, value] of data.entries()) {
     rv[key] = value;
-  });
+  }
   return JSON.stringify(rv);
 }
 
