@@ -10,7 +10,7 @@
     "prestart": "webpack --mode=production"
   },
   "dependencies": {
-    "blake2": "https://github.com/RealDolos/node-blake2",
+    "blake2": "https://github.com/kregfile/node-blake2#v1.6.0",
     "body-parser": "^1.18.2",
     "colors": "^1.2.1",
     "compression": "^1.7.2",
@@ -22,7 +22,7 @@
     "localforage": "^1.7.1",
     "lru-cache": "^4.1.2",
     "mkdirp": "^0.5.1",
-    "passlib": "https://github.com/RealDolos/node-passlib",
+    "passlib": "0.x || ^1",
     "qrcode": "^1.2.0",
     "redis": "^2.8.0",
     "request": "^2.85.0",

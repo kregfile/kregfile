@@ -887,9 +887,9 @@ bl@^1.0.0:
     readable-stream "^2.3.5"
     safe-buffer "^5.1.1"
 
-"blake2@https://github.com/RealDolos/node-blake2":
-  version "1.4.0"
-  resolved "https://github.com/RealDolos/node-blake2#dde0c035cc76ad15a6e69cc49a42e3f50fca903d"
+"blake2@https://github.com/kregfile/node-blake2#v1.6.0":
+  version "1.6.0"
+  resolved "https://github.com/kregfile/node-blake2#dde05fb47187ba5d5f804fe6bf7ba625ab3d8824"
   dependencies:
     nan "^2.0.0"
 
@@ -3870,9 +3870,9 @@ pascalcase@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/pascalcase/-/pascalcase-0.1.1.tgz#b363e55e8006ca6fe21784d2db22bd15d7917f14"
 
-"passlib@https://github.com/RealDolos/node-passlib":
-  version "0.1.0"
-  resolved "https://github.com/RealDolos/node-passlib#fd57b96734224cc7e6c9f3a16e86a2517a994822"
+"passlib@0.x || ^1":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/passlib/-/passlib-0.2.2.tgz#c76a3023d91d269c70713467ef7f13e7b2cb56b3"
 
 path-browserify@0.0.0:
   version "0.0.0"
