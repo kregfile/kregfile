@@ -7,6 +7,7 @@ import {
   dom,
   nukeEvent,
   roleToIcon,
+  toMessage,
   toType,
 } from "./util";
 import {APOOL} from "./animationpool";
@@ -78,6 +79,19 @@ export default new class Messages extends EventEmitter {
         role: "system",
         user: "Warning",
         msg: e
+      });
+    });
+
+    registry.config.on("change-disabled", async v => {
+      if (!v) {
+        return;
+      }
+      this.add({
+        volatile: true,
+        role: "system",
+        user: "Warning",
+        msg: await toMessage(
+          "This room was disabled by a moderator!\nYou cannot post or upload!"),
       });
     });
 

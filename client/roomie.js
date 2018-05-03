@@ -46,7 +46,7 @@ export default new class Roomie extends EventEmitter {
     addEventListener("mouseout", this.onmouseout, true);
     const ces = [
       "home", "report", "options",
-      "ban", "unban",
+      "ban", "unban", "nuke",
       "register", "login", "account", "logout"
     ];
     for (const ce of ces) {
@@ -70,6 +70,22 @@ export default new class Roomie extends EventEmitter {
 
   async onctxunban() {
     await this.showUnbanModal();
+  }
+
+  async onctxnuke() {
+    try {
+      await this.question(
+        "Really nuke this room?",
+        "R.I.P",
+        "i-nuke",
+        "NUKE",
+        "Nah, I'm robocop!"
+      );
+      registry.socket.emit("NUKE!!!!");
+    }
+    catch (ex) {
+      console.log("nuke cancelled");
+    }
   }
 
   onctxregister() {
