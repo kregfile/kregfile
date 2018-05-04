@@ -887,9 +887,9 @@ bl@^1.0.0:
     readable-stream "^2.3.5"
     safe-buffer "^5.1.1"
 
-"blake2@https://github.com/kregfile/node-blake2#v1.6.0":
-  version "1.6.0"
-  resolved "https://github.com/kregfile/node-blake2#dde05fb47187ba5d5f804fe6bf7ba625ab3d8824"
+"blake2@https://github.com/kregfile/node-blake2#v1.7.0":
+  version "1.7.0"
+  resolved "https://github.com/kregfile/node-blake2#e3bdc28c7817fc945f9e0376db3516f103dd753e"
   dependencies:
     nan "^2.0.0"
 

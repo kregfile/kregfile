@@ -10,7 +10,7 @@
     "prestart": "webpack --mode=production"
   },
   "dependencies": {
-    "blake2": "https://github.com/kregfile/node-blake2#v1.6.0",
+    "blake2": "https://github.com/kregfile/node-blake2#v1.7.0",
     "body-parser": "^1.18.2",
     "colors": "^1.2.1",
     "compression": "^1.7.2",
