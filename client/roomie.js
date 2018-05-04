@@ -9,6 +9,7 @@ import {MessageBox} from "./modal";
 import {LoginModal} from "./roomie/logindlg";
 import {BanModal, UnbanModal} from "./roomie/bandlg";
 import {BlacklistModal} from "./roomie/bldlg";
+import {OptionsModal} from "./roomie/optsdlg";
 
 const ALLOW_DRIFT = 200;
 
@@ -65,7 +66,8 @@ export default new class Roomie extends EventEmitter {
   onctxreport() {
   }
 
-  onctxoptions() {
+  async onctxoptions() {
+    await this.showOptionsModal();
   }
 
   async onctxban() {
@@ -363,6 +365,17 @@ export default new class Roomie extends EventEmitter {
     });
     return await this.showModal(
       new MessageBox(caption || "Message", text, icon, ...buttons));
+  }
+
+  async showOptionsModal() {
+    try {
+      await this.showModal(new OptionsModal(this));
+    }
+    catch (ex) {
+      if (ex) {
+        console.error(ex);
+      }
+    }
   }
 
   async showBanModal(subjects, template) {

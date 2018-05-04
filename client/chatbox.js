@@ -20,6 +20,7 @@ export default new class ChatBox extends EventEmitter {
     this.nick = document.querySelector("#nick");
     this.icon = document.querySelector("#user-icon");
     this.authed = "";
+    this.role = "white";
     this.history = null;
     this.autocomplete = new Autocomplete(this);
     this.text.addEventListener("keypress", this.onpress.bind(this));
@@ -36,6 +37,7 @@ export default new class ChatBox extends EventEmitter {
     });
 
     registry.socket.on("role", m => {
+      this.role = m;
       this.icon.className = "";
       this.icon.classList.add(m);
       switch (m) {

@@ -1,6 +1,6 @@
 <!doctype html>
 <%- include("head"); %>
-<body id="room" class="noips">
+<body id="room" class="noips regular">
   <nav id="main" class="layer">
     <div id="main-left">
       <button id="menu" class="i-menu"></button>
@@ -22,10 +22,10 @@
     <div id="new-status" class="hidden blink i-arrow-up" title="New files at the top"></div>
     <div class="spacer"></div>
     <div id="clearselection" class="btn i-clear" title="Clear selection"></div>
-    <div id="banfiles" class="btn i-ban" title="Ban files"></div>
-    <div id="unbanfiles" class="btn i-unban" title="Unban files"></div>
-    <div id="blacklist" class="btn i-blacklist" title="Blacklist files"></div>
-    <div id="whitelist" class="btn i-whitelist" title="Whitelist files"></div>
+    <div id="banfiles" class="modctrl btn i-ban" title="Ban files"></div>
+    <div id="unbanfiles" class="modctrl btn i-unban" title="Unban files"></div>
+    <div id="blacklist" class="modctrl btn i-blacklist" title="Blacklist files"></div>
+    <div id="whitelist" class="modctrl btn i-whitelist" title="Whitelist files"></div>
     <div id="trash" class="btn i-trash" title="Remove files"></div>
     <div id="nail" class="btn i-images hidden"></div>
     <form style="display: none;">
@@ -41,7 +41,7 @@
 
   <section id="status" class="layer">
     <div id="endmarker" class="blink hidden i-arrow-down" title="Go to new messages"></div>
-    <div id="ips">IP</div>
+    <div id="ips" class="modctrl">IP</div>
     <div id="connection" class="visible i-warning" title="No connection"></div>
     <div id="usercountcont" title="Users online">
       <span id="usercount-icon" class="i-users"></span>
@@ -89,9 +89,9 @@
     <li>-
     <li id="ctx-report" data-icon="i-report">Report this Room!
     <li id="ctx-options" data-icon="i-edit">Room Options
-    <li id="ctx-ban" data-icon="i-ban">Ban
-    <li id="ctx-unban" data-icon="i-unban">Unban
-    <li id="ctx-nuke" data-icon="i-nuke">Nuke this Room!
+    <li id="ctx-ban" data-class="modctrl" data-icon="i-ban">Ban
+    <li id="ctx-unban" data-class="modctrl" data-icon="i-unban">Unban
+    <li id="ctx-nuke" data-class="modctrl" data-icon="i-nuke">Nuke this Room!
     <li>-
     <li id="ctx-register" data-icon="i-users">Register
     <li id="ctx-login" data-icon="i-login">Log In
@@ -157,6 +157,31 @@
     <label><input type="checkbox" name="hellban" checked> Un-hellban</label>
     <label>Reason</label>
     <textarea name="reason" cols="20" rows="4"></textarea>
+  </form>
+
+  <form id="roomopts-tmpl" class="tmpl">
+    <span class="icon i-edit"></span>
+    <label>Room Name</label>
+    <input name="name" type="text" autocomplete="off">
+    <label>Message of the Day</label>
+    <textarea name="motd" cols="20" rows="3"></textarea>
+    <div class="wide">
+      <button name="owners">Manage Owners</button>
+      <button class="hidden" name="invitees">Manage Invited Users</button>
+    </div>
+    <label class="wide"><input type="checkbox" name="inviteonly"> Invite-Only Room</label>
+    <label class="wide"><input type="checkbox" name="adult"> Adult Content</label>
+    <label class="wide modctrl"><input type="checkbox" name="disabled"> Disabled</label>
+  </form>
+
+  <form id="users-tmpl" class="tmpl">
+    <span class="icon i-white"></span>
+    <div class="usersdesc wide"></div>
+    <label>Add User</label>
+    <input name="name" type="text" autocomplete="off">
+    <label>Current</label>
+    <div class="userlist">
+    </div>
   </form>
 
   <script src="/static/client.js?v=<%=v%>"></script>

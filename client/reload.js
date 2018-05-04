@@ -12,6 +12,8 @@ export default function() {
       msg: "OUTDATED CLIENT - reloading soon™️"
     });
 
-    setTimeout(() => location.reload(), randint(500, 2500));
+    setTimeout(() => {
+      location.reload();
+    }, randint(500, 2500));
   });
 }

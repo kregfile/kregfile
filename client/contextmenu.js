@@ -9,7 +9,11 @@ const MENU_OPEN_BOUNCE = 500;
 let ids = 0;
 
 class MenuItemBase {
-  constructor(owner, id, text, {icon = "", autohide = ""}) {
+  constructor(owner, id, text, {
+    class: className = "",
+    icon = "",
+    autohide = ""
+  }) {
     this.owner = owner;
     if (!id) {
       id = `contextmenu-${++ids}`;
@@ -21,6 +25,7 @@ class MenuItemBase {
 
     this.elem = document.createElement("li");
     this.elem.id = this.id;
+    this.elem.className = className;
     this.iconElem = document.createElement("span");
     this.textElem = document.createElement("span");
     this.elem.appendChild(this.iconElem);
@@ -153,7 +158,7 @@ class ContextMenu extends EventEmitter {
     this.items = [];
     this.itemMap = new Map();
     this.elem = document.createElement("ul");
-    this.elem.className = "context-menu";
+    this.elem.className = "context-menu layer";
     if (el) {
       this.constructFromTemplate(el);
     }

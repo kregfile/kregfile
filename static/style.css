@@ -161,13 +161,18 @@ button {
   margin: 0;
   padding: 0.7ex;
   font-size: var(--base-size);
-  transition: background 1s;
+  transition: background 1s, outline 1s ease-in;
   cursor: pointer;
   box-sizing: border-box;
   border-radius: 2px;
+  background-color: rgba(255,255,255,0.8);
+  color: black;
 }
 
+button:hover,
 button:focus {
+  box-shadow:  0px 0px 2px 1px rgba(0,0,0,0.5);
+  background-color: rgb(255,255,255);
   outline: 0;
 }
 
@@ -330,19 +335,11 @@ button:focus {
 }
 
 #trash,
-#banfiles,
-#unbanfiles,
-#whitelist,
-#blacklist,
 #clearselection {
   display: none;
 }
 
 .mod #trash,
-.mod #banfiles,
-.mod #unbanfiles,
-.mod #whitelist,
-.mod #blacklist,
 .mod #clearselection,
 .owner #trash,
 .owner #clearselection {
@@ -380,6 +377,10 @@ button:focus {
 
 .scroller:hover .scrollbar {
   opacity: 0.3;
+}
+
+.regular .modctrl {
+  display: none !important;
 }
 
 #chat {
@@ -532,12 +533,7 @@ button:focus {
 }
 
 #ips {
-  display: none;
   cursor: pointer;
-}
-
-.mod #ips {
-  display: block;
 }
 
 #connection {
@@ -1244,14 +1240,6 @@ ul.context-menu ul {
   display: none;
 }
 
-.regular #ctx-nuke,
-.regular #ctx-ban,
-.regular #ctx-unban,
-.regular #ctx-bl,
-.regular #ctx-wl {
-  display: none;
-}
-
 .modal-holder {
   position: fixed;
   top: 0;
@@ -1297,6 +1285,10 @@ ul.context-menu ul {
 }
 
 .modal .wide {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  align-content: center;
   grid-column-end: span 2;
 }
 
@@ -1314,6 +1306,11 @@ ul.context-menu ul {
   font-size: 95%;
   text-overflow: ellipsis;
   padding: 0.5ex 1em;
+}
+
+.modal-body button {
+  margin-right: 1em;
+  font-size: small;
 }
 
 .modal-buttons {
@@ -1350,6 +1347,7 @@ ul.context-menu ul {
 }
 
 .modal-login .modal-body,
+.modal-optsdlg .modal-body,
 .modal-bandlg .modal-body,
 .modal-unbandlg .modal-body,
 .modal-bldlg .modal-body {
@@ -1366,6 +1364,18 @@ ul.context-menu ul {
     "icon . .";
   grid-row-gap: 1.3ex;
 }
+
+.modal-optsdlg .modal-body {
+  grid-template-areas:
+    "icon . ."
+    "icon . ."
+    "icon . ."
+    "icon . ."
+    "icon . ."
+    "icon . .";
+  grid-row-gap: 1.3ex;
+}
+
 
 .modal-bandlg .modal-body {
   grid-template-areas:
@@ -1402,6 +1412,36 @@ ul.context-menu ul {
     "icon . .";
   grid-row-gap: 0.4em;
   grid-column-gap: 1em;
+}
+
+.modal .userlist {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--dark-bg);
+  height: 10em;
+  overflow-x: none;
+  overflow-y: scroll;
+  padding: 0.2ex 1ex;
+}
+
+.modal .userlistitem {
+  display: flex;
+  flex-shrink: 0;
+  justify-content: space-between;
+  align-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 0.3ex 0;
+  box-sizing: border-box;
+}
+
+.modal .userlistitem button {
+  font-size: xx-small;
+  margin: 0;
+}
+
+.modal .usersdesc {
+  max-width: 70ex;
 }
 
 .kf {
