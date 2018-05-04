@@ -513,6 +513,9 @@ export default new class Files extends EventEmitter {
   }
 
   setFileStyle(file) {
+    if (document.location.hostname === "localhost") {
+      return;
+    }
     const rules = [];
     const height = getComputedStyle(file.el, null).
       getPropertyValue("height");
