@@ -7,6 +7,7 @@ import {
   dom,
   nukeEvent,
   roleToIcon,
+  roleToStatus,
   toMessage,
   toType,
 } from "./util";
@@ -294,6 +295,7 @@ export default new class Messages extends EventEmitter {
     if (!m.owner && m.role) {
       user.insertBefore(dom("span", {
         classes: ["role", roleToIcon(m.role)],
+        attrs: {title: roleToStatus(m.role)},
       }), user.firstChild);
     }
     if (m.owner) {

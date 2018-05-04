@@ -190,8 +190,25 @@ export function roleToIcon(role) {
 
   case "user":
     return "i-green";
+
   default:
     return "i-white";
+  }
+}
+
+export function roleToStatus(role) {
+  switch (role) {
+  case "system":
+    return "System Message";
+
+  case "mod":
+    return "Moderator";
+
+  case "user":
+    return "Signed-In";
+
+  default:
+    return "Unregistered";
   }
 }
 

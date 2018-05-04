@@ -1,7 +1,12 @@
 "use strict";
 
 import EventEmitter from "events";
-import {nukeEvent, parseCommand, validateUsername} from "./util";
+import {
+  nukeEvent,
+  parseCommand,
+  roleToStatus,
+  validateUsername,
+} from "./util";
 import registry from "./registry";
 import History from "./chatbox/history";
 import Autocomplete from "./chatbox/autocomplete";
@@ -41,10 +46,12 @@ export default new class ChatBox extends EventEmitter {
       case "mod":
         this.icon.classList.add("i-purple");
         break;
+
       default:
         this.icon.classList.add("i-white");
         break;
       }
+      this.icon.setAttribute("title", roleToStatus(m));
     });
 
     registry.socket.on("nick", m => {

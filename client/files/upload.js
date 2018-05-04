@@ -36,6 +36,7 @@ export default class Upload extends Removable {
 
     this.abortEl = dom("span", {
       classes: ["icon", "abort", "i-clear"],
+      attrs: {title: "Cancel Upload"},
     });
     this.el.appendChild(this.abortEl);
     this.abortEl.onclick = this.abort.bind(this);
