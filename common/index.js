@@ -54,29 +54,15 @@ function mixin(obj, other) {
   }
 }
 
-const toPrettySize = (function(uselocale) {
-function toLocaleStringSupportsLocales() {
-  const number = 0;
-  try {
-    number.toLocaleString("i");
+function plural(s, single, plural) {
+  if (s === 1) {
+    return `${s} ${single}`;
   }
-  catch (e) {
-    return e.name === "RangeError";
-  }
-  return false;
+  return `${s} ${plural}`;
 }
 
-const fixer = uselocale && toLocaleStringSupportsLocales() ?
-  function (digits) {
-    // eslint-disable-next-line
-    return this.toLocaleString(undefined, {
-      minimumFractionDigits: digits,
-      maximumFractionDigits: digits,
-      useGrouping: false
-    });
-  } :
-  Number.prototype.toFixed;
-
+const toPrettySize = (function() {
+const formatters = new Map();
 const units = [
   " B",
   " KB",
@@ -87,6 +73,20 @@ const units = [
   " EB",
   " MercoByte"
 ];
+
+const fixer = function(digits) {
+  let f = formatters.get(digits);
+  if (!f) {
+    // eslint-disable-next-line
+    formatters.set(digits, f = new Intl.NumberFormat(undefined, {
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits,
+      useGrouping: false
+    }));
+  }
+  return f;
+};
+
 return function prettySize(n) {
   let o = 0;
   let f = 0;
@@ -107,7 +107,7 @@ return function prettySize(n) {
     // large size force multiplier: adds +3cp
     ++f;
   }
-  return fixer.call(n, f) + units[o];
+  return fixer(f).format(n) + units[o];
 };
 })(false);
 
@@ -121,23 +121,16 @@ return function(number) {
 };
 })();
 
-function plural(s, single, plural) {
-  if (s === 1) {
-    return `${s} ${single}`;
-  }
-  return `${s} ${plural}`;
-}
-
 function toPrettyDuration(s, short) {
   s = Math.floor(s / 1000);
   const rv = [];
-  if (s >= 31449600) {
-    const c = s / 31449600;
+  if (s >= 31536000) {
+    const c = s / 31536000;
     if (short) {
       return plural(Math.round(c), "year", "years");
     }
     rv.push(plural(Math.floor(c), "year", "years"));
-    s %= 31449600;
+    s %= 31536000;
   }
   if (s >= 604800) {
     const c = s / 604800;
@@ -153,7 +146,7 @@ function toPrettyDuration(s, short) {
       return plural(Math.round(c), "day", "days");
     }
     rv.push(plural(Math.floor(c), "day", "days"));
-    s %= 85400;
+    s %= 86400;
   }
   if (s >= 3600) {
     const c = s / 3600;
@@ -179,6 +172,35 @@ function toPrettyDuration(s, short) {
   }
   return rv.join(" ");
 }
+
+const toPrettyETA = (function() {
+// eslint-disable-next-line
+const fmt = new Intl.NumberFormat(undefined, {
+  minimumIntegerDigits: 2,
+  maximumFractionDigits: 0
+});
+return function toPrettyETA(s) {
+  const rv = [];
+  let c = Math.floor(s / 86400);
+  if (c > 0) {
+    rv.push(fmt.format(c), "::");
+  }
+  s %= 86400;
+
+  c = Math.floor(s / 3600);
+  if (c > 0) {
+    rv.push(fmt.format(c), ":");
+  }
+  s %= 3600;
+
+  c = s / 60;
+  rv.push(fmt.format(c), ":");
+  s %= 60;
+
+  rv.push(fmt.format(s));
+  return rv.join("");
+};
+})();
 
 function ofilter(o, set) {
   const rv = {};
@@ -245,8 +267,9 @@ module.exports = {
   parseCommand,
   memoize,
   toPrettyDuration,
-  toPrettySize,
+  toPrettyETA,
   toPrettyInt,
+  toPrettySize,
   shuffle,
   randint,
   sleep,

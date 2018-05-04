@@ -5,6 +5,7 @@ import registry from "../registry";
 import {
   dom,
   toPrettyDuration,
+  toPrettyETA,
   toPrettySize,
 } from "../util";
 import {APOOL} from "../animationpool";
@@ -143,7 +144,7 @@ export default class Upload extends Removable {
           if (diff > 1000 || !rate) {
             const cur = (e.loaded - bytes) / diff * 1000;
             bytes = e.loaded;
-            rate = cur * 0.8 + rate * 0.2;
+            rate = cur * 0.3 + rate * 0.7;
             last = now;
           }
           this.setProgress(this.offset + e.loaded, this.offset + e.total, rate);
@@ -164,8 +165,9 @@ export default class Upload extends Removable {
   setProgress(current, total, rate) {
     const p = (current / total);
     if (p !== 1) {
+      const eta = toPrettyETA((total - current) / rate * 1.01);
       rate = `${toPrettySize(rate)}/s`;
-      this.progressEl.textContent = PER.format(p);
+      this.progressEl.textContent = `ETA: ${eta} — ${PER.format(p)}`;
       this.sizeEl.textContent = `${toPrettySize(current)}/${toPrettySize(total)} — ${rate}`;
     }
     else {
