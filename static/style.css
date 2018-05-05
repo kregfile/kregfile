@@ -772,6 +772,7 @@ button:focus {
   display: flex;
   align-items: center;
   justify-content: center;
+  align-content: center;
   width: 100%;
   padding: 4px 1ex;
   border: 1px dotted rgba(128, 128, 128, 0.1);
@@ -834,8 +835,10 @@ button:focus {
 }
 
 #files > .file > .tags {
-  text-align: right;
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: flex-end;
   padding: 0 1em;
   max-width: 66%;
   overflow-x: hidden;
