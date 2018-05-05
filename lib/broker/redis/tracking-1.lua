@@ -27,6 +27,7 @@ local expire = function(force)
   for i,k in ipairs(redis.call("SMEMBERS", setskey)) do
     if redis.call("TTL", tokey(k)) <= 0 then
       redis.call("SREM", setskey, k)
+      redis.call("DEL", tokey(k))
       exp = 1
     else
       local arr = redis.call("ZRANGE", tokey(k), 0, -1, "WITHSCORES")
