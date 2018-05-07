@@ -3,6 +3,7 @@
 
 import io from "socket.io-client";
 import registry from "./registry";
+import parser from "../common/sioparser";
 
 export default function createSocket() {
   const params = new URLSearchParams();
@@ -16,6 +17,7 @@ export default function createSocket() {
     params.set("nick", nick);
   }
   const socket = io.connect({
+    parser,
     path: "/w",
     query: params.toString(),
     transports: ["websocket"],
@@ -23,6 +25,7 @@ export default function createSocket() {
     randomizationFactor: 0.7,
     reconnectionDelayMax: 10000,
   });
+
   socket.makeCall = (target, id, ...args) => {
     return new Promise((resolve, reject) => {
       try {
@@ -50,6 +53,20 @@ export default function createSocket() {
   socket.on("token", t => {
     token = t;
   });
+  Object.defineProperties(socket, {
+    clientSeq: {
+      enumerable: true,
+      get() {
+        return socket.io.encoder.seq;
+      }
+    },
+    serverSeq: {
+      enumerable: true,
+      get() {
+        return socket.io.decoder.seq;
+      }
+    },
+  });
 
   socket.rest = async (endp, params) => {
     params = Object.assign({token}, params);
@@ -71,7 +88,26 @@ export default function createSocket() {
     return res;
   };
 
-  socket.on("reconnect", () => {
+  socket.on("stoken", s => {
+    socket.stoken = s;
+  });
+  socket.on("reconnecting", () => {
+    if (!socket.serverRestartSeq) {
+      socket.serverRestartSeq = socket.serverSeq;
+      socket.serverSToken = socket.stoken;
+    }
+  });
+  socket.on("reconnect", async () => {
+    if (socket.serverRestartSeq) {
+      const {serverSToken, serverRestartSeq} = socket;
+      socket.serverRestartSeq = 0;
+      socket.servetSToken = 0;
+      const res = await socket.makeCall(
+        "continue", serverSToken, serverRestartSeq);
+      if (res) {
+        return;
+      }
+    }
     registry.messages.add({
       volatile: true,
       user: "Connection",
