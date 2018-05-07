@@ -456,6 +456,10 @@ export default new class Roomie extends EventEmitter {
     setTimeout(notification.close.bind(notification), 10000);
   }
 
+  fromServerTime(serverTime) {
+    return serverTime - this.drift;
+  }
+
   toServerTime(localTime) {
     if (!localTime) {
       localTime = Date.now();

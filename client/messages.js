@@ -207,7 +207,13 @@ export default new class Messages extends EventEmitter {
   }
 
   _add(m) {
-    m.date = m.date || new Date();
+    if (m.sdate) {
+      m.date = new Date(registry.roomie.fromServerTime(m.sdate));
+      delete m.sdate;
+    }
+    else {
+      m.date = m.date || new Date();
+    }
     let notify = false;
     if (!("notify" in m)) {
       for (const p of m.msg) {
