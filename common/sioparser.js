@@ -34,12 +34,16 @@ class Encoder extends parser.Encoder {
 
   encode(packet, callback) {
     if (packet.data) {
-      packet.data.push(this.seq++);
+      if (Array.isArray(packet.data)) {
+        packet.data.push(this.seq++);
+      }
+      else {
+        packet.data = [packet.data, this.seq++];
+      }
     }
     else {
       packet.data = [this.seq++];
     }
-    //packet.s = this.seq++;
     switch (packet.type) {
     case exports.CONNECT:
       packet.data.push(forceJSON);
