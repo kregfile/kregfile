@@ -5,6 +5,7 @@ Requires=redis.service network.target
 
 [Service]
 Type=simple
+Environment=NODE_ENV=production
 Environment=ENV=production
 Environment=env=production
 ExecStartPre=/usr/bin/git pull
