@@ -23,7 +23,8 @@ function parseToken(chunk) {
   if (isNaN(chunk)) {
     return chunk;
   }
-  return parseFloat(chunk) || chunk;
+  const rv = parseFloat(chunk);
+  return typeof rv !== "number" || !isFinite(rv) ? chunk : rv;
 }
 
 
@@ -74,8 +75,10 @@ function naturalSort (a, b) {
     if (xisnum) {
       // both are numbers
       // Compare the numbers and if they are the same, the tokens too
-      const res = default_compare(xnum, ynum) ||
-          default_compare(xTokens[i], yTokens[i]);
+      let res = default_compare(xnum, ynum);
+      if (!res) {
+        res = default_compare(xTokens[i], yTokens[i]);
+      }
       if (!res) {
         continue;
       }
