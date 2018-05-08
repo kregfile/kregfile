@@ -19,6 +19,7 @@ export class OptionsModal extends Modal {
       "owners", "invitees",
       "name", "motd",
       "inviteonly", "adult", "disabled",
+      "ttl",
     ];
     for (const f of fields) {
       this[f] = this.el.elements[f];
@@ -34,6 +35,7 @@ export class OptionsModal extends Modal {
     this.inviteonly.checked = !!c.get("inviteonly");
     this.adult.checked = !!c.get("adult");
     this.disabled.checked = !!c.get("disabled");
+    this.ttl.value = c.get("fileTTL") || 0;
     this.owners = null;
     this.invitees = null;
 
@@ -91,9 +93,18 @@ will NOT be aborted, and they also retain their chat histories.`,
       const {socket, config: c} = registry;
       const {value: name} = this.name;
       const {value: motd} = this.motd;
+      let {value: ttl} = this.ttl;
       const {checked: inviteonly} = this.inviteonly;
       const {checked: adult} = this.adult;
       const {checked: disabled} = this.disabled;
+
+      ttl = parseInt(ttl, 10);
+      if (ttl.toString() !== this.ttl.value) {
+        throw new Error("Invalid ttl (1)");
+      }
+      if (ttl < 0 || !isFinite(ttl)) {
+        throw new Error("Invalid ttl");
+      }
 
       if (name !== c.get("roomname")) {
         await socket.makeCall("setconfig", "name", name);
@@ -106,6 +117,9 @@ will NOT be aborted, and they also retain their chat histories.`,
       }
       if (disabled !== !!c.get("disabled")) {
         await socket.makeCall("setconfig", "disabled", disabled);
+      }
+      if (ttl !== !!c.get("fileTTL")) {
+        await socket.makeCall("setconfig", "fileTTL", ttl);
       }
 
       if (this.invitees) {

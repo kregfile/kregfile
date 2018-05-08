@@ -1074,6 +1074,7 @@ footer > * > a {
 input[type="text"],
 input[type="password"],
 input[type="email"],
+input[type="number"],
 #page textarea {
   background: var(--main-bg);
   color: var(--text-fg);
@@ -1083,7 +1084,8 @@ input[type="email"],
 
 input[type="text"],
 input[type="password"],
-input[type="email"] {
+input[type="email"],
+input[type="number"] {
   border: 1px solid var(--lite-bg) !important;
 }
 
@@ -1272,6 +1274,7 @@ ul.context-menu ul {
 .modal input[type="text"],
 .modal input[type="password"],
 .modal input[type="email"],
+.modal input[type="number"],
 .modal select,
 .modal textarea {
   background: var(--dark-bg);
@@ -1370,6 +1373,7 @@ ul.context-menu ul {
 
 .modal-optsdlg .modal-body {
   grid-template-areas:
+    "icon . ."
     "icon . ."
     "icon . ."
     "icon . ."
