@@ -50,4 +50,4 @@ cols.forEach((c, i) => {
 });
 
 const filter = document.querySelector("#filterrooms");
-filter.addEventListener("keypress", debounce(filterTable));
+filter.addEventListener("keydown", debounce(filterTable));
