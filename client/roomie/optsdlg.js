@@ -30,7 +30,7 @@ export class OptionsModal extends Modal {
 
     const {config: c} = registry;
     this.name.value = c.get("roomname");
-    this.motd.value = c.get("rawmotd");
+    this.motd.value = c.get("rawmotd") || "";
     this.inviteonly.checked = !!c.get("inviteonly");
     this.adult.checked = !!c.get("adult");
     this.disabled.checked = !!c.get("disabled");
