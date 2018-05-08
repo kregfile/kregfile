@@ -11,7 +11,7 @@ function sortTable(col, idx) {
     }
     return [cols[idx].dataset.sort, cols[0].dataset.sort];
   }, naturalCaseSort);
-  if (col.dataset.order !== "r") {
+  if (col.dataset.order === "r") {
     rows.reverse();
   }
   const owner = rows[0].parentElement;
