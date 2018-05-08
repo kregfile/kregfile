@@ -46,7 +46,7 @@ export default new class Roomie extends EventEmitter {
 
     addEventListener("mouseout", this.onmouseout, true);
     const ces = [
-      "home", "newroom", "report", "options",
+      "home", "newroom", "roomlist", "report", "options",
       "ban", "unban", "nuke",
       "register", "login", "account", "logout"
     ];
@@ -61,6 +61,10 @@ export default new class Roomie extends EventEmitter {
 
   onctxnewroom() {
     openInNew("/new");
+  }
+
+  onctxroomlist() {
+    openInNew("/adiscover");
   }
 
   onctxreport() {

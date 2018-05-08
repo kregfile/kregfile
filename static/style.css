@@ -1477,3 +1477,22 @@ ul.context-menu ul {
   width: 100%;
   justify-content: space-around;
 }
+
+#discover {
+  width: 100%;
+  min-width: 50vw;
+}
+#discover th {
+  cursor: pointer;
+}
+#discover td {
+  vertical-align: top;
+}
+#discover a {
+  color: white;
+}
+#discover ul {
+  margin: 0;
+  padding: 0;
+  padding-left: 2ex;
+}
