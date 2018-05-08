@@ -115,11 +115,13 @@ will NOT be aborted, and they also retain their chat histories.`,
       if (adult !== !!c.get("adult")) {
         await socket.makeCall("setconfig", "adult", adult);
       }
-      if (disabled !== !!c.get("disabled")) {
-        await socket.makeCall("setconfig", "disabled", disabled);
-      }
-      if (ttl !== !!c.get("fileTTL")) {
-        await socket.makeCall("setconfig", "fileTTL", ttl);
+      if (registry.chatbox.role === "mod") {
+        if (disabled !== !!c.get("disabled")) {
+          await socket.makeCall("setconfig", "disabled", disabled);
+        }
+        if (ttl !== !!c.get("fileTTL")) {
+          await socket.makeCall("setconfig", "fileTTL", ttl);
+        }
       }
 
       if (this.invitees) {
