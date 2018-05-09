@@ -1,0 +1,33 @@
+<!doctype html>
+<%- include("head"); %>
+<body id="page">
+  <nav>
+    <h1><%=NAME%> - Moderation Log</h1>
+  </nav>
+  <article id="modlog">
+    <table class="sortable">
+      <thead>
+        <tr>
+          <th data-order="r">Date</th>
+          <th>Room</th>
+          <th>Moderator</th>
+          <th>Message</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+      <% for (r of records) { %>
+        <tr>
+          <td data-sort="<%=r.issued%>"><%=r.time%> ago</td>
+          <td data-sort="<%=r.roomid%>"><a href="/r/<%=r.roomid%>" target="_blank"><%=r.roomid%></a></td>
+          <td data-sort="<%=r.mod.name%>"><%=r.mod.name%></td>
+          <td><%=r.text%></td>
+          <td><a href="/modlog/<%=r.id%>" target="_blank">Details</a></td>
+        </tr>
+      <% } %>
+      </tbody>
+    </table>
+  </article>
+  <%- include("footer"); %>
+  <script src="/static/sortable.js?v=<%=v%>" async></script>
+</body>

@@ -1,0 +1,63 @@
+<!doctype html>
+<%- include("head"); %>
+<body id="page">
+  <nav>
+    <h1><%=NAME%> - Moderation Log</h1>
+  </nav>
+  <article id="modlog">
+
+    <%- include("modlogstrip"); %>
+    <hr>
+
+    <h3>Message</h3>
+    <p><%=record.text%></p>
+
+    <% if (record.ips) { %>
+    <h3>Users</h3>
+    <table class="modlogusers">
+      <tr>
+        <th>Who</th>
+      </tr>
+      <% for (const acct of record.accounts) { %>
+      <tr>
+        <td><%=acct%></td>
+      </tr>
+      <% } %>
+      <% for (const ip of record.ips) { %>
+      <tr>
+        <td><%=ip%></td>
+      </tr>
+      <% } %>
+    </table>
+    <% } %>
+
+    <% if (record.files && record.files.length) { %>
+    <h3>Files</h3>
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Size</th>
+        <th>Room</th>
+        <th>User</th>
+      </tr>
+      <% for (const file of record.files) { %>
+      <tr>
+        <td><%=file.name%></td>
+        <td><%=file.fmtSize%></td>
+        <td><a href="/r/<%=file.roomid%>" target="_blank"><%=file.roomid%></a></td>
+        <td>
+          <% if (file.meta && file.meta.account) { %>
+          <%=file.meta.account%>
+          <% } %>
+          (<%=file.ip%>)
+        </td>
+      </tr>
+      <% } %>
+    </table>
+    <% } %>
+    
+    <hr>
+    <%- include("modlogstrip"); %>
+  </article>
+  <%- include("footer"); %>
+</body>

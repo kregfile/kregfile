@@ -1,0 +1,11 @@
+<p class="modlogstrip">
+  <a href="/r/<%=record.roomid%>"><%=record.roomid%></a>
+  /
+  <%=new Date(record.issued)%>
+  /
+  <a href="/u/<%=record.mod.name%>"><%=record.mod.name%></a>
+  <% if (record.revert) { %>
+  /
+  <a href="/modlog/revert/<%=record.id%>">REVERT</a>
+  <% } %>
+</p>

@@ -1482,21 +1482,47 @@ ul.context-menu ul {
   justify-content: space-around;
 }
 
+.sortable th {
+  cursor: pointer;
+}
+.sortable td {
+  vertical-align: top;
+}
+.sortable a {
+  color: white;
+}
+
 #discover {
   width: 100%;
   min-width: 50vw;
-}
-#discover th {
-  cursor: pointer;
-}
-#discover td {
-  vertical-align: top;
-}
-#discover a {
-  color: white;
 }
 #discover ul {
   margin: 0;
   padding: 0;
   padding-left: 2ex;
+}
+
+#modlog {
+  max-width: 70vw;
+  width: 70vw;
+}
+
+#modlog .sortable td {
+  white-space: nowrap;
+}
+
+#modlog .sortable td:nth-child(4) {
+  white-space:unset;
+}
+
+.modlogstrip {
+  font-size: small
+}
+
+.modlogstrip * {
+  color: white;
+}
+
+.modlogusers {
+  max-width: 30vw;
 }

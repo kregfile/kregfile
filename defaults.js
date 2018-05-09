@@ -29,6 +29,9 @@ module.exports = {
   // Path to upload directory
   uploads: "uploads",
 
+  // Path to keep the moderation log
+  modlog: "mod.log",
+
   // Number of hours a finished download takes to expire
   TTL: 48,
 
