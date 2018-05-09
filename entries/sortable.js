@@ -2,14 +2,21 @@
 
 import {debounce, sort, naturalCaseSort} from "client/util";
 
+function colToSort(col) {
+  if (!col) {
+    return null;
+  }
+  return col.dataset.sort || col.textContent;
+}
+
 function sortTable(col, idx) {
   const rows = sort(Array.from(table.querySelectorAll("tbody > tr")), r => {
     const cols = Array.from(r.querySelectorAll("td"));
     const scol = cols[idx];
     if (!scol || !idx) {
-      return [cols[0].dataset.sort];
+      return [colToSort(cols[0])];
     }
-    return [cols[idx].dataset.sort, cols[0].dataset.sort];
+    return [colToSort(scol), colToSort(cols[0])];
   }, naturalCaseSort);
   if (col.dataset.order === "r") {
     rows.reverse();
@@ -38,7 +45,7 @@ function filterTable() {
   });
 }
 
-const table = document.querySelector("#discover");
+const table = document.querySelector(".sortable");
 const cols = Array.from(table.querySelectorAll("th"));
 cols.forEach((c, i) => {
   c.addEventListener("click", () => {
@@ -49,5 +56,7 @@ cols.forEach((c, i) => {
   }
 });
 
-const filter = document.querySelector("#filterrooms");
-filter.addEventListener("keydown", debounce(filterTable));
+const filter = document.querySelector("#filter");
+if (filter) {
+  filter.addEventListener("keydown", debounce(filterTable));
+}

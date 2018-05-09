@@ -7,7 +7,7 @@ node_modules/
 static/account.js*
 static/client.js*
 static/register.js*
-static/discover.js*
+static/sortable.js*
 yarn-error.log
 *.pem
 *.key

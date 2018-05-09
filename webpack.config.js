@@ -32,7 +32,7 @@ module.exports = {
     client: "./main.js",
     register: "./register.js",
     account: "./account.js",
-    discover: "./discover.js",
+    sortable: "./sortable.js",
   },
   output: {
     filename: "[name].js",

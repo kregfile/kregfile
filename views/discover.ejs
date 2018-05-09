@@ -11,9 +11,9 @@
       <strong><%=files%> files</strong>.
     </p>
     <p>
-      <input id="filterrooms" type="text" placeholder="Filter...">
+      <input id="filter" type="text" placeholder="Filter...">
     </p>
-    <table id="discover">
+    <table id="discover" class="sortable">
       <thead>
         <tr>
           <th>Name</th>
@@ -23,26 +23,27 @@
         </tr>
       </thead>
       <tbody>
-    <% for (r of rooms) { %>
-    <tr data-filter="<%=r.name%> <%=r.id%> <%=r.owners.join(" ")%>">
-        <td data-sort="<%=r.name + " " + r.roomid%>">
-          <a target="_blank" href="/r/<%=r.roomid%>"><%=r.name%> (#<%=r.roomid%>)</a>
-        </td>
-        <td data-sort="<%=r.users%>"><%=r.users%></td>
-        <td data-sort="<%=r.files%>"><%=r.files%></td>
-        <td data-sort="<%=r.owners.join(" ")%>">
-          <% if (r.owners.length) { %>
-            <ul>
-            <% for (o of r.owners) { %>
-              <li><a target="_blank" href="/u/<%=o%>"><%=o%></a></li>
+      <% for (r of rooms) { %>
+        <tr data-filter="<%=r.name%> <%=r.id%> <%=r.owners.join(" ")%>">
+          <td data-sort="<%=r.name + " " + r.roomid%>">
+            <a target="_blank" href="/r/<%=r.roomid%>"><%=r.name%> (#<%=r.roomid%>)</a>
+          </td>
+          <td data-sort="<%=r.users%>"><%=r.users%></td>
+          <td data-sort="<%=r.files%>"><%=r.files%></td>
+          <td data-sort="<%=r.owners.join(" ")%>">
+            <% if (r.owners.length) { %>
+              <ul>
+              <% for (o of r.owners) { %>
+                <li><a target="_blank" href="/u/<%=o%>"><%=o%></a></li>
+              <% } %>
+              </ul>
             <% } %>
-            </ul>
-          <% } %>
-        </td>
-      </tr>
-    <% } %>
+          </td>
+        </tr>
+      <% } %>
+      </tbody>
     </table>
   </article>
   <%- include("footer"); %>
-  <script src="/static/discover.js?v=<%=v%>" async></script>
+  <script src="/static/sortable.js?v=<%=v%>" async></script>
 </body>
