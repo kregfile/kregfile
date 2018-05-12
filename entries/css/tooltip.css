@@ -1,0 +1,102 @@
+.tooltip {
+  visibility: hidden;
+  font-size: 90%;
+  display: grid;
+  position: fixed;
+  z-index: 1000;
+  padding-bottom: 1em;
+  background: var(--main-bg);
+  border: 1px solid var(--lite-bg);
+  border-left-width: 1ex;
+  border-top-left-radius: 1ex;
+  border-bottom-right-radius: 1ex;
+  grid-template-columns: auto auto 1fr;
+  grid-template-rows: repeat(10, auto);
+}
+
+.tooltip.visible {
+  visibility: visible;
+  animation-name: toolfadein;
+  animation-iteration-count: 1;
+  animation-timing-function: linear;
+  animation-duration: 0.2s;
+  box-shadow: 6px 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+.tooltip > * {
+  display: block;
+  padding-right: 1em;
+  white-space: nowrap;
+}
+
+.tooltip-name {
+  grid-row: 1;
+  grid-column: 1 / span 4;
+  padding: 0.5ex 1em;
+  margin-bottom: 1em;
+  max-width: 40em;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  background: var(--lite-bg);
+}
+
+.tooltip-tag-tag {
+  grid-column: 2;
+  align-self: end;
+  line-height: 166%;
+  padding-left: 1em;
+}
+
+.tooltip-tag-value {
+  grid-column: 3;
+  max-width: 20em;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  align-self: end;
+  line-height: 166%;
+}
+
+.tooltip-name,
+.tooltip-tag-value {
+  font-weight: bold;
+}
+
+.tooltip-preview {
+  display: inline-block;
+  line-height: 100%;
+  overflow: hidden;
+  padding-left: 1em;
+  padding-right: 0;
+  max-width: 200px;
+  max-height: 200px;
+  grid-column: 1;
+  grid-row: 2;
+  grid-row-end: -1;
+}
+
+span.tooltip-preview:before {
+  color: var(--role-user-fg);
+  font-size: 80px;
+  line-height: 80px;
+}
+
+span.tooltip-preview.mod:before {
+  color: var(--role-mod-fg);
+}
+
+.tooltip-user img {
+  max-width: 100px;
+}
+
+@keyframes toolfadein {
+  0% {
+    opacity: 0;
+    border-color: var(--main-bg);
+    background-color: var(--lite-bg);
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+

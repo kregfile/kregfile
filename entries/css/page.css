@@ -1,0 +1,164 @@
+.sortable th {
+  cursor: pointer;
+}
+
+.sortable td {
+  vertical-align: top;
+}
+
+.sortable a {
+  color: white;
+}
+
+body#page {
+  display: flex;
+  margin: 0;
+  background: var(--dark-bg);
+  flex-direction: column;
+  align-items: stretch;
+  min-height: 100vh;
+}
+
+#page > nav {
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  background: linear-gradient(
+    184deg,
+    var(--dark-bg),
+    var(--main-bg) 30%,
+    var(--main-bg) 60%,
+    var(--lite-bg)
+  );
+  border: 0;
+}
+
+#page h1 {
+  margin: 1ex 0.5ex;
+  width: 800px;
+  text-align: center;
+}
+
+#page textarea {
+  width: 100%;
+  min-height: calc(7px + 4em);
+}
+
+#page #register {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 60ex;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-column-gap: 1em;
+  grid-row-gap: 1ex;
+}
+
+#page label {
+  font-size: small;
+}
+
+#page #submit {
+  grid-column: 1 / span 2;
+  justify-self: center;
+}
+
+#page #account {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-column-gap: 1em;
+  grid-row-gap: 2ex;
+}
+
+#page #account h3 {
+  margin: 0;
+  margin-bottom: 1ex;
+}
+
+#page label[for="msg"],
+#page #account #msg {
+  grid-column: 1 / span 2;
+}
+
+#page #userprofile {
+  max-width: 70ex;
+  min-width: 55ex;
+  word-wrap: break-word;
+}
+
+#page #userprofile #avatar {
+  display: block;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#page #userprofile span#avatar:before {
+  font-size: 200px;
+}
+
+#page #userprofile #message {
+  white-space: pre;
+}
+
+#toplist {
+  min-width: 70ex;
+}
+
+#toplist tr :first-child {
+  white-space: nowrap;
+  text-align: right;
+  width: 2ex;
+}
+
+#toplist tr :last-child {
+  white-space: nowrap;
+  text-align: right;
+  width: 2ex;
+}
+
+#toplist-nav {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+}
+
+
+#discover {
+  width: 100%;
+  min-width: 50vw;
+}
+#discover ul {
+  margin: 0;
+  padding: 0;
+  padding-left: 2ex;
+}
+
+#modlog {
+  max-width: 70vw;
+  width: 70vw;
+}
+
+#modlog .sortable td {
+  white-space: nowrap;
+}
+
+#modlog .sortable td:nth-child(4) {
+  white-space:unset;
+}
+
+.modlogstrip {
+  font-size: small
+}
+
+.modlogstrip * {
+  color: white;
+}
+
+.modlogusers {
+  max-width: 30vw;
+}

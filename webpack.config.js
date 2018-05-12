@@ -4,6 +4,8 @@ const crypto = require("crypto");
 const path = require("path");
 const {RawSource} = require("webpack-sources");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
 class HashPlugin {
   apply(compiler) {
@@ -79,5 +81,21 @@ module.exports = {
     alias: {
       localforage: "node_modules/localforage/dist/localforage.nopromises.js",
     }
-  }
+  },
+  optimization: {
+    minimizer: [
+      new UglifyJsPlugin({
+        cache: true,
+        parallel: true,
+        sourceMap: true,
+      }),
+      new OptimizeCSSAssetsPlugin({
+        cssProcessor: require("cssnano"),
+        cssProcessorOptions: {
+          preset: "default",
+          discardComments: { removeAll: true },
+        },
+      })
+    ]
+  },
 };

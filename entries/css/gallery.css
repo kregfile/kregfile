@@ -1,0 +1,117 @@
+.gallery #filelist {
+  filter: blur(5px);
+}
+
+#gallery {
+  grid-area: files;
+  display: none;
+  z-index: 2000;
+  background: rgba(0,0,0,0.6);
+  overflow: hidden;
+  grid-template-columns: 5em 1fr 5em;
+  grid-template-rows: auto 1fr auto;
+  user-select: none;
+}
+
+#gallery > * {
+  cursor: pointer;
+}
+
+.gallery #gallery {
+  display: grid;
+}
+
+#gallery_img {
+  display: block;
+  grid-column: 1 / span 3;
+  grid-row: 1 / span 3;
+  justify-self: center;
+  align-self: center;
+  cursor: pointer;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.gallery_text {
+  padding: 0.3ex 1em;
+  border-radius: 16px;
+  background: rgba(30, 30, 30, 0.7);
+  user-select: none;
+  font-size: small;
+}
+
+#gallery_title {
+  grid-column: 2;
+  grid-row: 1;
+  text-align: center;
+  justify-self: center;
+  align-self: flex-start;
+  margin-top: -10em;
+  transition: 0.3s margin-top linear;
+}
+
+.aux #gallery_title {
+  margin-top: 1em;
+}
+
+.gallery_prevnext {
+  display: block;
+  grid-row: 1 / span 3;
+  font-size: 30pt;
+  justify-self: stetch;
+  background: rgba(30,30,30,0.05);
+  color: rgba(220,220,220,0.3);
+  align-self: center;
+  cursor: pointer;
+  user-select: none;
+  transition: 0.3s color ease-in, 0.5s background ease-in;
+}
+
+.gallery_prevnext:hover {
+  color: rgba(220,220,220,0.7);
+  background: rgba(30,30,30,0.9);
+}
+
+#gallery_prev {
+  grid-column: 1;
+  justify-self: flex-start;
+  padding-left: 0.5ex;
+  padding-right: 1ex;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+#gallery_next {
+  grid-column: 3;
+  justify-self: flex-end;
+  text-align: right;
+  padding-right: 0.5ex;
+  padding-left: 1ex;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+#gallery_close {
+  grid-column: 3;
+  grid-row: 1;
+  justify-content: center;
+  align-self: center;
+  margin-top: 2ex;
+}
+
+#gallery_info {
+  grid-column: 2 / span 2;
+  grid-row: 3;
+  text-align: right;
+  justify-self: right;
+  margin: 4ex;
+  margin-bottom: -10ex;
+  transition: 0.3s margin-bottom linear;
+  pointer-events: none;
+}
+
+.aux #gallery_info {
+  margin-bottom: 4ex;
+}
+
+
