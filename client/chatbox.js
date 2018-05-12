@@ -60,12 +60,22 @@ export default new class ChatBox extends EventEmitter {
       this.setNick(m);
     });
 
-    registry.socket.on("authed", authed => {
+    registry.socket.on("authed", async authed => {
       this.authed = authed;
       if (this.authed) {
-        this.ensureNick(true);
+        await this.ensureNick(true);
       }
     });
+  }
+
+  async send(value) {
+    const cmd = parseCommand(value);
+    if (cmd && await this.doCommand(cmd)) {
+      // done
+    }
+    else {
+      this.sendMessage(value);
+    }
   }
 
   onpress(e) {
@@ -75,13 +85,7 @@ export default new class ChatBox extends EventEmitter {
       if (target.value) {
         let {value} = target;
         value = value.trim();
-        const cmd = parseCommand(value);
-        if (cmd && this.doCommand(cmd)) {
-          // done
-        }
-        else {
-          this.sendMessage(value);
-        }
+        this.send(value).catch(console.error);
         target.value = "";
       }
       return nukeEvent(e);
@@ -148,9 +152,9 @@ export default new class ChatBox extends EventEmitter {
     });
   }
 
-  cmd_nick(value) {
+  async cmd_nick(value) {
     this.nick.value = value;
-    this.ensureNick();
+    await this.ensureNick();
     return true;
   }
 
@@ -176,19 +180,23 @@ export default new class ChatBox extends EventEmitter {
     return true;
   }
 
-  doCommand(cmd) {
+  async doCommand(cmd) {
     const fn = this[`cmd_${cmd.cmd}`];
     if (!fn) {
       return false;
     }
-    if (fn.call(this, cmd.args)) {
+    let rv = fn.call(this, cmd.args);
+    if (rv && rv.then) {
+      rv = await rv;
+    }
+    if (rv) {
       this.history.add(cmd.str);
       return true;
     }
     return false;
   }
 
-  ensureNick(silent) {
+  async ensureNick(silent) {
     try {
       let {value: onick} = this.nick;
       if (!onick) {
@@ -199,7 +207,7 @@ export default new class ChatBox extends EventEmitter {
         nick = onick.toLowerCase() === this.authed ? onick : this.authed;
       }
       else {
-        nick = validateUsername(onick);
+        nick = await validateUsername(onick);
       }
       const oldnick = localStorage.getItem("nick");
       localStorage.setItem("nick", nick);
@@ -218,8 +226,8 @@ export default new class ChatBox extends EventEmitter {
     }
   }
 
-  sendMessage(m) {
-    this.ensureNick();
+  async sendMessage(m) {
+    await this.ensureNick();
     registry.socket.emit("message", m);
     this.history.add(m);
   }

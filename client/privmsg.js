@@ -62,7 +62,7 @@ export default new class PrivMessage {
     const u = m.slice(0, idx.index).trim();
     const user = u.toLowerCase();
     m = m.slice(idx.index).trim();
-    validateUsername(user);
+    await validateUsername(user);
 
     let pubkey = await s.makeCall("reqpubkey", user);
     if (!pubkey) {

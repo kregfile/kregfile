@@ -1,6 +1,7 @@
 "use strict";
 
 import message from "../common/message";
+import {xregexp} from "./lazy";
 
 export function dom(type, options) {
   const {attrs = {}, text = "", classes = []} = options || {};
@@ -92,14 +93,14 @@ export function toType(type) {
   return TYPES.has(type) && type || "file";
 }
 
-export function validateUsername(nick) {
+export async function validateUsername(nick) {
   if (nick.length < 3) {
     throw new Error("User name too short");
   }
   if (nick.length > 20) {
     throw new Error("User name too long");
   }
-  nick = nick.replace(/[^a-z\d]/gi, "");
+  nick = nick.replace(await xregexp("[^\\p{Latin}\\d]", "gi"), "");
   if (nick.length < 3) {
     throw new Error("User name too short");
   }

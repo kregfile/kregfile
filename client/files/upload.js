@@ -188,7 +188,7 @@ export default class Upload extends Removable {
     if (this.aborted) {
       return;
     }
-    registry.chatbox.ensureNick();
+    await registry.chatbox.ensureNick();
     this.setIcon("i-upload");
     try {
       for (let i = 0; i <= 10; ++i) {

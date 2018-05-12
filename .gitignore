@@ -13,3 +13,4 @@ yarn-error.log
 *.key
 *.crt
 mod.log
+static/vendors~*

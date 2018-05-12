@@ -15,7 +15,7 @@ form.addEventListener("submit", async e => {
 
   const errors = [];
   try {
-    if (validateUsername(user) !== user) {
+    if (await validateUsername(user) !== user) {
       errors.push(`Invalid user name:
       no special chars, like umlauts or accented characters!`);
     }
