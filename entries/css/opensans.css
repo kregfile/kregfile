@@ -24,13 +24,13 @@
 }
 @font-face {
   font-family: 'Open Sans';
-  src: url("./fonts/OpenSans-Semibold.woff2") format("woff2");
+  src: url("./fonts/OpenSans-SemiBold.woff2") format("woff2");
   font-weight: 600;
   font-style: normal;
 }
 @font-face {
   font-family: 'Open Sans';
-  src: url("./fonts/OpenSans-SemiboldItalic.woff2") format("woff2");
+  src: url("./fonts/OpenSans-SemiBoldItalic.woff2") format("woff2");
   font-weight: 600;
   font-style: italic;
 }
