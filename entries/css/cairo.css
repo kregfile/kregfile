@@ -1,0 +1,24 @@
+@font-face {
+  font-family: 'Cairo';
+  src: url("./fonts/Cairo-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Cairo';
+  src: url("./fonts/Cairo-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Cairo';
+  src: url("./fonts/Cairo-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Cairo';
+  src: url("./fonts/Rubik-Bold.woff2") format("woff2");
+  font-weight: bold;
+  font-style: normal;
+}

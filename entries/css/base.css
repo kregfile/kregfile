@@ -15,7 +15,7 @@
   --role-mod-fg: #d880fc;
   --role-system-fg: #ff6c00;
   --base-size: 12pt;
-  --base-font: 'Open Sans', sans-serif;
+  --base-font: 'Open Sans', 'Rubik', 'Cairo', sans-serif;
   --files-size: 11pt;
   --detail-size: 8pt;
 }
