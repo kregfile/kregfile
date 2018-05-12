@@ -3902,9 +3902,9 @@ normalize-url@^1.4.0:
     query-string "^4.1.0"
     sort-keys "^1.0.0"
 
-notepack.io@^2.1.2:
+"notepack.io@https://github.com/kregfile/notepack":
   version "2.1.2"
-  resolved "https://registry.yarnpkg.com/notepack.io/-/notepack.io-2.1.2.tgz#94a47f5e4ce4ace1f3d71b27c6f83c7163393c52"
+  resolved "https://github.com/kregfile/notepack#9362e00fc2eabcd196035b4f7c294ac1cb5075a4"
 
 npm-bundled@^1.0.1:
   version "1.0.3"
