@@ -1,8 +1,9 @@
 @font-face {
   font-family: 'symbols';
   src:
-    url('fonts/symbols.ttf?2ffdmm') format('truetype'),
+    url('fonts/symbols.woff2?2ffdmm') format('woff2'),
     url('fonts/symbols.woff?2ffdmm') format('woff'),
+    url('fonts/symbols.ttf?2ffdmm') format('truetype'),
     url('fonts/symbols.svg?2ffdmm#symbols') format('svg');
   font-weight: normal;
   font-style: normal;
