@@ -3,6 +3,7 @@
 const crypto = require("crypto");
 const path = require("path");
 const {RawSource} = require("webpack-sources");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 class HashPlugin {
   apply(compiler) {
@@ -33,6 +34,7 @@ module.exports = {
     register: "./register.js",
     account: "./account.js",
     sortable: "./sortable.js",
+    style: "./css/style.css",
   },
   output: {
     filename: "[name].js",
@@ -40,7 +42,32 @@ module.exports = {
     publicPath: "/static/",
     chunkFilename: "[name].js?v=[chunkhash]",
   },
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader"
+        ]
+      },
+      {
+        test: /\.(png|jpg|gif|woff2?|ttf|svg|otf|eof)$/,
+        use: [
+          {
+            loader: "file-loader",
+            options: {
+              name: "s~[hash].[ext]",
+            }
+          }
+        ]
+      }
+    ]
+  },
   plugins: [
+    new MiniCssExtractPlugin({
+      filename: "[name].css"
+    }),
     new HashPlugin(),
   ],
   devtool: "source-map",

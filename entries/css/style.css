@@ -1,3 +1,6 @@
+@import 'opensans.css';
+@import 'font.css';
+
 :root {
   --main-bg: #333333;
   --text-fg: #fefefe;
@@ -1452,7 +1455,7 @@ ul.context-menu ul {
 }
 
 .kf {
-  background-image: url("favicon.png");
+  background-image: url("/static/favicon.png");
   background-size: 16px;
   background-repeat: no-repeat;
   background-position: center center;
