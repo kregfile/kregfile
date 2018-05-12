@@ -221,6 +221,11 @@ export default new class ChatBox extends EventEmitter {
       }
       registry.socket.emit("nick", nick);
     }
+    catch (ex) {
+      this.emit(
+        "error",
+        `User name invalid: ${ex.message || ex}`);
+    }
     finally {
       this.currentNick = this.nick.value = localStorage.getItem("nick");
     }
