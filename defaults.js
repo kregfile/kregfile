@@ -74,6 +74,8 @@ module.exports = {
   exiftool: "exiftool",
   // For asset generation, path to ffmpeg binary
   ffmpeg: "ffmpeg",
+  // For further checking the file type, if exiftool fails
+  filetool: "file",
   // Max number of concurrent asset generators
   maxAssetsProcesses: 2,
   // Max number of concurrent metadata extractor processes
