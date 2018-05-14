@@ -206,7 +206,7 @@ footer > * > a {
   width: 0px !important;
   height: 0px !important;
   display: inline;
-  background-image: url(/static/loader.png), url();
+  background-image: url(/loader.png), url();
 }
 
 .tmpl {

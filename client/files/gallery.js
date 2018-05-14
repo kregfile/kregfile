@@ -153,7 +153,7 @@ export default class Gallery {
       return false;
     }
     this.file = file;
-    this.imgEl.src = "/static/loader.png";
+    this.imgEl.src = "/loader.png";
     const img = this.imgEl.cloneNode();
     img.onload = () => {
       if (this.file !== file) {

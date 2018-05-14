@@ -88,7 +88,7 @@ class FileTooltip extends Tooltip {
 
     case "image": {
       const img = new Image();
-      img.src = "/static/loader.png";
+      img.src = "/loader.png";
       img.style.width = preview.width;
       img.style.height = preview.height;
       img.setAttribute("alt", `Preview for ${file.name}`);

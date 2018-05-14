@@ -41,7 +41,7 @@ module.exports = {
   output: {
     filename: "[name].js",
     path: path.join(__dirname, "static"),
-    publicPath: "/static/",
+    publicPath: "/",
     chunkFilename: "[name].js?v=[chunkhash]",
   },
   module: {

@@ -452,7 +452,7 @@ body#room {
 }
 
 .kf {
-  background-image: url("/static/favicon.png");
+  background-image: url("/favicon.png");
   background-size: 16px;
   background-repeat: no-repeat;
   background-position: center center;
