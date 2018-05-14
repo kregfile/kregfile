@@ -42,9 +42,12 @@ export default new class Roomie extends EventEmitter {
     document.querySelector("#ips").addEventListener("click", () => {
       document.body.classList.toggle("noips");
       this.emit("ips");
-    });
+    }, { passive: true });
 
-    addEventListener("mouseout", this.onmouseout, true);
+    addEventListener("mouseout", this.onmouseout, {
+      capture: true,
+      passive: true
+    });
     const ces = [
       "home", "newroom", "roomlist", "report", "options",
       "ban", "unban", "nuke", "modlog",
@@ -230,7 +233,7 @@ export default new class Roomie extends EventEmitter {
     if (this._mouseMoveInstalled) {
       return;
     }
-    addEventListener("mousemove", this.onmousemove);
+    addEventListener("mousemove", this.onmousemove, { passive: true });
     this._mouseMoveInstalled = true;
   }
 
@@ -238,7 +241,7 @@ export default new class Roomie extends EventEmitter {
     if (!this._mouseMoveInstalled) {
       return;
     }
-    addEventListener("mousemove", this.onmousemove);
+    addEventListener("mousemove", this.onmousemove, { passive: true });
     this._mouseMoveInstalled = false;
   }
 

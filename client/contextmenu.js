@@ -93,7 +93,10 @@ class SubMenuItem extends MenuItemBase {
       return false;
     }, true);
     this.owner.elem.addEventListener(
-      "mouseenter", debounce(this.entered.bind(this), MENU_OPEN_BOUNCE), true);
+      "mouseenter", debounce(this.entered.bind(this), MENU_OPEN_BOUNCE), {
+        capture: true,
+        passive: true
+      });
     this.owner.on("dismissed", () => {
       this.menu.dismiss();
     });

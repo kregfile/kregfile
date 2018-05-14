@@ -26,7 +26,7 @@ export default class Gallery {
 
     Object.seal(this);
 
-    this.el.addEventListener("mousemove", this.startHideAux);
+    this.el.addEventListener("mousemove", this.startHideAux, { passive: true });
     this.el.addEventListener("click", this.onclose.bind(this), true);
     this.closeEl.addEventListener("click", this.close.bind(this), true);
     this.titleEl.addEventListener("click", this.ontitleclick);

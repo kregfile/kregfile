@@ -11,11 +11,11 @@ export default class Scroller {
     this.start = 0;
     this.off = 0;
 
-    el.addEventListener("wheel", () => {});
+    el.addEventListener("wheel", () => {}, { passive: true });
 
     const diff = el.clientWidth - el.offsetWidth;
     if (!diff) {
-      el.addEventListener("scroll", () => {});
+      el.addEventListener("scroll", () => {}, { passive: true });
       // no need to do anything, aka macos and some gtk themes
       Object.seal(this);
       return;
@@ -35,8 +35,8 @@ export default class Scroller {
 
     // hide the platform scroll bar
     el.style.marginRight = `${diff}px`;
-    el.addEventListener("scroll", this.onscroll.bind(this));
-    addEventListener("resize", this.onresize.bind(this));
+    el.addEventListener("scroll", this.onscroll.bind(this), { passive: true });
+    addEventListener("resize", this.onresize.bind(this), { passive: true });
 
     this.obs = new MutationObserver(this.onmutate.bind(this));
     this.obs.observe(el, {
@@ -101,13 +101,13 @@ export default class Scroller {
     this.start = e.pageY;
     this.off = this.bar.offsetTop;
     addEventListener("mouseup", this.onmouseup);
-    addEventListener("mousemove", this.onmousemove);
+    addEventListener("mousemove", this.onmousemove, { passive: true });
     nukeEvent(e);
   }
 
   onmouseup() {
     removeEventListener("mouseup", this.onmouseup);
-    removeEventListener("mousemove", this.onmousemove);
+    removeEventListener("mousemove", this.onmousemove, { passive: true });
   }
 
   onmousemove(e) {

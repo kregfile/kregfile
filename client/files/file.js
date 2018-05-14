@@ -48,7 +48,9 @@ export default class File extends BaseFile {
       classes: ["name"],
       text: this.name}
     );
-    this.nameEl.addEventListener("mouseenter", this.onenter.bind(this));
+    this.nameEl.addEventListener("mouseenter", this.onenter.bind(this), {
+      passive: true
+    });
     this.nameEl.addEventListener("click", this.onclick.bind(this));
     this.el.appendChild(this.nameEl);
 

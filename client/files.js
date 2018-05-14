@@ -88,7 +88,9 @@ export default new class Files extends EventEmitter {
 
     this.el.addEventListener("click", this.onclick.bind(this));
     this.el.addEventListener("contextmenu", this.onclick.bind(this));
-    this.el.addEventListener("scroll", this.onscroll.bind(this));
+    this.el.addEventListener("scroll", this.onscroll.bind(this), {
+      passive: true
+    });
 
     document.querySelector("#clearselection").addEventListener(
       "click", this.clearSelection.bind(this));

@@ -98,16 +98,16 @@ export default new class Messages extends EventEmitter {
 
     this.endMarker.addEventListener("click", () => {
       this.scrollEnd();
-    });
+    }, { passive: true });
     this.el.addEventListener("scroll", () => {
       if (this.isScrollEnd) {
         this.hideEndMarker();
       }
-    });
+    }, { passive: true });
 
     addEventListener("resize", debounce(() => {
       this.scrollEnd();
-    }, 500));
+    }, 500), { passive: true });
   }
 
   async completeFile(f) {
@@ -289,7 +289,7 @@ export default new class Messages extends EventEmitter {
       });
       user.dataset.profile = profile;
       user.dataset.owner = m.owner;
-      user.addEventListener("mouseenter", this.onuserenter);
+      user.addEventListener("mouseenter", this.onuserenter, { passive: true });
     }
     else {
       user = dom("span", {
@@ -400,7 +400,9 @@ export default new class Messages extends EventEmitter {
             file.lastChild.textContent = f.name;
           }).catch(console.error);
         }
-        file.addEventListener("mouseenter", this.onfileenter);
+        file.addEventListener("mouseenter", this.onfileenter, {
+          passive: true
+        });
         file.addEventListener("click", this.onfileclick);
         msg.appendChild(file);
         break;

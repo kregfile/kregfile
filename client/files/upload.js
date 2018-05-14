@@ -149,7 +149,7 @@ export default class Upload extends Removable {
             last = now;
           }
           this.setProgress(this.offset + e.loaded, this.offset + e.total, rate);
-        });
+        }, { passive: true });
         req.open("PUT", `/api/upload?${params.toString()}`);
         let {file} = this;
         if (this.offset) {
