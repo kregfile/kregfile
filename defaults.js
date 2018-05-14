@@ -12,6 +12,9 @@ module.exports = {
   // Your site's name
   name: "kregfile",
 
+  // Your site's motto
+  motto: "Made with rice",
+
   // redis_* = options for redis
   // Listen port
   port,
