@@ -3902,7 +3902,7 @@ normalize-url@^1.4.0:
     query-string "^4.1.0"
     sort-keys "^1.0.0"
 
-"notepack.io@https://github.com/kregfile/notepack":
+"notepack.io@https://github.com/kregfile/notepack#v3.0.0":
   version "2.1.2"
   resolved "https://github.com/kregfile/notepack#9362e00fc2eabcd196035b4f7c294ac1cb5075a4"
 

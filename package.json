@@ -26,7 +26,7 @@
     "lru-cache": "^4.1.2",
     "mini-css-extract-plugin": "^0.4.0",
     "mkdirp": "^0.5.1",
-    "notepack.io": "https://github.com/kregfile/notepack",
+    "notepack.io": "https://github.com/kregfile/notepack#v3.0.0",
     "optimize-css-assets-webpack-plugin": "^4.0.1",
     "passlib": "0.x || ^1",
     "qrcode": "^1.2.0",
