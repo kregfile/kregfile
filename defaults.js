@@ -1,9 +1,12 @@
 "use strict";
 
+const os = require("os");
+
 const {HTTP_PORT: port = 8080} = process.env;
 const {HTTPS_PORT: tlsport = 8443} = process.env;
+const NUM_CPUS = os.cpus().length;
 
-const linux = require("os").platform() === "linux";
+const LINUX = os.platform() === "linux";
 
 // Do not edit here.
 // Overwrite with a .config.json or config.js (module)
@@ -25,6 +28,9 @@ module.exports = {
   tlskey: "",
   tlscert: "",
   tlsport,
+
+  // how many web workers to run
+  workers: Math.max(NUM_CPUS + 1, 2),
 
   // For crypto shit, probably wanna customize it, or not, not that important
   secret: "kregfile",
@@ -72,7 +78,7 @@ module.exports = {
 
   // Use firejail when calling potential dangerous external commands,
   // see jail.profile
-  jail: linux,
+  jail: LINUX,
   // For meta data and asset generation, path to ffmpeg exiftool
   exiftool: "exiftool",
   // For asset generation, path to ffmpeg binary
