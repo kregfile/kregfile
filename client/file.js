@@ -46,6 +46,9 @@ class FileTooltip extends Tooltip {
     const diff = Math.max(0, file.ttl);
     a(toPrettySize(file.size), "size");
     a(toPrettyDuration(diff), "expires");
+    if (file.uploaded) {
+      a(file.localUploaded.toLocaleString(), "uploaded");
+    }
     file.tagsMap.forEach(a);
   }
 
@@ -167,6 +170,10 @@ export default class File extends Removable {
 
   get ttl() {
     return registry.roomie.diffTimes(this.expires);
+  }
+
+  get localUploaded() {
+    return new Date(registry.roomie.fromServerTime(this.uploaded));
   }
 
   get expired() {
