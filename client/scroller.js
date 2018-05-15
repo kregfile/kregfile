@@ -34,7 +34,7 @@ export default class Scroller {
     this.bar.addEventListener("mousedown", this.onmousedown.bind(this));
 
     // hide the platform scroll bar
-    el.style.marginRight = `${diff}px`;
+    el.style.marginRight = `${diff - 2}px`;
     el.addEventListener("scroll", this.onscroll.bind(this), { passive: true });
     addEventListener("resize", this.onresize.bind(this), { passive: true });
 
