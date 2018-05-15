@@ -57,7 +57,8 @@ body#room {
   justify-content: flex-start;
 }
 
-.filterbtn {
+.filterbtn,
+.filterbtn:focus {
   margin-right: 1ex;
   overflow: hidden;
   background: rgba(128,128,128, 0.4);
@@ -68,11 +69,12 @@ body#room {
   text-align: center;
 }
 
-.filterbtn:hover {
+.filterbtn:hover,
   background: rgba(128,128,128, 0.8) !important;
 }
 
-.filterbtn.disabled {
+.filterbtn.disabled
+.filterbtn.disabled:focus {
   background: transparent;
   color: var(--dark-fg);
   box-shadow: none;
