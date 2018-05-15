@@ -73,7 +73,7 @@ body#room {
   background: rgba(128,128,128, 0.8) !important;
 }
 
-.filterbtn.disabled
+.filterbtn.disabled,
 .filterbtn.disabled:focus {
   background: transparent;
   color: var(--dark-fg);
