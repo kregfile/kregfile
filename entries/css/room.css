@@ -161,10 +161,22 @@ body#room {
 }
 
 #tools .btn:last-child {
-  font-size: 16pt;
-  width: 38px;
+  display: flex;
+  justify-items: center;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  width: auto;
   border-top-right-radius: 0px;
   margin-left: 1em;
+}
+
+#tools .btn:last-child span {
+  color: darkgreen;
+  font-size: 16pt;
+  display: inline-block;
+  padding-left: 0.3ex;
+  padding-right: 0.3ex;
 }
 
 #trash,
