@@ -41,8 +41,8 @@ module.exports = {
   // Path to keep the moderation log
   modlog: "mod.log",
 
-  // Allow X-Forwarded-For to set IP if found
-  useXForwardedFor: false,
+  // Allow X-Forwarded-For to set client IP if found
+  considerProxyForwardedForHeaders: false,
 
   // Number of hours a finished download takes to expire
   TTL: 48,
