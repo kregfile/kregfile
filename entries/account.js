@@ -1,7 +1,6 @@
 "use strict;";
 
 import qrcode from "qrcode";
-import {dom} from "client/util";
 
 const acct = document.querySelector("#account");
 acct.addEventListener("submit", async e => {
