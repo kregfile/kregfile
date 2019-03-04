@@ -18,7 +18,7 @@ export default new class Registry {
       enumerable: true
     });
   }
-  init() {
+  async init() {
     delete this.init;
     const components = {
       socket,
@@ -36,10 +36,19 @@ export default new class Registry {
     }
     for (const [k, component] of Object.entries(components)) {
       if (typeof component === "function") {
-        this[k] = component();
+        const rv = component();
+        if (rv && rv.then) {
+          this[k] = await rv;
+        }
+        else {
+          this[k] = rv;
+        }
       }
       if (typeof component.init === "function") {
-        component.init();
+        const rv = component.init();
+        if (rv && rv.then) {
+          await rv;
+        }
       }
     }
   }

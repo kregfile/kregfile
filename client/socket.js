@@ -5,7 +5,29 @@ import io from "socket.io-client";
 import registry from "./registry";
 import parser from "../common/sioparser";
 
-export default function createSocket() {
+const {crypto: {subtle: crypto}} = window;
+
+function b64(buf) {
+  return btoa(String.fromCharCode(...new Uint8Array(buf.buffer || buf)));
+}
+
+async function addVerifier(params, verifier) {
+  const key = await crypto.generateKey({
+    name: "HMAC",
+    hash: "SHA-256",
+    length: 9 * 8,
+  }, true, ["sign"]);
+  const nounce = await crypto.exportKey("raw", key);
+  const bnounce = b64(nounce);
+  const enc = (new TextEncoder()).encode(verifier);
+  const signature = await crypto.sign("HMAC", key, enc);
+  const wrapped = b64(signature).
+    replace(/=/g, "").replace(/\//g, "_").replace(/\+/g, "-");
+  params.append("s", wrapped);
+  params.append("n", bnounce);
+}
+
+export default async function createSocket() {
   const params = new URLSearchParams();
   const nick = localStorage.getItem("nick");
   params.set("roomid", registry.roomid);
@@ -15,6 +37,10 @@ export default function createSocket() {
   params.set("cv", cv);
   if (nick) {
     params.set("nick", nick);
+  }
+  const verifier = new URLSearchParams(document.cookie).get("verifier");
+  if (verifier) {
+    await addVerifier(params, verifier);
   }
   const socket = io.connect({
     parser,
