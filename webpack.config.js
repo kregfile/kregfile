@@ -4,7 +4,7 @@ const crypto = require("crypto");
 const path = require("path");
 const {RawSource} = require("webpack-sources");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
 class HashPlugin {
@@ -84,10 +84,11 @@ module.exports = {
   },
   optimization: {
     minimizer: [
-      new UglifyJsPlugin({
-        cache: true,
+      new TerserPlugin({
         parallel: true,
-        sourceMap: true,
+        terserOptions: {
+          ecma: 6,
+        },
       }),
       new OptimizeCSSAssetsPlugin({
         cssProcessor: require("cssnano"),
