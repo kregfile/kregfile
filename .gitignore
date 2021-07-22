@@ -16,3 +16,4 @@ static/style*
 static/s~*
 static/vendors~*
 yarn-error.log
+uploads/
