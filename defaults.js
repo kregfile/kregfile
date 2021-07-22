@@ -29,6 +29,12 @@ module.exports = {
   tlscert: "",
   tlsport,
 
+  // Enable disable creating new rooms
+  roomCreation: true,
+
+  // Require registered accounts when creating rooms
+  roomCreationRequiresAccount: false,
+
   // how many web workers to run
   workers: Math.max(NUM_CPUS + 1, 2),
 
