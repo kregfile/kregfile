@@ -49,6 +49,9 @@
     "webpack-cli": "^3.2.3",
     "xregexp": "^5.0.2"
   },
+  "optionalDependencies" : {
+    "gm": "^1.23.1"
+  },
   "devDependencies": {
     "stylelint-config-recommended": "^5.0.0"
   }

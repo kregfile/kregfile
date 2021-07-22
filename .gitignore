@@ -10,3 +10,4 @@ mod.log
 node_modules/
 yarn-error.log
 uploads/
+/.project
