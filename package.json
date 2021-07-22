@@ -21,6 +21,7 @@
     "ejs": "^3.1.6",
     "express": "^4.16.4",
     "file-loader": "^3.0.1",
+    "gm": "^1.23.1",
     "helmet": "^3.15.1",
     "localforage": "^1.7.3",
     "lru-cache": "^6.0.0",
