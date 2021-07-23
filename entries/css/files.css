@@ -127,6 +127,10 @@
   text-overflow: ellipsis;
 }
 
+.tags > .tag-user {
+  background: rgba(90, 160, 90, 0.4) !important;
+}
+
 #files > .file > .i-upload {
   animation: opulse 2s infinite ease-in;
 }
@@ -164,4 +168,3 @@
     transform: scale(0.9);
   }
 }
-
