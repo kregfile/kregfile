@@ -87,7 +87,7 @@ module.exports = {
       new TerserPlugin({
         parallel: true,
         terserOptions: {
-          ecma: 6,
+          ecma: 10,
         },
       }),
       new OptimizeCSSAssetsPlugin({

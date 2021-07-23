@@ -205,6 +205,7 @@ return function toPrettyETA(s) {
 function ofilter(o, set) {
   const rv = {};
   for (const k of set.values()) {
+    // eslint-disable-next-line no-prototype-builtins
     if (o.hasOwnProperty(k)) {
       rv[k] = o[k];
     }

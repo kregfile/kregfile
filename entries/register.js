@@ -65,7 +65,7 @@ form.addEventListener("submit", async e => {
       throw new Error(res.err);
     }
     if (window.PasswordCredential) {
-      const cred = new PasswordCredential({
+      const cred = new window.PasswordCredential({
         id: body.get("u").toLowerCase(),
         password: body.get("p")
       });

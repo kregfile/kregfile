@@ -1,11 +1,12 @@
+"use strict";
+// License: MIT
+
 module.exports = {
-    "env": {
-        "es6": true,
-        "browser": true
-    },
-    "extends": "../.eslintrc.js",
-    "parserOptions": {
-        "sourceType": "module",
-        "ecmaVersion": 8
-    },
+  extends: "../.eslintrc.js",
+  env: {
+    browser: true,
+  },
+  parserOptions: {
+    sourceType: "module",
+  },
 };

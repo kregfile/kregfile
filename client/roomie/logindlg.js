@@ -70,7 +70,7 @@ export class LoginModal extends Modal {
         msg: "Successfully logged in!"
       });
       if (window.PasswordCredential) {
-        const cred = new PasswordCredential({
+        const cred = new window.PasswordCredential({
           id: user.toLowerCase(),
           password
         });
