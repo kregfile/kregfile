@@ -169,10 +169,9 @@ export default class File extends BaseFile {
       return null;
     }
     const {innerWidth, innerHeight} = window;
-    const assets = Array.from(this.assets.values()).filter(e => {
-      if (e.type !== "image") {
-        return false;
-      }
+    const assets = Array.from(this.assets.values()).
+      filter(e => e.type === "image");
+    const bestAssets = assets.filter(e => {
       if (e.width > innerWidth * 1.4) {
         return false;
       }
@@ -191,8 +190,8 @@ export default class File extends BaseFile {
         e.width * e.height
       ];
     };
-    sort(assets, sorter);
-    const img = this.href + assets.pop().ext;
+    sort(bestAssets, sorter);
+    const img = this.href + bestAssets.pop().ext;
     const infos = [toPrettySize(this.size), this.tags.user];
     const {resolution, duration} = this;
     if (duration) {
@@ -201,8 +200,10 @@ export default class File extends BaseFile {
     if (resolution) {
       infos.unshift(resolution);
     }
+    const srcset = assets.map(e => `${this.href}${e.ext} ${e.width}w`).join(", ");
     return {
       img,
+      srcset,
       infos
     };
   }

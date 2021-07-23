@@ -163,6 +163,7 @@ export default class Gallery {
       this.imgEl = img;
       this.imgEl.addEventListener("click", this.onimgclick);
     };
+    img.setAttribute("srcset", info.srcset);
     img.src = info.img;
     this.titleEl.classList.add("visible");
     this.infoEl.textContent = info.infos.join(" — ");
