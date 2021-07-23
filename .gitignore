@@ -4,16 +4,9 @@
 .DS_Store
 .config.json
 data/
-kregfile-v1.0.0.tgz
+kregfile-v*.tgz
 lib/clientversion.js
 mod.log
 node_modules/
-static/account.js*
-static/client.js*
-static/register.js*
-static/sortable.js*
-static/style*
-static/s~*
-static/vendors~*
 yarn-error.log
 uploads/
