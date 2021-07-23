@@ -13,6 +13,7 @@ Prerequisites
 - Previews
   - exiftool
   - ffmpeg
+  - imagemagick and graphicsmagick (optional, for PDF previews)
   - firejail (optional, but highly recommended, see 'jail' in the config to disable)
 
 
