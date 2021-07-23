@@ -3,7 +3,6 @@
 
 import io from "socket.io-client";
 import registry from "./registry";
-import parser from "../common/sioparser";
 
 const {crypto: {subtle: crypto}} = window;
 
@@ -43,7 +42,6 @@ export default async function createSocket() {
     await addVerifier(params, verifier);
   }
   const socket = io.connect({
-    parser,
     path: "/w",
     query: params.toString(),
     transports: ["websocket"],
