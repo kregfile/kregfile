@@ -3,6 +3,8 @@
   --text-fg: #fefefe;
   --dark-fg: #aeaeae;
   --dark-bg: #101010;
+  --disabled-fg: white;
+  --disabled-bg: #221818;
   --lite-bg: #4f4f4f;
   --hi-fg: #f4f3f3;
   --hi-bg: #282828;

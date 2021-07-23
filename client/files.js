@@ -296,11 +296,26 @@ export default new class Files extends EventEmitter {
     }
   }
 
+  get canUpload() {
+    const disabled = registry.config.get("requireAccounts") &&
+    registry.chatbox.role === "white";
+    return !registry.config.get("disabled") && !disabled;
+  }
+
   ondragenter(e) {
     registry.roomie.hideTooltip();
+
+    if (!this.canUpload) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.dataTransfer.dropEffect = "none";
+      return;
+    }
+
     if (!e.dataTransfer.types.includes("Files")) {
       return;
     }
+
     e.preventDefault();
     e.stopPropagation();
     e.dataTransfer.dropEffect = "copy";
@@ -321,9 +336,18 @@ export default new class Files extends EventEmitter {
   ondrop(e) {
     this.dragging = false;
     this.adjustEmpty();
+
+    if (!this.canUpload) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.dataTransfer.dropEffect = "none";
+      return;
+    }
+
     if (!e.dataTransfer.types.includes("Files")) {
       return;
     }
+
     e.preventDefault();
     e.stopPropagation();
     try {

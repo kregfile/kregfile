@@ -37,6 +37,8 @@ export default new class Roomie extends EventEmitter {
     this.onmouseout = this.onmouseout.bind(this);
     this.onmodalkey = this.onmodalkey.bind(this);
 
+    this.role = "white";
+
     Object.seal(this);
 
     document.querySelector("#ips").addEventListener("click", () => {
@@ -154,8 +156,10 @@ export default new class Roomie extends EventEmitter {
       document.body.classList[!authed ? "add" : "remove"]("unauthed");
     });
     registry.socket.on("role", role => {
+      this.role = role;
       document.body.classList[role === "mod" ? "add" : "remove"]("mod");
       document.body.classList[role !== "mod" ? "add" : "remove"]("regular");
+      this.updateRole();
     });
     registry.socket.on("owner", owner => {
       document.body.classList[owner ? "add" : "remove"]("owner");
@@ -180,6 +184,10 @@ export default new class Roomie extends EventEmitter {
       this.motd = v;
       registry.messages.showMOTD();
     });
+
+    registry.config.on("requireAccounts", () => this.updateRole());
+    registry.config.on("roomCreation", () => this.updateRole());
+    registry.config.on("roomCreationRequiresAccount", () => this.updateRole());
 
     registry.messages.on("message", m => {
       if (m.saved) {
@@ -297,7 +305,6 @@ export default new class Roomie extends EventEmitter {
     const {key, target: {localName}} = e;
     if (key === "Enter" && (
       localName === "input" || localName === "textarea")) {
-      console.log(key, localName);
       return;
     }
     if (key === "Enter" || key === "Escape") {
@@ -493,5 +500,21 @@ export default new class Roomie extends EventEmitter {
   _updateTitleAndName() {
     this._updateTitle();
     document.querySelector("#name").textContent = this.name;
+  }
+
+  updateRole() {
+    let enabled;
+    const {config: c} = registry;
+    if (this.role === "mod") {
+      enabled = true;
+    }
+    else if (this.role === "white") {
+      enabled = c.get("roomCreation") && !c.get("requireAccounts") &&
+        !c.get("roomCreationRequiresAccount");
+    }
+    else {
+      enabled = c.get("roomCreation");
+    }
+    document.body.classList[enabled ? "add" : "remove"]("newroom");
   }
 }();

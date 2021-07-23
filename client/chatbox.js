@@ -54,6 +54,7 @@ export default new class ChatBox extends EventEmitter {
         break;
       }
       this.icon.setAttribute("title", roleToStatus(m));
+      this.updateDisabledState();
     });
 
     registry.socket.on("nick", m => {
@@ -66,6 +67,8 @@ export default new class ChatBox extends EventEmitter {
         await this.ensureNick(true);
       }
     });
+
+    registry.config.on("requireAccounts", this.updateDisabledState.bind(this));
   }
 
   async send(value) {
@@ -248,5 +251,20 @@ export default new class ChatBox extends EventEmitter {
     this.nick.value = nick;
     this.currentNick = nick;
     localStorage.setItem("nick", nick);
+  }
+
+  updateDisabledState() {
+    const disabled = registry.config.get("requireAccounts") &&
+    this.role === "white";
+    if (disabled) {
+      this.text.setAttribute("disabled", "disabled");
+      this.text.setAttribute(
+        "placeholder", this.text.dataset.placeholderDisabled);
+    }
+    else {
+      this.text.removeAttribute("disabled");
+      this.text.setAttribute(
+        "placeholder", this.text.dataset.placeholderEnabled);
+    }
   }
 }();

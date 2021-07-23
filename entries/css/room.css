@@ -195,6 +195,10 @@ body#room {
   display: none !important;
 }
 
+body:not(.newroom) #ctx-newroom {
+  display: none !important;
+}
+
 #chat {
   grid-area: chat;
   overflow: hidden;
@@ -406,6 +410,13 @@ body#room {
   box-shadow: none;
   font-family: var(--base-font);
   font-size: 14px;
+}
+
+#text:disabled,
+#text:disabled::placeholder {
+  color: var(--disabled-fg);
+  background: var(--disabled-bg);
+  opacity: 1;
 }
 
 #splitter {

@@ -19,21 +19,13 @@ module.exports = {
   motto: "Made with rice",
 
   // redis_* = options for redis
+
+  /****************/
+  /* Server stuff */
+  /****************/
+
   // Listen port
   port,
-
-  // run tls server
-  tls: false,
-  tlsonly: false,
-  tlskey: "",
-  tlscert: "",
-  tlsport,
-
-  // Enable disable creating new rooms
-  roomCreation: true,
-
-  // Require registered accounts when creating rooms
-  roomCreationRequiresAccount: false,
 
   // how many web workers to run
   workers: Math.max(NUM_CPUS + 1, 2),
@@ -50,15 +42,37 @@ module.exports = {
   // Allow X-Forwarded-For to set client IP if found
   considerProxyForwardedForHeaders: false,
 
+  // Run tls server
+  tls: false,
+  tlsonly: false,
+  // Path to the TLS key
+  tlskey: "",
+  // Path to the TLS cert
+  tlscert: "",
+  // Path to the tls port
+  tlsport,
+
+  /**********/
+  /* Limits */
+  /**********/
+
+  // Require an account for chatting and uploads
+  // implies roomCreationRequiresAccount if true
+  requireAccounts: false,
+
+  // Enable disable creating new rooms
+  roomCreation: true,
+
+  // Require registered accounts when creating rooms
+  roomCreationRequiresAccount: false,
+
   // Number of hours a finished download takes to expire
+  // Mods can override this per room
   TTL: 48,
 
-  // Number of hours an interrupted pending donwload may be resumed before
-  // garbage collected
-  pendingTTL: 12,
-
-  // Session TTL for logged in users, in seconds
-  sessionTTL: 2592000,
+  /*****************/
+  /* Flood control */
+  /*****************/
 
   // Number of messages before considered flooding
   chatFloodTrigger: 5,
@@ -85,19 +99,41 @@ module.exports = {
   // Number of ms to block new rooms from flooding user
   roomFloodDuration: 60 * 60 * 1000,
 
+
+  /************/
+  /* Previews */
+  /************/
+
   // Use firejail when calling potential dangerous external commands,
   // see jail.profile
   jail: LINUX,
+
   // For meta data and asset generation, path to ffmpeg exiftool
   exiftool: "exiftool",
+
   // For asset generation, path to ffmpeg binary
   ffmpeg: "ffmpeg",
+
   // For further checking the file type, if exiftool fails
   filetool: "file",
+
   // Max number of concurrent asset generators
   maxAssetsProcesses: 2,
+
   // Max number of concurrent metadata extractor processes
   maxMetaProcesses: 5,
+
+
+  /***************/
+  /* Fine tuning */
+  /***************/
+
+  // Number of hours an interrupted pending donwload may be resumed before
+  // garbage collected
+  pendingTTL: 12,
+
+  // Session TTL for logged in users, in seconds
+  sessionTTL: 2592000,
 
   // For testing mostly, delay serving of assets and downloads
   delayServe: 0,
