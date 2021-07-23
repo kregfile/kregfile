@@ -155,6 +155,11 @@ export default new class ChatBox extends EventEmitter {
     });
   }
 
+  async cmd_login() {
+    await registry.roomie.showLoginModal();
+    return true;
+  }
+
   async cmd_nick(value) {
     this.nick.value = value;
     await this.ensureNick();

@@ -112,14 +112,8 @@ export default new class Roomie extends EventEmitter {
   }
 
   async onctxlogin() {
-    try {
-      await this.showModal(new LoginModal(this));
-    }
-    catch (ex) {
-      // ignored
-    }
+    await this.showLoginModal();
   }
-
   onctxaccount() {
     openInNew("/account");
   }
@@ -393,6 +387,15 @@ export default new class Roomie extends EventEmitter {
       if (ex) {
         console.error(ex);
       }
+    }
+  }
+
+  async showLoginModal() {
+    try {
+      await this.showModal(new LoginModal(this));
+    }
+    catch (ex) {
+      // ignored
     }
   }
 
