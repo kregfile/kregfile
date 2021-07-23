@@ -155,6 +155,11 @@ export default new class ChatBox extends EventEmitter {
     });
   }
 
+  async cmd_help() {
+    await registry.roomie.showHelpModal();
+    return true;
+  }
+
   async cmd_login() {
     await registry.roomie.showLoginModal();
     return true;
@@ -189,19 +194,24 @@ export default new class ChatBox extends EventEmitter {
   }
 
   async doCommand(cmd) {
-    const fn = this[`cmd_${cmd.cmd}`];
-    if (!fn) {
+    try {
+      const fn = this[`cmd_${cmd.cmd}`];
+      if (!fn) {
+        return false;
+      }
+      let rv = fn.call(this, cmd.args);
+      if (rv && rv.then) {
+        rv = await rv;
+      }
+      if (rv) {
+        this.history.add(cmd.str);
+        return true;
+      }
       return false;
     }
-    let rv = fn.call(this, cmd.args);
-    if (rv && rv.then) {
-      rv = await rv;
+    finally {
+      this.text.focus();
     }
-    if (rv) {
-      this.history.add(cmd.str);
-      return true;
-    }
-    return false;
   }
 
   async ensureNick(silent) {

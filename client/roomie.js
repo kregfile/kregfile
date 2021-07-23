@@ -9,6 +9,7 @@ import {MessageBox} from "./modal";
 import {LoginModal} from "./roomie/logindlg";
 import {BanModal, UnbanModal} from "./roomie/bandlg";
 import {BlacklistModal} from "./roomie/bldlg";
+import {HelpModal} from "./roomie/helpdlg";
 import {OptionsModal} from "./roomie/optsdlg";
 
 const ALLOW_DRIFT = 200;
@@ -424,6 +425,17 @@ export default new class Roomie extends EventEmitter {
   async showBlacklistModal(files, template) {
     try {
       await this.showModal(new BlacklistModal(this, files, template));
+    }
+    catch (ex) {
+      if (ex) {
+        console.error(ex);
+      }
+    }
+  }
+
+  async showHelpModal() {
+    try {
+      await this.showModal(new HelpModal(this));
     }
     catch (ex) {
       if (ex) {
