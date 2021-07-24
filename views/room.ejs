@@ -113,6 +113,20 @@
     <input class="tfa hidden" name="t" type="text" autocomplete="off">
   </form>
 
+  <form id="changepw-tmpl" class="tmpl">
+    <span class="icon i-login"></span>
+    <label>Username:</label>
+    <input name="u" type="text" disabled autocomplete="username">
+    <label>Current password:</label>
+    <input name="c" type="password" autocomplete="current-password">
+    <label>New Password:</label>
+    <input name="p" type="password" autocomplete="new-password">
+    <label>Confirm New Password:</label>
+    <input name="confirmation" type="password" autocomplete="new-password">
+    <label class="tfa-label hidden">Two factor:</label>
+    <input class="tfa hidden" name="t" type="text" autocomplete="off">
+  </form>
+
   <form id="ban-tmpl" class="tmpl">
     <span class="icon i-ban"></span>
     <label>Subjects</label>
@@ -189,6 +203,58 @@
     <div class="userlist">
     </div>
   </form>
+
+  <template id="help-tmpl">
+    <span class="icon i-sytem32"></span>
+    <section>
+      <h4>Commands for Everyone</h4>
+      <dl>
+        <dt>/login</dt>
+        <dd>Show the login dialog</dd>
+        <dt>/nick NAME</dt>
+        <dd>Change your nick name</dd>
+        <dt>/me MESSAGE</dt>
+        <dd>Send a me message</dd>
+        <dt>/p <em>USER</em> MESSAGE</dt>
+        <dd>Send a private message to a registered user</dd>
+        <dt>/motd</dt>
+        <dd>Show the MOTD</dd>
+        <dt>/search EXPRESSION</dt>
+        <dd>Search the file list</dd>
+      </dl>
+      <p>To just send a message starting with a "/" just use a "//" instead.</p>
+    </section>
+    <section id="help-modal-regular">
+      <h4>Commands for logged in users</h4>
+      <dl>
+        <dt>/logout</dt>
+        <dd>Byeeeeeee</dd>
+        <dt>/changepw</dt>
+        <dd>Change your password</dd>
+      </dl>
+    </section>
+    <section id="help-modal-owner">
+      <h4>Room owners only</h4>
+      <dl>
+        <dt>/name NAME</dt>
+        <dd>Set the room name</dd>
+        <dt>/setmotd MOTD</dt>
+        <dd>Set the room MOTD</dd>
+        <dt>/addowner /removeowner USER</dt>
+        <dd>Add/Remove a room owner</dd>
+        <dt>/addinvitee /removeinvitee USER</dt>
+        <dd>Add/remove an invited user</dd>
+      </dl>
+    </section>
+    <section id="help-modal-mod">
+      <h4>Moderators only</h4>
+      <dl>
+        <dt>/a MESSAGE</dt>
+        <dd>Send a message to admin chat only</dd>
+      </dl>
+    </section>
+  </template>
+
 
   <script src="/client.js?v=<%=v%>"></script>
 </body>
