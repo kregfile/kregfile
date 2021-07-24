@@ -113,6 +113,20 @@
     <input class="tfa hidden" name="t" type="text" autocomplete="off">
   </form>
 
+  <form id="changepw-tmpl" class="tmpl">
+    <span class="icon i-login"></span>
+    <label>Username:</label>
+    <input name="u" type="text" disabled autocomplete="username">
+    <label>Current password:</label>
+    <input name="c" type="password" autocomplete="current-password">
+    <label>New Password:</label>
+    <input name="p" type="password" autocomplete="new-password">
+    <label>Confirm New Password:</label>
+    <input name="confirmation" type="password" autocomplete="new-password">
+    <label class="tfa-label hidden">Two factor:</label>
+    <input class="tfa hidden" name="t" type="text" autocomplete="off">
+  </form>
+
   <form id="ban-tmpl" class="tmpl">
     <span class="icon i-ban"></span>
     <label>Subjects</label>
@@ -207,6 +221,16 @@
         <dd>Show the MOTD</dd>
         <dt>/search EXPRESSION</dt>
         <dd>Search the file list</dd>
+      </dl>
+      <p>To just send a message starting with a "/" just use a "//" instead.</p>
+    </section>
+    <section id="help-modal-regular">
+      <h4>Commands for logged in users</h4>
+      <dl>
+        <dt>/logout</dt>
+        <dd>Byeeeeeee</dd>
+        <dt>/changepw</dt>
+        <dd>Change your password</dd>
       </dl>
     </section>
     <section id="help-modal-owner">

@@ -107,6 +107,7 @@
 }
 
 .modal-helpdlg .modal-body,
+.modal-changepw .modal-body,
 .modal-login .modal-body,
 .modal-optsdlg .modal-body,
 .modal-bandlg .modal-body,
@@ -120,11 +121,25 @@
 
 .modal-helpdlg .modal-body {
   grid-template-columns: auto 1fr;
-  grid-template-areas: "icon ." "icon ." "icon .";
+  grid-template-areas:
+    "icon ."
+    "icon ."
+    "icon ."
+    "icon .";
 }
 
 .modal-login .modal-body {
   grid-template-areas:
+    "icon . ."
+    "icon . ."
+    "icon . .";
+  grid-row-gap: 1.3ex;
+}
+
+.modal-changepw .modal-body {
+  grid-template-areas:
+    "icon . ."
+    "icon . ."
     "icon . ."
     "icon . ."
     "icon . .";

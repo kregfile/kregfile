@@ -11,6 +11,7 @@ import {BanModal, UnbanModal} from "./roomie/bandlg";
 import {BlacklistModal} from "./roomie/bldlg";
 import {HelpModal} from "./roomie/helpdlg";
 import {OptionsModal} from "./roomie/optsdlg";
+import { ChangePWModal } from "./roomie/changepwdlg";
 
 const ALLOW_DRIFT = 200;
 
@@ -394,6 +395,15 @@ export default new class Roomie extends EventEmitter {
   async showLoginModal() {
     try {
       await this.showModal(new LoginModal(this));
+    }
+    catch (ex) {
+      // ignored
+    }
+  }
+
+  async showChangePWModal() {
+    try {
+      await this.showModal(new ChangePWModal(this));
     }
     catch (ex) {
       // ignored

@@ -165,6 +165,15 @@ export default new class ChatBox extends EventEmitter {
     return true;
   }
 
+  async cmd_changepw() {
+    if (this.role === "white" || !this.authed) {
+      throw new Error("You must be logged in to change your password");
+    }
+
+    await registry.roomie.showChangePWModal();
+    return true;
+  }
+
   async cmd_nick(value) {
     this.nick.value = value;
     await this.ensureNick();
