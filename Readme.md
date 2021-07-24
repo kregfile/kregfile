@@ -1,7 +1,8 @@
-kregfile - the better volafile
+kregfile - somewhat like volafile
 ===
 
-a POC really, don't complain about messy code, it's a POC!
+kregfile is like volafile, except open source and you can host it yourself.
+In fact, you have to host it yourself, because I won't be doing it for you.
 
 
 Prerequisites
@@ -26,6 +27,8 @@ Instructions
 - Then run `yarn start` for maximum cancer
 - Navigate to `127.0.0.1:8080` and enjoy.
 
+If everything works, you may consider putting things into production, get TLS certificates on so on.
+
 Force-making specific rooms
 ---
 
@@ -40,6 +43,7 @@ Use the `./setRole.js` script to set the `mod` role for a user (and make the use
 Code structure
 ---
 
+- `common` has code commonly shared between the frontend and backend
 - `client` has most client-side code
 - `entries` contains the entry points for client side code (for webppack)
 - `lib` contains most server-side code
@@ -48,8 +52,18 @@ Code structure
 - `views` contains the ejs templates (not many)
 
 How to devel?
+---
 
 - Run `yarn run pack` in a shell. This will start webpack in watch mode and rebundle once the sources change automatically
 - Run `nodemon` in another shell. This will trigger server restarts automatically when you change things.
 
 The clients (browser tabs) should automatically reconnect and pull any new client code version automatically.
+
+Troubleshooting FAQ
+---
+
+1. *My previews do not work!*
+   
+   Make sure you have all the prerequites installed.
+   Then it might be firejail that is broken, e.g. it refuses to run in another "sandbox" (which might be the VPS/linux container/docker your kregfile is running in).
+   If that's the case, then consider turning off the "jail" config option and check if it then works for you.
