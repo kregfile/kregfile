@@ -8,7 +8,9 @@
   font-weight: normal;
   font-style: normal;
 }
-
+.i-file-download:before {
+  content:"\21E9" !important;
+}
 [class^="i-"], [class*=" i-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'symbols' !important;

@@ -39,6 +39,19 @@ export default class File extends BaseFile {
     });
     this.el.appendChild(this.downloadEl);
 
+    const {classList} = document.body;
+    if (classList.contains("mod") || classList.contains("owner")) {
+        this.downloadEl2 = dom("a", {
+          attrs: {
+            download: this.name,
+            rel: "nofollow,noindex",
+            href: this.url
+          },
+          classes: ["i-file-download"],
+        });
+
+        this.el.appendChild(this.downloadEl2);
+    }
     this.nameEl = dom("a", {
       attrs: {
         target: "_blank",
