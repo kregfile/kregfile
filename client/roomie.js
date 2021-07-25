@@ -12,6 +12,7 @@ import {BlacklistModal} from "./roomie/bldlg";
 import {HelpModal} from "./roomie/helpdlg";
 import {OptionsModal} from "./roomie/optsdlg";
 import { ChangePWModal } from "./roomie/changepwdlg";
+import { ReportModal } from "./roomie/reportdlg";
 
 const ALLOW_DRIFT = 200;
 
@@ -79,7 +80,8 @@ export default new class Roomie extends EventEmitter {
     openInNew("/modlog");
   }
 
-  onctxreport() {
+  async onctxreport() {
+    await this.showReportModal();
   }
 
   async onctxoptions() {
@@ -393,6 +395,15 @@ export default new class Roomie extends EventEmitter {
   async showLoginModal() {
     try {
       await this.showModal(new LoginModal(this));
+    }
+    catch (ex) {
+      // ignored
+    }
+  }
+
+  async showReportModal() {
+    try {
+      await this.showModal(new ReportModal(this));
     }
     catch (ex) {
       // ignored

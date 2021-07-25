@@ -233,6 +233,11 @@ input[type="number"] {
   border: 1px solid var(--lite-bg) !important;
 }
 
+input:disabled {
+  color: var(--disabled-fg) !important;
+  background: var(--disabled-bg) !important;
+}
+
 
 @keyframes opulse {
   0% {
@@ -247,4 +252,3 @@ input[type="number"] {
     opacity: 0.2;
   }
 }
-

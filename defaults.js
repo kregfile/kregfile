@@ -79,6 +79,11 @@ module.exports = {
   // Number of ms to block messages from flooding user
   chatFloodDuration: 10000,
 
+  // Number of reports before considered flooding
+  reportFloodTrigger: 1,
+  // Number of ms to block reports from flooding user
+  reportFloodDuration: 120000,
+
   // Number of uploads before considered flooding
   uploadFloodTrigger: 25,
   // Number of ms to block uploads from flooding user

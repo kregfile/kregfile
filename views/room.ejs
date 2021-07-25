@@ -120,6 +120,29 @@
     <input class="tfa hidden" name="t" type="text" autocomplete="off">
   </form>
 
+  <form id="report-tmpl" class="tmpl">
+    <span class="icon i-report"></span>
+    <section id="report-rules">
+      <h4>Report rules</h4>
+      <ul>
+        <li>Do not spam! Send one report!</li>
+        <li>Do only report <strong>obvious</strong> illegal or rule violating content. This specifically does <em>not</em> include any copyright claims!<br>
+          Nudity and porn may be illegal in your jurisdication, but that does not mean it's illegal everywhere.</li>
+        <li>If you have something to report that is not obviously illegal or rule violating, use other support channels, but dn <strong>not</strong> use this report function!</li>
+        <li>Be descriptive in your report!</li>
+        <li>Violators will be banned!</li>
+      </ul>
+    </section>
+    <label>Room</label>
+    <input name="room" type="text" disabled>
+    <label>Report message</label>
+    <textarea name="msg" rows="5" cols="30"></textarea>
+    <label id="report-agreement">
+      <input type="checkbox" name="agreement">
+      I followed the above rules, and recognize I can be banned for abusing the report function
+    </label>
+  </form>
+
   <form id="changepw-tmpl" class="tmpl">
     <span class="icon i-login"></span>
     <label>Username:</label>
