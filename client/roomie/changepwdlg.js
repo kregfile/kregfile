@@ -86,13 +86,7 @@ export class ChangePWModal extends Modal {
         }
       }
 
-      registry.messages.add({
-        user: "System",
-        role: "system",
-        volatile: true,
-        msg: "Successfully changed password!"
-      });
-
+      registry.messages.addSystemMessage("Successfully changed password!");
       return true;
     }
     catch (ex) {

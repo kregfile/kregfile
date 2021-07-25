@@ -753,12 +753,8 @@ export default new class Files extends EventEmitter {
   trash() {
     const {selection} = this;
     if (!selection.length) {
-      registry.messages.add({
-        user: "System",
-        volatile: true,
-        role: "system",
-        msg: "Select some files by (shift-, ctrl-)clicking on their icon first"
-      });
+      registry.messages.addSystemMessage(
+        "Select some files by (shift-, ctrl-)clicking on their icon first");
       return;
     }
     this.clearSelection();

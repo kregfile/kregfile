@@ -63,12 +63,7 @@ export class LoginModal extends Modal {
       }
       registry.socket.emit("session", res.session);
       registry.chatbox.setNick(user);
-      registry.messages.add({
-        user: "System",
-        role: "system",
-        volatile: true,
-        msg: "Successfully logged in!"
-      });
+
       if (window.PasswordCredential) {
         const cred = new window.PasswordCredential({
           id: user.toLowerCase(),
@@ -81,6 +76,8 @@ export class LoginModal extends Modal {
           console.error("Failed to save cred", ex);
         }
       }
+
+      registry.messages.addSystemMessage("Successfully logged in!");
       return true;
     }
     catch (ex) {

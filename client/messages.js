@@ -526,6 +526,15 @@ export default new class Messages extends EventEmitter {
     });
   }
 
+  addSystemMessage(msg) {
+    this.add({
+      volatile: true,
+      user: "System",
+      role: "system",
+      msg
+    });
+  }
+
   async restore() {
     const stored = await this.store.getItem(registry.roomid);
     const {restoring} = this;

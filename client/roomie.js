@@ -124,12 +124,7 @@ export default new class Roomie extends EventEmitter {
     try {
       await registry.socket.rest("logout");
       registry.socket.emit("session", null);
-      registry.messages.add({
-        user: "System",
-        role: "system",
-        volatile: true,
-        msg: "Successfully logged out!"
-      });
+      registry.messages.addSystemMessage("Successfully logged out!");
     }
     catch (ex) {
       await this.showMessage(ex.message || ex, "Error");
