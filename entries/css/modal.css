@@ -107,6 +107,7 @@
 }
 
 .modal-helpdlg .modal-body,
+.modal-report .modal-body,
 .modal-changepw .modal-body,
 .modal-login .modal-body,
 .modal-optsdlg .modal-body,
@@ -126,6 +127,25 @@
     "icon ."
     "icon ."
     "icon .";
+}
+
+.modal-report .modal-body {
+  max-width: 50em;
+  grid-row-gap: 1.3ex;
+  grid-template-columns: auto 1fr 4fr;
+  grid-template-areas:
+    "icon rules rules"
+    "icon . ."
+    "icon . ."
+    "agreement agreement agreement";
+}
+
+#report-rules {
+  grid-area: rules;
+}
+#report-agreement {
+  margin-top: 1ex;
+  grid-area: agreement;
 }
 
 .modal-login .modal-body {

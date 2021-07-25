@@ -26,6 +26,8 @@ export default new class ChatBox extends EventEmitter {
     this.text.addEventListener("keypress", this.onpress.bind(this));
     this.text.addEventListener("paste", this.onpaste.bind(this));
     this.text.addEventListener("drop", this.ondrop.bind(this));
+
+    this.updateDisabledState = this.updateDisabledState.bind(this);
     Object.seal(this);
   }
 
@@ -68,7 +70,9 @@ export default new class ChatBox extends EventEmitter {
       }
     });
 
-    registry.config.on("requireAccounts", this.updateDisabledState.bind(this));
+    registry.config.on("requireAccounts", this.updateDisabledState);
+    registry.socket.on("connect", this.updateDisabledState);
+    registry.socket.on("disconnect", this.updateDisabledState);
   }
 
   async send(value) {
@@ -279,8 +283,13 @@ export default new class ChatBox extends EventEmitter {
 
   updateDisabledState() {
     const disabled = registry.config.get("requireAccounts") &&
-    this.role === "white";
-    if (disabled) {
+      this.role === "white";
+    if (!registry.roomie.connected) {
+      this.text.setAttribute("disabled", "disabled");
+      this.text.setAttribute(
+        "placeholder", this.text.dataset.placeholderDisconnected);
+    }
+    else if (disabled) {
       this.text.setAttribute("disabled", "disabled");
       this.text.setAttribute(
         "placeholder", this.text.dataset.placeholderDisabled);
@@ -289,6 +298,7 @@ export default new class ChatBox extends EventEmitter {
       this.text.removeAttribute("disabled");
       this.text.setAttribute(
         "placeholder", this.text.dataset.placeholderEnabled);
+      this.text.focus();
     }
   }
 }();

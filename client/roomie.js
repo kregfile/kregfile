@@ -12,6 +12,7 @@ import {BlacklistModal} from "./roomie/bldlg";
 import {HelpModal} from "./roomie/helpdlg";
 import {OptionsModal} from "./roomie/optsdlg";
 import { ChangePWModal } from "./roomie/changepwdlg";
+import { ReportModal } from "./roomie/reportdlg";
 
 const ALLOW_DRIFT = 200;
 
@@ -30,6 +31,7 @@ export default new class Roomie extends EventEmitter {
     this.tooltipid = null;
     this._ttinfo = null;
     this.modals = new Set();
+    this.connected = false;
     this._mouseMoveInstalled = false;
     this._installTooltip = debounce(this._installTooltip.bind(this), 250);
 
@@ -78,7 +80,8 @@ export default new class Roomie extends EventEmitter {
     openInNew("/modlog");
   }
 
-  onctxreport() {
+  async onctxreport() {
+    await this.showReportModal();
   }
 
   async onctxoptions() {
@@ -124,12 +127,7 @@ export default new class Roomie extends EventEmitter {
     try {
       await registry.socket.rest("logout");
       registry.socket.emit("session", null);
-      registry.messages.add({
-        user: "System",
-        role: "system",
-        volatile: true,
-        msg: "Successfully logged out!"
-      });
+      registry.messages.addSystemMessage("Successfully logged out!");
     }
     catch (ex) {
       await this.showMessage(ex.message || ex, "Error");
@@ -141,11 +139,13 @@ export default new class Roomie extends EventEmitter {
       document.querySelector("#usercount").textContent = v;
     });
     const connection = document.querySelector("#connection");
-    registry.socket.on("reconnecting", () => {
+    registry.socket.on("disconnect", () => {
       connection.classList.add("visible");
+      this.connected = false;
     });
     registry.socket.on("connect", () => {
       connection.classList.remove("visible");
+      this.connected = true;
     });
     registry.socket.on("authed", authed => {
       document.body.classList[authed ? "add" : "remove"]("authed");
@@ -395,6 +395,15 @@ export default new class Roomie extends EventEmitter {
   async showLoginModal() {
     try {
       await this.showModal(new LoginModal(this));
+    }
+    catch (ex) {
+      // ignored
+    }
+  }
+
+  async showReportModal() {
+    try {
+      await this.showModal(new ReportModal(this));
     }
     catch (ex) {
       // ignored

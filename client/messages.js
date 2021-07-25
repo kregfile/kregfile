@@ -264,20 +264,31 @@ export default new class Messages extends EventEmitter {
     const notify = this._add(m);
     const d = DATE_FORMAT_SHORT.format(m.date);
 
-    const e = dom("div");
-    if (m.highlight) {
-      e.classList.add("hi");
-    }
-    if (m.me) {
-      e.classList.add("me");
-    }
-    const ucls = ["u"];
+    const profile = m.user.toLowerCase();
+    const ucls = ["msgcontainer"];
     if (m.role) {
       ucls.push(m.role);
     }
+
+    const e = dom("div", {classes: ["msgcontainer", ...ucls]});
+    if (m.role) {
+      e.dataset.role = m.role;
+    }
+    e.dataset.profile = profile;
+
+    ucls.shift();
+    ucls.unshift("u");
+
+    if (m.highlight) {
+      e.classList.add("hi");
+    }
+
+    if (m.me) {
+      e.classList.add("me");
+    }
+
     let user;
     if (m.role && m.role !== "white" && m.role !== "system") {
-      const profile = m.user.toLowerCase();
       user = dom("a", {
         classes: ucls,
         attrs: {
@@ -432,6 +443,7 @@ export default new class Messages extends EventEmitter {
 
       case "r": {
         const a = dom("a", {
+          classes: ["r"],
           attrs: {
             target: "_blank",
             href: `/r/${p.v}`,
@@ -523,6 +535,15 @@ export default new class Messages extends EventEmitter {
         {t: "b"},
         {t: "u", v: document.location.href.toString()},
       ]
+    });
+  }
+
+  addSystemMessage(msg) {
+    this.add({
+      volatile: true,
+      user: "System",
+      role: "system",
+      msg
     });
   }
 
