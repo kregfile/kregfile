@@ -51,9 +51,15 @@ export default async function createSocket() {
   });
 
   socket.makeCall = (target, id, ...args) => {
+    const callbackKey = `${target}-${id}`;
     return new Promise((resolve, reject) => {
       try {
+        const timeout = setTimeout(() => {
+          socket.removeListener(callbackKey);
+          reject(new Error("Call timeout"));
+        }, 20000);
         const rresolve = rv => {
+          clearTimeout(timeout);
           if (rv && rv.err) {
             reject(new Error(rv.err));
             return;
@@ -64,7 +70,7 @@ export default async function createSocket() {
           socket.once(target, rresolve);
           socket.emit(target);
         }
-        socket.once(`${target}-${id}`, rresolve);
+        socket.once(callbackKey, rresolve);
         socket.emit(target, id, ...args);
       }
       catch (ex) {
