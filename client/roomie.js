@@ -193,6 +193,11 @@ export default new class Roomie extends EventEmitter {
       if (m.saved) {
         return;
       }
+
+      if (m.role === "system") {
+        return;
+      }
+
       this.incrUnread();
     });
     registry.files.on("file-added", (_, replace) => {
