@@ -250,6 +250,10 @@ body:not(.newroom) #ctx-newroom {
   margin-right: 0.5ex;
 }
 
+.msgcontainer.system {
+  font-size: small;
+}
+
 .u {
   display: inline-block;
   font-weight: bold;
