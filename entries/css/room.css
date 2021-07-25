@@ -309,6 +309,15 @@ body:not(.newroom) #ctx-newroom {
   opacity: 0.9;
 }
 
+a.r::before {
+  display: inline-block;
+  content: '#';
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.4);
+  padding-right: 0.3ex;
+  text-decoration: none !important;
+}
+
 .channel {
   display: inline-block;
   margin-left: 1em;

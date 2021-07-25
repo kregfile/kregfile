@@ -443,6 +443,7 @@ export default new class Messages extends EventEmitter {
 
       case "r": {
         const a = dom("a", {
+          classes: ["r"],
           attrs: {
             target: "_blank",
             href: `/r/${p.v}`,
