@@ -19,7 +19,7 @@ export class OptionsModal extends Modal {
       "owners", "invitees",
       "name", "motd",
       "inviteonly", "adult", "disabled",
-      "ttl",
+      "disablereports", "ttl",
     ];
     for (const f of fields) {
       this[f] = this.el.elements[f];
@@ -35,6 +35,7 @@ export class OptionsModal extends Modal {
     this.inviteonly.checked = !!c.get("inviteonly");
     this.adult.checked = !!c.get("adult");
     this.disabled.checked = !!c.get("disabled");
+    this.disablereports.checked = !!c.get("disableReports");
     this.ttl.value = c.get("fileTTL") || 0;
     this.owners = null;
     this.invitees = null;
@@ -97,6 +98,7 @@ will NOT be aborted, and they also retain their chat histories.`,
       const {checked: inviteonly} = this.inviteonly;
       const {checked: adult} = this.adult;
       const {checked: disabled} = this.disabled;
+      const {checked: disableReports} = this.disablereports;
 
       ttl = parseInt(ttl, 10);
       if (ttl.toString() !== this.ttl.value) {
@@ -121,6 +123,9 @@ will NOT be aborted, and they also retain their chat histories.`,
         }
         if (ttl !== !!c.get("fileTTL")) {
           await socket.makeCall("setconfig", "fileTTL", ttl);
+        }
+        if (disableReports !== !!c.get("disableReports")) {
+          await socket.makeCall("setconfig", "disableReports", disableReports);
         }
       }
 

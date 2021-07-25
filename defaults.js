@@ -56,6 +56,9 @@ module.exports = {
   /* Limits */
   /**********/
 
+  // Default chat history size for this instance (kept in browser only)
+  historySize: 500,
+
   // Require an account for chatting and uploads
   // implies roomCreationRequiresAccount if true
   requireAccounts: false,

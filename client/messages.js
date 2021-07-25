@@ -51,6 +51,7 @@ export default new class Messages extends EventEmitter {
     this.onbanclick = this.onbanclick.bind(this);
     this.restoring = [];
     this.bannable = new WeakMap();
+    this._waitConfig = null;
 
     Object.seal(this);
   }
@@ -108,6 +109,9 @@ export default new class Messages extends EventEmitter {
     addEventListener("resize", debounce(() => {
       this.scrollEnd();
     }, 500), { passive: true });
+
+    this._waitConfig = new Promise(
+      r => registry.config.once("change-historySize", r));
   }
 
   async completeFile(f) {
@@ -201,8 +205,13 @@ export default new class Messages extends EventEmitter {
     }
   }
 
-  _save() {
-    this.store.setItem(registry.roomid, this.msgs).
+  async _save() {
+    await this._waitConfig;
+    const historySize = registry.config.get("historySize") || 300;
+    while (this.msgs.length > historySize) {
+      this.msgs.shift();
+    }
+    await this.store.setItem(registry.roomid, this.msgs).
       catch(console.error);
   }
 
@@ -249,9 +258,6 @@ export default new class Messages extends EventEmitter {
     this.emit("message", m);
     m.saved = true;
     this.msgs.push(m);
-    if (this.msgs.length > 100) {
-      this.msgs.shift();
-    }
     this._save();
     return notify;
   }
