@@ -136,7 +136,7 @@ export default new class Roomie extends EventEmitter {
       document.querySelector("#usercount").textContent = v;
     });
     const connection = document.querySelector("#connection");
-    registry.socket.on("reconnecting", () => {
+    registry.socket.on("disconnect", () => {
       connection.classList.add("visible");
     });
     registry.socket.on("connect", () => {

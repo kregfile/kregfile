@@ -115,29 +115,45 @@ export default async function createSocket() {
   socket.on("stoken", s => {
     socket.stoken = s;
   });
-  socket.on("reconnecting", () => {
+
+  socket.on("disconnect", () => {
     if (!socket.serverRestartSeq) {
       socket.serverRestartSeq = socket.serverSeq;
       socket.serverSToken = socket.stoken;
     }
   });
-  socket.on("reconnect", async () => {
-    if (socket.serverRestartSeq) {
-      const {serverSToken, serverRestartSeq} = socket;
-      socket.serverRestartSeq = 0;
-      socket.servetSToken = 0;
-      const res = await socket.makeCall(
-        "continue", serverSToken, serverRestartSeq);
-      if (res) {
-        return;
+
+  socket.io.on("reconnect_attempt", attempt => {
+    if (attempt !== 3) {
+      return;
+    }
+    registry.messages.addSystemMessage("Connection error. Reconnecting...");
+  });
+
+  socket.io.on("reconnect", async attempt => {
+    try {
+      if (socket.serverRestartSeq) {
+        const {serverSToken, serverRestartSeq} = socket;
+        socket.serverRestartSeq = 0;
+        socket.servetSToken = 0;
+        const res = await socket.makeCall(
+          "continue", serverSToken, serverRestartSeq);
+        if (res) {
+          return;
+        }
+      }
+      if (attempt > 2) {
+        registry.messages.addSystemMessage("Connection restored");
       }
     }
-    registry.messages.add({
-      volatile: true,
-      user: "Connection",
-      role: "system",
-      msg: "reconnected"
-    });
+    catch (ex) {
+      console.error(ex);
+    }
+  });
+
+  socket.io.on("reconnect_failed", () => {
+    registry.messages.addSystemMessage(
+      "Couldn't connect! Please manually refresh your tab!");
   });
 
   return socket;
