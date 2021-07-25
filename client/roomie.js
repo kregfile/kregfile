@@ -173,6 +173,10 @@ export default new class Roomie extends EventEmitter {
       this.name = v;
     });
 
+    registry.config.on("change-disableReports", disabled => {
+      document.body.classList[disabled ? "add" : "remove"]("noreports");
+    });
+
     registry.config.on("change-motd", v => {
       if (JSON.stringify(this.motd) === JSON.stringify(v)) {
         return;
@@ -403,6 +407,11 @@ export default new class Roomie extends EventEmitter {
 
   async showReportModal() {
     try {
+      if (registry.config.get("disableReports")) {
+        registry.messages.addSystemMessage("Reports are disabled in this room");
+        return;
+      }
+
       await this.showModal(new ReportModal(this));
     }
     catch (ex) {

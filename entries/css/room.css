@@ -199,6 +199,11 @@ body:not(.newroom) #ctx-newroom {
   display: none !important;
 }
 
+body.noreports #ctx-report {
+  display: none !important;
+}
+
+
 #chat {
   grid-area: chat;
   overflow: hidden;
