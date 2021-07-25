@@ -30,6 +30,7 @@ export default new class Roomie extends EventEmitter {
     this.tooltipid = null;
     this._ttinfo = null;
     this.modals = new Set();
+    this.connected = false;
     this._mouseMoveInstalled = false;
     this._installTooltip = debounce(this._installTooltip.bind(this), 250);
 
@@ -138,9 +139,11 @@ export default new class Roomie extends EventEmitter {
     const connection = document.querySelector("#connection");
     registry.socket.on("disconnect", () => {
       connection.classList.add("visible");
+      this.connected = false;
     });
     registry.socket.on("connect", () => {
       connection.classList.remove("visible");
+      this.connected = true;
     });
     registry.socket.on("authed", authed => {
       document.body.classList[authed ? "add" : "remove"]("authed");
