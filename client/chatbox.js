@@ -235,7 +235,18 @@ export default new class ChatBox extends EventEmitter {
       }
       let nick;
       if (this.authed) {
-        nick = onick.toLowerCase() === this.authed ? onick : this.authed;
+        if (onick.toLowerCase() === this.authed) {
+          nick = onick;
+        }
+        else {
+          nick = this.authed;
+          this.emit(
+            "warn",
+            "Chat name must match your account name, " +
+            "except for capitalization! " +
+            "It was reset to your account name.");
+          silent = true;
+        }
       }
       else {
         nick = await validateUsername(onick);
@@ -245,7 +256,7 @@ export default new class ChatBox extends EventEmitter {
       if (onick !== nick && !silent) {
         this.emit(
           "warn",
-          "User name contained invalid stuff, which was removed");
+          "Chat name contained invalid stuff, which was removed");
       }
       if (oldnick === nick) {
         return;
