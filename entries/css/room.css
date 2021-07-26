@@ -508,3 +508,47 @@ a.r::before {
 .tag-user {
   font-feature-settings: "salt" on;
 }
+
+.welcome {
+  background: rgba(128, 128, 128, 0.2);
+  text-align: center;
+  padding: 1em;
+}
+
+.welcome * {
+  padding: 0;
+  margin: 0;
+  line-height: 175%;
+}
+
+.welcome h4 {
+  font-size: large;
+}
+.welcome h5 {
+  margin-bottom: 1em;
+}
+
+.welcome_linkcont {
+  font-size: x-large;
+  text-decoration: none;
+  border-top: 1px solid var(--text-fg);
+  border-bottom: 1px solid var(--text-fg);
+}
+.welcome_link {
+  display: inline-block;
+  font-weight: bold;
+}
+.welcome_copy {
+  display: inline-block;
+  margin-left: 1ex;
+  cursor: pointer;
+  transition: color 1s;
+}
+.welcome_copy.copied {
+  transition: color 1s;
+  color: lightgreen !important;
+}
+.welcome_tos {
+  font-size: x-small;
+  text-align: right;
+}

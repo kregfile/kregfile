@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'symbols';
   src:
-    url('fonts/symbols.woff2?2ffdmm') format('woff2'),
-    url('fonts/symbols.woff?2ffdmm') format('woff'),
-    url('fonts/symbols.ttf?2ffdmm') format('truetype'),
-    url('fonts/symbols.svg?2ffdmm#symbols') format('svg');
+    url('fonts/symbols.woff2?me68l9') format('woff2'),
+    url('fonts/symbols.woff?me68l9') format('woff'),
+    url('fonts/symbols.ttf?me68l9') format('truetype'),
+    url('fonts/symbols.svg?me68l9#symbols') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -12,7 +12,7 @@
 [class^="i-"], [class*=" i-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'symbols' !important;
-  speak: none;
+  speak: never;
   font-style: normal;
   font-weight: normal;
   font-variant: normal;
@@ -24,53 +24,17 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.i-newroom:before {
-  content: "\e923";
+.i-ban:before {
+  content: "\e900";
 }
-.i-nuke:before {
-  content: "\e922";
+.i-file-b:before {
+  content: "\e901";
 }
-.i-jester:before {
-  content: "\e921";
+.i-document-b:before {
+  content: "\e902";
 }
-.i-owner:before {
-  content: "\e921";
-}
-.i-trash:before {
-  content: "\e920";
-}
-.i-sytem32:before {
-  content: "\e91f";
-}
-.i-globe:before {
-  content: "\e91f";
-}
-.i-arrow-down:before {
-  content: "\e91d";
-}
-.i-arrow-up:before {
-  content: "\e91e";
-}
-.i-white:before {
-  content: "\e919";
-}
-.i-green:before {
-  content: "\e91a";
-}
-.i-purple:before {
-  content: "\e91b";
-}
-.i-logout:before {
-  content: "\e90f";
-}
-.i-login:before {
-  content: "\e910";
-}
-.i-report:before {
-  content: "\e912";
-}
-.i-users:before {
-  content: "\e907";
+.i-archive-b:before {
+  content: "\e903";
 }
 .i-twatter:before {
   content: "\e904";
@@ -81,68 +45,47 @@
 .i-menu:before {
   content: "\e906";
 }
-.i-file-b:before {
-  content: "\e901";
-}
-.i-document-b:before {
-  content: "\e902";
-}
-.i-image-b:before {
-  content: "\e90d";
-}
-.i-video-b:before {
-  content: "\e913";
-}
-.i-audio-b:before {
-  content: "\e911";
-}
-.i-video-camera:before {
-  content: "\e914";
-}
-.i-archive-b:before {
-  content: "\e903";
-}
-.i-file:before {
-  content: "\e924";
-}
-.i-wait:before {
-  content: "\e979";
-}
-.i-download:before {
-  content: "\e9c2";
-}
-.i-upload:before {
-  content: "\e9c3";
-}
-.i-upload-done:before {
-  content: "\e9c4";
-}
-.i-warning:before {
-  content: "\e90c";
-}
-.i-info:before {
-  content: "\e91c";
-}
-.i-information:before {
-  content: "\e91c";
-}
-.i-error:before {
-  content: "\ea0d";
+.i-users:before {
+  content: "\e907";
 }
 .i-clear:before {
   content: "\e908";
 }
-.i-pref:before {
-  content: "\e994";
-}
 .i-filter:before {
   content: "\e909";
 }
-.i-funnel:before {
-  content: "\e909";
+.i-prev:before {
+  content: "\e90a";
+}
+.i-next:before {
+  content: "\e90b";
+}
+.i-warning:before {
+  content: "\e90c";
+}
+.i-image-b:before {
+  content: "\e90d";
 }
 .i-images:before {
   content: "\e90e";
+}
+.i-logout:before {
+  content: "\e90f";
+}
+.i-login:before {
+  content: "\e910";
+}
+.i-audio-b:before {
+  content: "\e911";
+}
+.i-report:before {
+  content: "\e912";
+}
+.i-video-b:before {
+  content: "\e913";
+}
+.i-video-camera:before {
+  content: "\e914";
 }
 .i-whitelist:before {
   content: "\e915";
@@ -153,8 +96,44 @@
 .i-unban:before {
   content: "\e917";
 }
-.i-ban:before {
-  content: "\e900";
+.i-edit:before {
+  content: "\e918";
+}
+.i-white:before {
+  content: "\e919";
+}
+.i-green:before {
+  content: "\e91a";
+}
+.i-purple:before {
+  content: "\e91b";
+}
+.i-info:before {
+  content: "\e91c";
+}
+.i-arrow-down:before {
+  content: "\e91d";
+}
+.i-arrow-up:before {
+  content: "\e91e";
+}
+.i-sytem32:before {
+  content: "\e91f";
+}
+.i-trash:before {
+  content: "\e920";
+}
+.i-owner:before {
+  content: "\e921";
+}
+.i-nuke:before {
+  content: "\e922";
+}
+.i-newroom:before {
+  content: "\e923";
+}
+.i-file:before {
+  content: "\e924";
 }
 .i-document:before {
   content: "\e926";
@@ -174,12 +153,24 @@
 .i-clock:before {
   content: "\e94d";
 }
-.i-prev:before {
-  content: "\e90a";
+.i-wait:before {
+  content: "\e979";
 }
-.i-next:before {
-  content: "\e90b";
+.i-pref:before {
+  content: "\e994";
 }
-.i-edit:before {
-  content: "\e918";
+.i-download:before {
+  content: "\e9c2";
+}
+.i-upload:before {
+  content: "\e9c3";
+}
+.i-upload-done:before {
+  content: "\e9c4";
+}
+.i-error:before {
+  content: "\ea0d";
+}
+.i-copy:before {
+  content: "\e925";
 }

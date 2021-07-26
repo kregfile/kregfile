@@ -293,64 +293,69 @@ export default new class Messages extends EventEmitter {
       e.classList.add("me");
     }
 
-    let user;
-    if (m.role && m.role !== "white" && m.role !== "system") {
-      user = dom("a", {
-        classes: ucls,
-        attrs: {
-          href: `/u/${profile}`,
-          target: "_blank",
-          rel: "nofollow",
-        },
-        text: m.user
-      });
-      user.dataset.profile = profile;
-      user.dataset.owner = m.owner;
-      user.addEventListener("mouseenter", this.onuserenter, { passive: true });
-    }
-    else {
-      user = dom("span", {
-        classes: ucls,
-        text: m.user
-      });
-    }
+    if (!m.raw) {
+      let user;
+      if (m.role && m.role !== "white" && m.role !== "system") {
+        user = dom("a", {
+          classes: ucls,
+          attrs: {
+            href: `/u/${profile}`,
+            target: "_blank",
+            rel: "nofollow",
+          },
+          text: m.user
+        });
+        user.dataset.profile = profile;
+        user.dataset.owner = m.owner;
+        user.addEventListener(
+          "mouseenter", this.onuserenter, { passive: true });
+      }
+      else {
+        user = dom("span", {
+          classes: ucls,
+          text: m.user
+        });
+      }
 
-    if (!m.owner && m.role) {
-      user.insertBefore(dom("span", {
-        classes: ["role", roleToIcon(m.role)],
-        attrs: {title: roleToStatus(m.role)},
-      }), user.firstChild);
-    }
-    if (m.owner) {
-      user.insertBefore(dom("span", {
-        classes: ["i-owner"],
-        attrs: {title: "Room Owner"},
-      }), user.firstChild);
-    }
-    const ts = dom("span", {
-      attrs: {title: DATE_FORMAT_LONG.format(m.date)},
-      classes: ["time"],
-      text: d
-    });
-    user.insertBefore(ts, user.firstChild);
-
-    if (m.ip) {
-      user.appendChild(dom("span", {
-        classes: ["tag-ip"],
-        text: ` (${m.ip})`
-      }));
-    }
-    if (!m.me) {
-      user.appendChild(document.createTextNode(":"));
-    }
-
-    if (m.admin) {
-      const ban = dom("span", {
-        classes: ["ban-btn", "i-ban"],
+      if (!m.owner && m.role) {
+        user.insertBefore(dom("span", {
+          classes: ["role", roleToIcon(m.role)],
+          attrs: {title: roleToStatus(m.role)},
+        }), user.firstChild);
+      }
+      if (m.owner) {
+        user.insertBefore(dom("span", {
+          classes: ["i-owner"],
+          attrs: {title: "Room Owner"},
+        }), user.firstChild);
+      }
+      const ts = dom("span", {
+        attrs: {title: DATE_FORMAT_LONG.format(m.date)},
+        classes: ["time"],
+        text: d
       });
-      this.bannable.set(ban, m.admin);
-      user.appendChild(ban);
-      ban.onclick = this.onbanclick;
+      user.insertBefore(ts, user.firstChild);
+
+      if (m.ip) {
+        user.appendChild(dom("span", {
+          classes: ["tag-ip"],
+          text: ` (${m.ip})`
+        }));
+      }
+      if (!m.me) {
+        user.appendChild(document.createTextNode(":"));
+      }
+
+      if (m.admin) {
+        const ban = dom("span", {
+          classes: ["ban-btn", "i-ban"],
+        });
+        this.bannable.set(ban, m.admin);
+        user.appendChild(ban);
+        ban.onclick = this.onbanclick;
+      }
+
+      e.appendChild(user);
     }
 
     const msg = dom("span", {
@@ -360,7 +365,6 @@ export default new class Messages extends EventEmitter {
       m.msg = [{t: "t", v: m.msg}];
     }
     this.addMessageParts(msg, m.msg);
-    e.appendChild(user);
     e.appendChild(msg);
 
     if (m.channel) {
@@ -460,6 +464,18 @@ export default new class Messages extends EventEmitter {
         break;
       }
 
+      case "raw": {
+        if (typeof p.h === "string") {
+          const node = dom("span", {classes: ["raw"]});
+          node.innerHTML = p.h;
+          msg.appendChild(node);
+        }
+        else {
+          msg.appendChild(p.h);
+        }
+        break;
+      }
+
       default:
         msg.appendChild(document.createTextNode(p.v));
         break;
@@ -528,18 +544,39 @@ export default new class Messages extends EventEmitter {
   }
 
   addWelcome() {
+    const tpl = document.querySelector("#welcome").content.cloneNode(true);
+    const link = tpl.querySelector(".welcome_link");
+    const u = new URL(location.pathname, location.href);
+    link.textContent = u.href;
+    const ttl = tpl.querySelector(".welcome_ttl");
+    ttl.textContent = registry.config.get("ttl");
+    const copy = tpl.querySelector(".welcome_copy");
+    copy.addEventListener("click", e => {
+      try {
+        e.preventDefault();
+        e.stopPropagation();
+        const i = dom("input", {attrs: {type: "text"}});
+        i.value = u.href;
+        copy.appendChild(i);
+        i.select();
+        document.execCommand("copy");
+        copy.removeChild(i);
+        copy.classList.add("copied");
+        setTimeout(() => copy.classList.remove("copied"), 2000);
+      }
+      catch (ex) {
+        console.error(ex);
+      }
+    });
     this.add({
+      raw: true,
       volatile: true,
-      highlight: true,
+      highlight: false,
       notify: false,
       role: "system",
       user: "System",
       msg: [
-        {t: "t", v: `Welcome to ${registry.config.get("name")}`},
-        {t: "b"},
-        {t: "t", v: "Share this room with somebody: "},
-        {t: "b"},
-        {t: "u", v: document.location.href.toString()},
+        {t: "raw", h: tpl.firstElementChild}
       ]
     });
   }
