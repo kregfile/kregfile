@@ -86,6 +86,7 @@ export default class File extends BaseFile {
 
     this.sizeEl = dom("span", {
       classes: ["size"],
+      attr: {"title" : file.size }, /* Added line to tooltip the actual size */
       text: toPrettySize(file.size)
     });
     this.detailEl.appendChild(this.sizeEl);
