@@ -44,6 +44,7 @@ export default new class Files extends EventEmitter {
     this.scrollState = new ScrollState(this);
     this.newFiles = false;
     this.selectionStart = null;
+    this.galleryMode = false;
 
     this.onfiles = this.onfiles.bind(this);
     this.filesQueue = [];
@@ -62,7 +63,6 @@ export default new class Files extends EventEmitter {
     this.ondragenter = this.ondragenter.bind(this);
     this.ondragleave = this.ondragleave.bind(this);
     this.dragging = false;
-    Object.seal(this);
 
     addEventListener("drop", this.ondrop.bind(this), true);
     addEventListener("dragenter", this.ondragenter, true);
@@ -100,11 +100,14 @@ export default new class Files extends EventEmitter {
     const actions = [
       "banFiles", "unbanFiles",
       "whitelist", "blacklist",
-      "trash"];
+      "trash", "nailOff", "nailOn"];
     for (const a of actions) {
-      document.querySelector(`#${a.toLowerCase()}`).addEventListener(
-        "click", this[a].bind(this));
+      const e = document.querySelector(`#${a.toLowerCase()}`);
+      e.addEventListener("click", this[a].bind(this));
+      this[`${a}El`] = e;
     }
+
+    Object.seal(this);
   }
 
   get visible() {
@@ -581,6 +584,9 @@ export default new class Files extends EventEmitter {
         this.el.appendChild(f.el);
         this.setFileStyle(f);
       }
+      if (this.galleryMode) {
+        f.adjustPreview();
+      }
       head = f.el;
     }
   }
@@ -833,6 +839,30 @@ export default new class Files extends EventEmitter {
       return ips.has(f.ip) || (a && f.meta && accounts.has(f.meta.account));
     });
     this.trashFiles(purges);
+  }
+
+  nailOff() {
+    this.galleryMode = this.nailOffEl.classList.contains("active");
+    if (this.galleryMode) {
+      this.nailOffEl.classList.remove("active");
+      this.el.classList.remove("listmode");
+      this.nailOnEl.classList.add("active");
+      this.el.classList.add("gallerymode");
+
+      APOOL.schedule(null, () => this.visible.forEach(f => f.adjustPreview()));
+    }
+    else {
+      this.nailOffEl.classList.add("active");
+      this.el.classList.add("listmode");
+      this.nailOnEl.classList.remove("active");
+      this.el.classList.remove("gallerymode");
+    }
+
+    APOOL.schedule(null, () => this.scroller.update());
+  }
+
+  nailOn() {
+    this.nailOff();
   }
 
   async uploadOne(u) {

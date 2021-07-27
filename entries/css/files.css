@@ -106,6 +106,10 @@
   text-overflow: ellipsis;
 }
 
+#files:not(.gallerymode) > .file .galleryonly {
+  display: none;
+}
+
 #files > .file > .tags {
   display: flex;
   align-items: center;
@@ -161,6 +165,103 @@
 
 #files > .file > .detail > .ttl {
   flex: 3;
+}
+
+#files.gallerymode {
+  display: flex;
+  flex-wrap: wrap;
+  font-size: small;
+  justify-content: flex-start;
+  align-content: flex-start;
+  align-items: flex-start;
+}
+
+#files.gallerymode > .file:not(.upload) {
+  background-color: rgb(255, 255, 255, 0.1) !important;
+  display: grid !important;
+  width: 250px !important;
+  height: 320px !important;
+  margin: 1ex;
+  padding: 1ex 1em;
+  border: 2px solid rgb(255, 255, 255, 0.3) !important;
+  border-radius: 6px;
+  column-gap: 1ex;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: 1fr 5fr 1fr 1fr;
+  grid-template-areas: 
+    'icon name'
+    'preview preview'
+    'tags tags'
+    'detail detail'
+    ;
+  justify-items: center;
+}
+
+#files.gallerymode > .file.selected:not(.upload) {
+  background-color: rgb(255, 255, 255, 0.2) !important;
+  border: 2px solid rgb(255, 255, 255, 0.9) !important;
+}
+
+#files.gallerymode > .file:not(.upload) > * {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#files.gallerymode > .file:not(.upload) .icon {
+  grid-area: icon;
+  justify-self: end;
+  width: auto;
+  height: auto;
+}
+
+#files.gallerymode > .file:not(.upload) .name {
+  grid-area: name;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  text-overflow: ellipsis;
+}
+
+#files.gallerymode .preview {
+  grid-area: preview;
+  justify-self: stretch;
+  align-self: stretch;
+
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+}
+
+#files.gallerymode .preview .faticon {
+  font-size: 160px;
+  padding: 0;
+  margin: 0;
+}
+
+#files.gallerymode > .file:not(.upload) .detail {
+  grid-area: detail;
+  display: block;
+  width: auto;
+  height: auto;
+  text-align: end;
+  justify-self: end;
+  white-space: normal;
+  max-width: 100%;
+}
+#files.gallerymode > .file:not(.upload) > .detail > span {
+  border: 0;
+  padding: 0;
+  padding-left: 1em;
+  margin: 0;
+}
+
+#files.gallerymode > .file:not(.upload) .tags {
+  grid-area: tags;
+  text-align: end;
+  justify-self: end;
+  width: auto;
+  height: auto;
 }
 
 @keyframes spin {

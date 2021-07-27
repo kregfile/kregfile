@@ -163,6 +163,21 @@ body#room {
   margin-right: 1em;
 }
 
+#nailoff.btn {
+  margin-left: 2em;
+  border-top-right-radius: 0;
+}
+#nailon.btn {
+  border-left: 1px solid gray;
+  margin-left: 0;
+  border-top-left-radius: 0;
+}
+#nailoff.btn.active,
+#nailon.btn.active {
+  background: rgba(255,255,255,0.5);
+  box-shadow: rgb(0 0 0 / 75%) 0px 0px 6px 0px inset;
+}
+
 #tools .btn:last-child {
   display: flex;
   justify-items: center;
