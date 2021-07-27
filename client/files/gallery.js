@@ -23,6 +23,7 @@ export default class Gallery {
     this.onimgclick = this.onimgclick.bind(this);
     this.ontitleclick = this.ontitleclick.bind(this);
     this.onpress = this.onpress.bind(this);
+    this.onwheel = this.onwheel.bind(this);
 
     Object.seal(this);
 
@@ -77,6 +78,18 @@ export default class Gallery {
     return true;
   }
 
+  onwheel(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (e.deltaY > 0) {
+      this.next();
+    }
+    else {
+      this.prev();
+    }
+  }
+
   onclose(e) {
     if (e.target !== this.el) {
       return;
@@ -87,6 +100,7 @@ export default class Gallery {
 
   close() {
     document.body.removeEventListener("keydown", this.onpress, true);
+    document.body.removeEventListener("wheel", this.onpress, true);
     this.el.parentElement.classList.remove("gallery");
     this.imgEl.src = "";
     this.file = null;
@@ -182,6 +196,7 @@ export default class Gallery {
       this.startHideAux();
     });
     document.body.addEventListener("keydown", this.onpress, true);
+    document.body.addEventListener("wheel", this.onwheel, true);
     return true;
   }
 }
