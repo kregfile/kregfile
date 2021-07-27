@@ -6,12 +6,12 @@ import registry from "./registry";
 import {
   dom,
   toPrettyDuration,
+  toPrettyInt,
   toPrettySize,
   sort,
   Rect,
   toType,
 } from "./util";
-import { toPrettyInt } from "../common";
 
 const BASE_FILE = {
   name: "",
