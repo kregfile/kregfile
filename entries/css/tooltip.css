@@ -1,6 +1,6 @@
 .tooltip {
   visibility: hidden;
-  font-size: 90%;
+  font-size: 85%;
   display: grid;
   position: fixed;
   z-index: 1000;

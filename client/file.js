@@ -11,6 +11,7 @@ import {
   Rect,
   toType,
 } from "./util";
+import { toPrettyInt } from "../common";
 
 const BASE_FILE = {
   name: "",
@@ -45,9 +46,13 @@ class FileTooltip extends Tooltip {
 
     const diff = Math.max(0, file.ttl);
     a(toPrettySize(file.size), "size");
-    a(toPrettyDuration(diff), "expires");
+    a(`(${toPrettyInt(file.size)} Bytes)`, "");
+    a(new Date(Date.now() + diff).toLocaleString(), "expires");
+    a(toPrettyDuration(diff), "");
     if (file.uploaded) {
       a(file.localUploaded.toLocaleString(), "uploaded");
+      const since = Date.now() - file.localUploaded;
+      a(`${toPrettyDuration(since)} ago`, "");
     }
     file.tagsMap.forEach(a);
   }
