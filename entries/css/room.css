@@ -144,7 +144,6 @@ body#room {
   text-align: center;
   background: rgba(255,255,255,0.7);
   color: black;
-  height: cal(100% - 1ex);
   padding: 0.5ex;
   margin-top: 0.5ex;
   margin-left: 0.7ex;
@@ -158,6 +157,10 @@ body#room {
 
 #tools .btn:hover {
   background: rgba(255,255,255,0.9);
+}
+
+#clearselection.btn {
+  margin-right: 1em;
 }
 
 #tools .btn:last-child {
@@ -180,13 +183,16 @@ body#room {
 }
 
 #trash,
+#selectall,
 #clearselection {
   display: none;
 }
 
 .mod #trash,
+.mod #selectall,
 .mod #clearselection,
 .owner #trash,
+.owner #selectall,
 .owner #clearselection {
   display: block;
 }

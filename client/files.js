@@ -92,6 +92,8 @@ export default new class Files extends EventEmitter {
       passive: true
     });
 
+    document.querySelector("#selectall").addEventListener(
+      "click", this.selectAll.bind(this));
     document.querySelector("#clearselection").addEventListener(
       "click", this.clearSelection.bind(this));
 
@@ -745,6 +747,11 @@ export default new class Files extends EventEmitter {
 
   _clearSelection() {
     this.selection.forEach(e => e.el.classList.remove("selected"));
+  }
+
+  selectAll() {
+    this.selectionStart = null;
+    this.visible.forEach(f => f.el.classList.add("selected"));
   }
 
   clearSelection() {
