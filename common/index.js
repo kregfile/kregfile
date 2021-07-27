@@ -65,12 +65,12 @@ const toPrettySize = (function() {
 const formatters = new Map();
 const units = [
   " B",
-  " KB",
-  " MB",
-  " GB",
-  " TB",
-  " PB",
-  " EB",
+  " KiB",
+  " MiB",
+  " GiB",
+  " TiB",
+  " PiB",
+  " EiB",
   " MercoByte"
 ];
 
