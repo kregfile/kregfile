@@ -21,13 +21,15 @@
     <div id="filter-status" class="hidden i-filter"></div>
     <div id="new-status" class="hidden blink i-arrow-up" title="New files at the top"></div>
     <div class="spacer"></div>
+    <div id="selectall" class="btn i-plus" title="Select all"></div>
     <div id="clearselection" class="btn i-clear" title="Clear selection"></div>
     <div id="banfiles" class="modctrl btn i-ban" title="Ban files"></div>
     <div id="unbanfiles" class="modctrl btn i-unban" title="Unban files"></div>
     <div id="blacklist" class="modctrl btn i-blacklist" title="Blacklist files"></div>
     <div id="whitelist" class="modctrl btn i-whitelist" title="Whitelist files"></div>
     <div id="trash" class="btn i-trash" title="Remove files"></div>
-    <div id="nail" class="btn i-images hidden"></div>
+    <div id="nailoff" class="btn i-list active"></div>
+    <div id="nailon" class="btn i-grid"></div>
     <form style="display: none;">
       <input id="upload-button" name="upload-button" type="file" multiple="multiple">
     </form>
@@ -76,7 +78,7 @@
   </section>
 
   <section id="filelist" class="layer">
-    <section id="files">
+    <section id="files" class="listmode">
     </section>
   </section>
   <section id="filelist-scroller" class="scroller hidden"></section>

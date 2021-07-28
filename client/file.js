@@ -6,12 +6,12 @@ import registry from "./registry";
 import {
   dom,
   toPrettyDuration,
+  toPrettyInt,
   toPrettySize,
   sort,
   Rect,
   toType,
 } from "./util";
-import { toPrettyInt } from "../common";
 
 const BASE_FILE = {
   name: "",
@@ -57,19 +57,8 @@ class FileTooltip extends Tooltip {
     file.tagsMap.forEach(a);
   }
 
-  findPreview(file) {
-    if (!file.assets.size) {
-      return null;
-    }
-    const assets = sort(Array.from(file.assets.values()), f => {
-      // Smallest video, then image, then other
-      return [f.type, -(f.width * f.height)];
-    });
-    return assets.pop();
-  }
-
   addPreview(file) {
-    const preview = this.findPreview(file);
+    const preview = file.findPreview();
     if (!preview) {
       return;
     }
@@ -230,5 +219,16 @@ export default class File extends Removable {
       return;
     }
     registry.roomie.installTooltip(tt, e);
+  }
+
+  findPreview() {
+    if (!this.assets || !this.assets.size) {
+      return null;
+    }
+    const assets = sort(Array.from(this.assets.values()), f => {
+      // Smallest video, then image, then other
+      return [f.type, -(f.width * f.height)];
+    });
+    return assets.pop();
   }
 }

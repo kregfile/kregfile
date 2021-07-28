@@ -144,7 +144,6 @@ body#room {
   text-align: center;
   background: rgba(255,255,255,0.7);
   color: black;
-  height: cal(100% - 1ex);
   padding: 0.5ex;
   margin-top: 0.5ex;
   margin-left: 0.7ex;
@@ -158,6 +157,25 @@ body#room {
 
 #tools .btn:hover {
   background: rgba(255,255,255,0.9);
+}
+
+#clearselection.btn {
+  margin-right: 1em;
+}
+
+#nailoff.btn {
+  margin-left: 2em;
+  border-top-right-radius: 0;
+}
+#nailon.btn {
+  border-left: 1px solid gray;
+  margin-left: 0;
+  border-top-left-radius: 0;
+}
+#nailoff.btn.active,
+#nailon.btn.active {
+  background: rgba(255,255,255,0.5);
+  box-shadow: rgb(0 0 0 / 75%) 0px 0px 6px 0px inset;
 }
 
 #tools .btn:last-child {
@@ -180,13 +198,16 @@ body#room {
 }
 
 #trash,
+#selectall,
 #clearselection {
   display: none;
 }
 
 .mod #trash,
+.mod #selectall,
 .mod #clearselection,
 .owner #trash,
+.owner #selectall,
 .owner #clearselection {
   display: block;
 }
