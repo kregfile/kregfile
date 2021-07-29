@@ -433,6 +433,57 @@ export default new class Roomie extends EventEmitter {
     }
   }
 
+  async showRemoveMessagesModal(id) {
+    if (!id) {
+      return;
+    }
+    try {
+      const res = await this.question(
+        "Really want to remove this message?",
+        "Message Removal",
+        "i-nuke",
+        // Buttons
+        "Just this one",
+        "All (User, Room)",
+        "All (IP, Room)",
+        "All (User)",
+        "All (IP)",
+        "Nope");
+      const options = {
+        user: false,
+        ip: false,
+        room: false,
+      };
+      switch (res) {
+      case "accept":
+        break;
+
+      case 1:
+        options.room = true;
+        options.user = true;
+        break;
+
+      case 2:
+        options.room = true;
+        options.ip = true;
+        break;
+
+      case 3:
+        options.user = true;
+        break;
+
+      case 4:
+        options.ip = true;
+        break;
+      default:
+        throw new Error("invalid res");
+      }
+      await registry.socket.makeCall("removeMessage", id, options);
+    }
+    catch (ex) {
+      console.error("message removal cancelled", ex);
+    }
+  }
   async showBanModal(subjects, template) {
     try {
       await this.showModal(new BanModal(this, subjects, template));

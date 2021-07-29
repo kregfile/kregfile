@@ -58,6 +58,8 @@ export default new class Messages extends EventEmitter {
 
   init() {
     registry.socket.on("message", this.add.bind(this));
+    registry.socket.on(
+      "removeMessages", APOOL.wrap(this.onremovemessages.bind(this)));
 
     registry.splitter.on("adjusted", () => {
       this.scrollEnd();
@@ -196,6 +198,10 @@ export default new class Messages extends EventEmitter {
 
   onbanclick(e) {
     nukeEvent(e);
+    if (e.altKey) {
+      registry.roomie.showRemoveMessagesModal(e.target.dataset.id);
+      return;
+    }
     const subjects = this.bannable.get(e.target);
     if (e.shiftKey) {
       registry.roomie.showUnbanModal(subjects);
@@ -262,12 +268,7 @@ export default new class Messages extends EventEmitter {
     return notify;
   }
 
-  add(m) {
-    if (this.restoring) {
-      this.restoring.push(m);
-      return;
-    }
-    const notify = this._add(m);
+  translateMessage(m) {
     const d = DATE_FORMAT_SHORT.format(m.date);
 
     const profile = m.user.toLowerCase();
@@ -350,6 +351,7 @@ export default new class Messages extends EventEmitter {
         const ban = dom("span", {
           classes: ["ban-btn", "i-ban"],
         });
+        ban.dataset.id = m.id;
         this.bannable.set(ban, m.admin);
         user.appendChild(ban);
         ban.onclick = this.onbanclick;
@@ -374,6 +376,19 @@ export default new class Messages extends EventEmitter {
       }));
     }
 
+    e.dataset.id = m.id;
+
+    return [e, msg];
+  }
+
+
+  add(m) {
+    if (this.restoring) {
+      this.restoring.push(m);
+      return;
+    }
+    const notify = this._add(m);
+    const [e, msg] = this.translateMessage(m);
     this.queue.push(e);
     if (notify) {
       registry.roomie.displayNotification({
@@ -480,6 +495,61 @@ export default new class Messages extends EventEmitter {
         msg.appendChild(document.createTextNode(p.v));
         break;
       }
+    }
+  }
+
+  onremovemessages(ids) {
+    ids = new Set(ids);
+    if (this.restoring) {
+      this.restoring = this.restoring.filter(m => !ids.has(m.id));
+    }
+    const mod = registry.chatbox.role === "mod";
+    const collected = new Map();
+    for (const m of this.msgs) {
+      if (!ids.has(m.id)) {
+        continue;
+      }
+      if (mod) {
+        m.channel = "Removed";
+      }
+      else {
+        Object.assign(m, {
+          highlight: false,
+          me: false,
+          notify: false,
+          user: "System",
+          role: "system",
+          msg: [{
+            t: "t",
+            v: "Message removed"
+          }]
+        });
+        delete m.channel;
+      }
+      collected.set(m.id, m);
+    }
+    this._save();
+
+    let replaced = false;
+    const end = this.isScrollEnd;
+    for (const list of [this.queue, this.els]) {
+      for (let i = 0; i < list.length; ++i) {
+        const el = list[i];
+        const m = collected.get(el.dataset.id);
+        if (!m) {
+          continue;
+        }
+        const [newEl] = this.translateMessage(m);
+        if (el.parentElement) {
+          el.parentElement.replaceChild(newEl, el);
+          replaced = true;
+        }
+        list[i] = newEl;
+      }
+    }
+    if (replaced && end) {
+      // nasty but meh
+      setTimeout(() => this.scrollEnd(), 10);
     }
   }
 

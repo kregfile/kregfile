@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'symbols';
   src:
-    url('fonts/symbols.woff2?ks8puo') format('woff2'),
-    url('fonts/symbols.woff?ks8puo') format('woff'),
-    url('fonts/symbols.ttf?ks8puo') format('truetype'),
-    url('fonts/symbols.svg?ks8puo#symbols') format('svg');
+    url('fonts/symbols.woff2?vlqbju') format('woff2'),
+    url('fonts/symbols.woff?vlqbju') format('woff'),
+    url('fonts/symbols.ttf?vlqbju') format('truetype'),
+    url('fonts/symbols.svg?vlqbju#symbols') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -185,4 +185,7 @@
 }
 .i-minus:before {
   content: "\e92e";
+}
+.i-question:before {
+  content: "\e92f";
 }
