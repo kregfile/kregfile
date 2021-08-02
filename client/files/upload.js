@@ -17,6 +17,8 @@ const PER = new Intl.NumberFormat(undefined, {
   maximumFractionDigits: 1
 });
 
+let IDS = 0;
+
 export default class Upload extends Removable {
   constructor(owner, file) {
     super();
@@ -26,6 +28,7 @@ export default class Upload extends Removable {
     this.offset = null;
     this.req = null;
     this.aborted = false;
+    this.id = ++IDS;
 
     this.el = dom("div", {classes: ["file", "upload"]});
 
@@ -59,45 +62,49 @@ export default class Upload extends Removable {
 
   getKey() {
     const {socket} = registry;
+    let inlineTO = null;
     const getter = (resolve, reject) => {
-      socket.once("uploadkey", d => {
-        if (d.err) {
-          reject(new Error(d.err));
+      socket.makeCall("uploadkey", this.id).then(d => {
+        if (inlineTO) {
+          clearInterval(inlineTO);
+          inlineTO = null;
+        }
+        if (!d.wait) {
+          resolve(d);
           return;
         }
-        if (d.wait) {
-          resolve(new Promise((iresolve, ireject) => {
-            const dur = registry.roomie.diffTimes(d.wait);
-            if (dur <= 0) {
-              getter(iresolve, ireject);
-              return;
-            }
-            this.sizeEl.textContent = `Waiting (${toPrettyDuration(dur)})`;
-            setTimeout(() => getter(iresolve, ireject), Math.min(dur, 5000));
-          }));
-          return;
-        }
-        resolve(d);
-      });
-      setTimeout(() => reject("Timeout"), 30000);
-      socket.emit("uploadkey");
+
+        const updateDuration = dur => this.sizeEl.textContent = `Waiting (${toPrettyDuration(dur)})`;
+        resolve(new Promise((iresolve, ireject) => {
+          let dur = registry.roomie.diffTimes(d.wait);
+          if (dur <= 0) {
+            getter(iresolve, ireject);
+            return;
+          }
+          updateDuration(dur);
+          inlineTO = setInterval(() => {
+            dur -= 1000;
+            updateDuration(dur);
+          }, 1000);
+          setTimeout(() => {
+            getter(iresolve, ireject);
+          }, Math.min(dur, 20000));
+        }));
+        return;
+      }).catch(reject);
     };
-    return new Promise(getter);
+    const rv = new Promise(getter);
+    (rv.finally || rv.catch).call(rv, () => {
+      if (inlineTO) {
+        clearInterval(inlineTO);
+      }
+    });
+    return rv;
   }
 
   queryOffset() {
     const {socket} = registry;
-    return new Promise((resolve, reject) => {
-      socket.once(`queryoffset-${this.key}`, d => {
-        if (d.err) {
-          reject(new Error(d.err));
-          return;
-        }
-        resolve(d);
-      });
-      setTimeout(() => reject("Timeout"), 30000);
-      socket.emit("queryoffset", this.key);
-    });
+    return socket.makeCall("queryoffset", this.key);
   }
 
   abort() {
@@ -118,8 +125,8 @@ export default class Upload extends Removable {
     }
     const params = new URLSearchParams();
     params.set("name", this.file.name);
-    params.set("key", this.key);
     params.set("offset", this.offset);
+    params.set("now", Date.now());
     try {
       const req = this.req = new XMLHttpRequest();
       return await new Promise((resolve, reject) => {
@@ -150,7 +157,7 @@ export default class Upload extends Removable {
           }
           this.setProgress(this.offset + e.loaded, this.offset + e.total, rate);
         }, { passive: true });
-        req.open("PUT", `/api/upload?${params.toString()}`);
+        req.open("PUT", `/api/upload/${this.key}?${params.toString()}`);
         let {file} = this;
         if (this.offset) {
           file = file.slice(this.offset);
@@ -191,7 +198,11 @@ export default class Upload extends Removable {
     await registry.chatbox.ensureNick();
     this.setIcon("i-upload");
     try {
-      for (let i = 0; i <= 10; ++i) {
+      const maxFileSize = registry.config.get("maxFileSize");
+      if (maxFileSize && this.file.size && this.file.size > maxFileSize) {
+        throw Object.assign(new Error(`File is too large, limit is ${toPrettySize(maxFileSize)}`), {code: 5});
+      }
+      for (let i = 0; i <= 25; ++i) {
         if (!this.key) {
           const key = await this.getKey();
           this.key = key;

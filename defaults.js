@@ -73,6 +73,10 @@ module.exports = {
   // Mods can override this per room
   TTL: 48,
 
+  // Maximal file size in bytes.
+  // Set to 0 to disable.
+  maxFileSize: 10 * 1024 * 1024 * 1024,
+
   /*****************/
   /* Flood control */
   /*****************/
