@@ -20,6 +20,7 @@
   --base-font: 'Open Sans', 'Rubik', 'Cairo', sans-serif;
   --files-size: 11pt;
   --detail-size: 8pt;
+  --unread-marker-color: rgba(200, 0, 0, 0.3);
 }
 
 html {

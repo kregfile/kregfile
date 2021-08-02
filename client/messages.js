@@ -53,6 +53,46 @@ export default new class Messages extends EventEmitter {
     this.bannable = new WeakMap();
     this._waitConfig = null;
 
+    try {
+      const options = {
+        root: this.el,
+        rootMargin: "0px",
+        threshold: 0.95
+      };
+
+      this.interectionObserver = new IntersectionObserver(entries => {
+        if (registry.roomie.hidden) {
+          return;
+        }
+        const seenMessages = new Set();
+        for (const e of entries) {
+          if (!e.isIntersecting || !e.target) {
+            continue;
+          }
+          this.interectionObserver.unobserve(e.target);
+          const {dataset: {id}} = e.target;
+          if (!id) {
+            continue;
+          }
+          e.target.dataset.seen = "true";
+          seenMessages.add(id);
+        }
+        this.msgs.forEach(m => {
+          if (!seenMessages.has(m.id)) {
+            return;
+          }
+          m.seen = true;
+        });
+        this._save();
+      }, options);
+    }
+    catch (ex) {
+      this.intersectionObserver = new class {
+        observe() { }
+        unobserve() { }
+      }();
+    }
+
     Object.seal(this);
   }
 
@@ -108,6 +148,8 @@ export default new class Messages extends EventEmitter {
       }
     }, { passive: true });
 
+    registry.roomie.on("hidden", this.onhidden.bind(this));
+
     addEventListener("resize", debounce(() => {
       this.scrollEnd();
     }, 500), { passive: true });
@@ -145,6 +187,26 @@ export default new class Messages extends EventEmitter {
     }
     this.files.set(f, file);
     return file;
+  }
+
+  onhidden(hidden) {
+    if (hidden) {
+      return;
+    }
+    this.setLastMessageMarker();
+  }
+
+  setLastMessageMarker() {
+    const perma = this.els.filter(e => e.dataset.volatile !== "true");
+    const lastSeen = perma.reduce((prev, cur) => {
+      cur.classList.remove("lastseen");
+      return cur.dataset.seen === "true" ? cur : prev;
+    }, null);
+    const last = perma.pop();
+    if (!lastSeen || lastSeen === last) {
+      return;
+    }
+    lastSeen.classList.add("lastseen");
   }
 
   async onfileenter(e) {
@@ -280,6 +342,12 @@ export default new class Messages extends EventEmitter {
     const e = dom("div", {classes: ["msgcontainer", ...ucls]});
     if (m.role) {
       e.dataset.role = m.role;
+    }
+    if (m.volatile) {
+      e.dataset.volatile = "true";
+    }
+    if (m.seen) {
+      e.dataset.seen = "true";
     }
     e.dataset.profile = profile;
 
@@ -565,7 +633,11 @@ export default new class Messages extends EventEmitter {
     const {el} = this;
     const end = this.isScrollEnd;
     for (const e of this.queue) {
+      const {dataset: {seen, id, volatile}} = e;
       this.els.push(e);
+      if (seen !== "true" && id && volatile !== "true") {
+        this.interectionObserver.observe(e);
+      }
       el.appendChild(e);
     }
     this.queue.length = 0;
@@ -674,7 +746,18 @@ export default new class Messages extends EventEmitter {
       await new Promise(r => registry.config.on("change-name", r));
       this.addWelcome();
     }
-    this.queue.push(dom("div", {classes: ["hr"]}));
+    this.add({
+      msg: [{t: "raw", h: dom("div", {classes: ["hr"]})}],
+      raw: true,
+      volatile: true,
+      highlight: false,
+      notify: false,
+      role: "system",
+      user: "System",
+    });
     restoring.forEach(this.add.bind(this));
+    if (this.flushing) {
+      this.flushing.then(() => this.setLastMessageMarker());
+    }
   }
 }();

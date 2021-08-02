@@ -276,6 +276,10 @@ body.noreports #ctx-report {
   margin-right: 0.5ex;
 }
 
+.msgcontainer.lastseen {
+  border-bottom: 1px solid var(--unread-marker-color);
+}
+
 .msgcontainer.system {
   font-size: small;
 }
