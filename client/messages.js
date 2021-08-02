@@ -18,12 +18,24 @@ import UserTooltip from "./messages/usertooltip";
 import File from "./file";
 import Scroller from "./scroller";
 
-const DATE_FORMAT_SHORT = new Intl.DateTimeFormat("en-US", {
-  hour12: false,
-  hour: "2-digit",
-  minute: "2-digit",
-  second: "2-digit",
-});
+const DATE_FORMAT_SHORT = (function() {
+try {
+  return new Intl.DateTimeFormat("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23"
+  });
+}
+catch (ex) {
+  return new Intl.DateTimeFormat("en-US", {
+    hour12: false,
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+}
+})();
 const DATE_FORMAT_LONG = new Intl.DateTimeFormat("eu");
 
 export default new class Messages extends EventEmitter {
