@@ -92,7 +92,7 @@ module.exports = {
   reportFloodDuration: 120000,
 
   // Number of uploads before considered flooding
-  uploadFloodTrigger: 25,
+  uploadFloodTrigger: 60,
   // Number of ms to block uploads from flooding user
   uploadFloodDuration: 60000,
 
