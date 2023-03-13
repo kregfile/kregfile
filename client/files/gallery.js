@@ -167,13 +167,16 @@ export default class Gallery {
       return false;
     }
     this.file = file;
-    this.imgEl.src = "/loader.png";
-    this.imgEl.removeAttribute("srcset");
+    const to = setTimeout(() => {
+      this.imgEl.src = "/loader.png";
+      this.imgEl.removeAttribute("srcset");
+    }, 60);
     const img = this.imgEl.cloneNode();
     img.onload = () => {
       if (this.file !== file) {
         return;
       }
+      clearTimeout(to);
       this.imgEl.parentElement.replaceChild(img, this.imgEl);
       this.imgEl = img;
       this.imgEl.addEventListener("click", this.onimgclick);
