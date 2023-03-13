@@ -168,6 +168,7 @@ export default class Gallery {
     }
     this.file = file;
     this.imgEl.src = "/loader.png";
+    this.imgEl.removeAttribute("srcset");
     const img = this.imgEl.cloneNode();
     img.onload = () => {
       if (this.file !== file) {
