@@ -12,13 +12,11 @@ local ip = bool(ARGV[3])
 local room = bool(ARGV[4])
 
 if not user and not room and not ip then
-    print("removemessages: invalid call")
     return
 end
 
 local data = redis.call("GET", "message:" .. id)
 if not data then
-    print("removemessages: ressage not found")
     return
 end
 data = cjson.decode(data)

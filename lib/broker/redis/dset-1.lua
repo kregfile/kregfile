@@ -5,12 +5,10 @@ local item
 
 if op == "add" then
   item = ARGV[3]
-  print("SADD", key, item)
   redis.call("SADD", key, item)
   redis.call("PUBLISH", key, cjson.encode({{pid=pid, t="a", v=cjson.decode(item)}}))
 elseif op == "delete" then
   item = ARGV[3]
-  print("SREM", key, item)
   redis.call("SREM", key, item)
   redis.call("PUBLISH", key, cjson.encode({{pid=pid, t="d", v=cjson.decode(item)}}))
 elseif op == "clear" then
