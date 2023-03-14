@@ -27,9 +27,6 @@ class HashPlugin {
 
 module.exports = {
   mode: "development",
-  node: {
-    Buffer: false,
-  },
   context: path.join(__dirname, "entries"),
   entry: {
     client: "./main.js",
