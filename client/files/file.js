@@ -267,6 +267,7 @@ export default class File extends BaseFile {
     const {innerWidth, innerHeight} = window;
     const assets = Array.from(this.assets.values()).
       filter(e => e.type === "image");
+    sort(assets, e => e.width * e.height);
     const bestAssets = assets.filter(e => {
       if (e.width > innerWidth * 1.4) {
         return false;
@@ -297,9 +298,12 @@ export default class File extends BaseFile {
       infos.unshift(resolution);
     }
     const srcset = assets.map(e => `${this.href}${e.ext} ${e.width}w`).join(", ");
+    const largest = assets.pop();
+    const sizes = `${assets.map(e => `(max-width: ${e.width}px) ${e.width}px`).join(", ")}, ${largest.width}px`;
     return {
       img,
       srcset,
+      sizes,
       infos
     };
   }

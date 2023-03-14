@@ -180,6 +180,7 @@ export default class Gallery {
     const to = setTimeout(() => {
       this.imgEl.src = "/loader.png";
       this.imgEl.removeAttribute("srcset");
+      this.imgEl.removeAttribute("sizes");
     }, 60);
 
     // Set up new image (and swap on load)
@@ -193,7 +194,10 @@ export default class Gallery {
       this.imgEl = img;
       this.imgEl.addEventListener("click", this.onimgclick);
     };
-    img.setAttribute("srcset", info.srcset);
+    if (info.srcset && info.sizes) {
+      img.setAttribute("srcset", info.srcset);
+      img.setAttribute("sizes", info.sizes);
+    }
     img.src = info.img;
 
     // Set up additional info elements straight away
