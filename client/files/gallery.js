@@ -178,27 +178,49 @@ export default class Gallery {
 
     // Set up placeholder loader image
     const to = setTimeout(() => {
-      this.imgEl.src = "/loader.png";
-      this.imgEl.removeAttribute("srcset");
-      this.imgEl.removeAttribute("sizes");
+      const loader = new Image();
+      loader.src = "/loader.png";
+      loader.id = this.imgEl.id;
+      this.imgEl.parentElement.replaceChild(loader, this.imgEl);
+      this.imgEl = loader;
     }, 60);
 
+    if (info.img) {
     // Set up new image (and swap on load)
-    const img = this.imgEl.cloneNode();
-    img.onload = () => {
-      if (this.file !== file) {
-        return;
+      const img = new Image();
+      img.id = this.imgEl.id;
+      img.onload = () => {
+        if (this.file !== file) {
+          return;
+        }
+        clearTimeout(to);
+        this.imgEl.parentElement.replaceChild(img, this.imgEl);
+        this.imgEl = img;
+        this.imgEl.addEventListener("click", this.onimgclick);
+      };
+      if (info.srcset && info.sizes) {
+        img.setAttribute("srcset", info.srcset);
+        img.setAttribute("sizes", info.sizes);
       }
-      clearTimeout(to);
-      this.imgEl.parentElement.replaceChild(img, this.imgEl);
-      this.imgEl = img;
-      this.imgEl.addEventListener("click", this.onimgclick);
-    };
-    if (info.srcset && info.sizes) {
-      img.setAttribute("srcset", info.srcset);
-      img.setAttribute("sizes", info.sizes);
+      img.src = info.img;
     }
-    img.src = info.img;
+    else if (info.video) {
+      const video = document.createElement("video");
+      video.id = this.imgEl.id;
+      video.src = info.video;
+      video.setAttribute("controls", "controls");
+      video.setAttribute("loop", "loop");
+      video.oncanplay = () => {
+        if (this.file !== file) {
+          return;
+        }
+        clearTimeout(to);
+        this.imgEl.parentElement.replaceChild(video, this.imgEl);
+        this.imgEl = video;
+        this.imgEl.addEventListener("click", this.onimgclick);
+        video.play();
+      };
+    }
 
     // Set up additional info elements straight away
     this.titleEl.classList.add("visible");
