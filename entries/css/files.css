@@ -233,6 +233,12 @@
   align-items: center;
 }
 
+#files.gallerymode .preview video,
+#files.gallerymode .preview img {
+  max-width: 200px;
+  max-height: 200px;
+}
+
 #files.gallerymode .preview .faticon {
   font-size: 160px;
   padding: 0;
