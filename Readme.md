@@ -29,6 +29,20 @@ Instructions
 
 If everything works, you may consider putting things into production, get TLS certificates on so on.
 
+Configuration files
+----
+
+kregfile will load configuration data from all of these files, if they are present, in this order.
+The last value for any configuration option wins (much like CSS rules).
+
+1. `defaults.js` (the defaults of kregfile, do not edit, but use as a reference of available options)
+2. `$HOME/.config/kregfile.json`
+3. `$HOME/.config/kregfile.js`
+4. `$PWD/.config.js`
+4. `$PWD/.config.json`
+
+`.js` files will be `require()d` and the config options will be taken from the keys present in the exported object. `.json` files wil lbe parsed as JSON, and options taken from the top-level object.
+
 Force-making specific rooms
 ---
 
