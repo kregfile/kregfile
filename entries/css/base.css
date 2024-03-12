@@ -172,10 +172,12 @@ footer > * > a {
   animation: opulse 5s infinite ease-in;
 }
 
+/*
 .layer {
   backface-visibility: hidden;
   transform: translateZ(0);
 }
+*/
 
 .scroller {
   width: 10px;
