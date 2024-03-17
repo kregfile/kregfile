@@ -35,10 +35,12 @@
   margin-left: auto;
 }
 
+/* because firefox
 .empty rect {
   animation: 5s linear infinite spin, 10s ease-in infinite opulse;
   transform-origin: 50% 50% 0px;
 }
+*/
 
 #files > .file {
   display: flex;
@@ -135,9 +137,11 @@
   background: rgba(90, 160, 90, 0.4) !important;
 }
 
+/* because firefox
 #files > .file > .i-upload {
   animation: opulse 2s infinite ease-in;
 }
+*/
 
 #files > .file > .i-wait {
   opacity: 0.5;

@@ -169,7 +169,7 @@ footer > * > a {
 }
 
 .blink {
-  animation: opulse 5s infinite ease-in;
+  animation: opulse 5s infinite ease-in alternate;
 }
 
 /*
