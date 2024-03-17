@@ -12,6 +12,7 @@
   border-bottom-right-radius: 1ex;
   grid-template-columns: auto auto 1fr;
   grid-template-rows: repeat(10, auto);
+  transform: translateZ(0);
 }
 
 .tooltip-name {
