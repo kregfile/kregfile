@@ -8,6 +8,14 @@ export default class Removable {
       return;
     }
     try {
+      if (this.destroy) {
+        this.destroy();
+      }
+    }
+    catch (ex) {
+      console.error("Removable destructor failed", ex);
+    }
+    try {
       if (this.el.parentElement) {
         this.el.parentElement.removeChild(this.el);
       }

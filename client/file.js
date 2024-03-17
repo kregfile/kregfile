@@ -80,6 +80,7 @@ class FileTooltip extends Tooltip {
         }
       }));
       this.el.appendChild(video);
+      this.video = video;
       return;
     }
 
@@ -100,6 +101,7 @@ class FileTooltip extends Tooltip {
       };
       loaded.src = url;
       this.el.appendChild(img);
+      this.img = img;
       return;
     }
 
@@ -152,8 +154,21 @@ class FileTooltip extends Tooltip {
   show() {
     this.el.classList.add("visible");
   }
-}
 
+  destroy() {
+    if (this.video) {
+      this.video.pause();
+      this.video.textContent = "";
+      this.video.parentElement.removeChild(this.video);
+      this.video = null;
+    }
+    if (this.img) {
+      this.img.src = "";
+      this.img.srcset = "";
+      this.img.parentElement.removeChild(this.img);
+    }
+  }
+}
 
 export default class File extends Removable {
   constructor(file) {
