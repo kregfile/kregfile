@@ -20,12 +20,17 @@
 
 .tooltip.visible {
   visibility: visible;
+  box-shadow: 6px 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Firefox does not like this
+.tooltip.tooltip.visible {
   animation-name: toolfadein;
   animation-iteration-count: 1;
   animation-timing-function: linear;
   animation-duration: 0.2s;
-  box-shadow: 6px 6px 10px rgba(0, 0, 0, 0.3);
 }
+*/
 
 .tooltip > * {
   display: block;
