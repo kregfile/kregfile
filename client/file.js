@@ -67,12 +67,15 @@ class FileTooltip extends Tooltip {
     case "video": {
       const video = dom("video", {
         attrs: {
-          autoplay: "true",
           loop: "true",
-          preload: "auto",
         },
         classes: ["tooltip-preview"],
       });
+      const playVideo = () => {
+        video.removeEventListener("canplay", playVideo);
+        video.play().catch(console.error);
+      };
+      video.addEventListener("canplay", playVideo);
       video.appendChild(dom("source", {
         attrs: {
           type: preview.mime,
@@ -157,6 +160,7 @@ class FileTooltip extends Tooltip {
 
   destroy() {
     if (this.video) {
+      this.video.removeAttribute("loop");
       this.video.pause();
       this.video.textContent = "";
       this.video.parentElement.removeChild(this.video);
