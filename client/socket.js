@@ -137,6 +137,7 @@ export default async function createSocket() {
   });
 
   socket.io.on("reconnect", async attempt => {
+    socket.emit("nick", registry.chatbox.currentNick);
     try {
       if (socket.serverRestartSeq) {
         const {serverSToken, serverRestartSeq} = socket;
